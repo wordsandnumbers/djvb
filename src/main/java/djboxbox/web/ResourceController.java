@@ -1,4 +1,4 @@
-package web;
+package djboxbox.web;
 
 import java.util.HashMap;
 import java.util.Map;
