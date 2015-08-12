@@ -93,7 +93,7 @@ document.getElementById('sdk-js').onload = function() {
       apiUrl: oAuthHeaders.apiUrl
     };
 
-    $.post('/login/verify', verifyData)
+    $.post('/login/login', verifyData)
       .done(function(){ window.reload(); });
   }
   

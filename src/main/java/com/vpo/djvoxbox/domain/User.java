@@ -12,7 +12,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Document
 public class User {
 
-
 	@Id
 	private String id;
 	@Indexed(unique=true)
@@ -20,12 +19,24 @@ public class User {
 	private String identifier;
 	@Email
 	private String email;
+	private String phoneNumber;
+	private String role;
+	private String name;
+	
 	
 	public User() {
 		super();
 	}
 	
-	
+	public User(String identifier, String phoneNumber, String email) {
+		super();
+		this.identifier = identifier;
+		this.phoneNumber = phoneNumber;
+		this.email = email;
+		this.role = "USER";
+	}
+
+
 	public String getId() {
 		return id;
 	}
@@ -43,6 +54,36 @@ public class User {
 	}
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+
+	public String getRole() {
+		return role;
+	}
+
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+
+	public String getName() {
+		return name;
+	}
+
+
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	

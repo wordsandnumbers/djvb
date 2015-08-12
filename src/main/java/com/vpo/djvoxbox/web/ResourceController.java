@@ -1,5 +1,6 @@
 package com.vpo.djvoxbox.web;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -29,4 +30,9 @@ public class ResourceController {
 		return user;
 	  }
 	
+	
+	@RequestMapping("/resource/test")
+	public @ResponseBody String test(Principal principal) {
+		return principal.getName();
+	  }
 }
