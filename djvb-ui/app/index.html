@@ -1,0 +1,112 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <!-- build:css(.) styles/vendor.css -->
+    <!-- bower:css -->
+    <link rel="stylesheet" href="bower_components/ionic/release/css/ionic.css" />
+    <!-- endbower -->
+    <!-- endbuild -->
+    <!-- build:css(.tmp) styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild -->
+</head>
+
+    
+<body ng-app="djvbApp" animation="slide-left-right-ios7">
+    <!--[if lte IE 8]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+<ion-nav-bar class="bar-stable">
+<!--
+    <ion-nav-back-button class="button-icon icon">
+        <i class="ion-chevron-left"></i> Back
+    </ion-nav-back-button>
+-->
+</ion-nav-bar>
+<ion-nav-view></ion-nav-view>
+<ion-tabs class="tabs-royal tabs-icon-only">
+    <ion-tab title="Home" icon="ion-home" href="#/home">
+    </ion-tab>
+    <ion-tab title="Search" icon="ion-search" href="#/search">
+    </ion-tab>
+    <ion-tab title="Sing" icon="ion-mic-c" href="#/sing">
+    </ion-tab>
+</ion-tabs>
+
+<script id="login.html" type="text/ng-template">
+<ion-view title="DJVB Login">
+    <ion-content padding="true">
+        <div class="card">
+            <div class="item item-text-wrap">
+                Welcome to DJVB! Please log in using your phone number or email address.
+            </div>
+        </div>
+        <button class="button button-stable button-block button-royal" ng-click="vm.digitsLogin($event)"><i class="icon ion-ios-telephone-outline"></i> Log in with Phone Number</button>
+        or
+        <label class="item item-input">
+            <input type="text" ng-model="vm.email" type="email" placeholder="Your Email">
+        </label>
+        <button class="button button-stable button-block button-royal" ng-click="vm.digitsLogin($event)"><i class="icon ion-ios-email-outline"></i> Log in with Email</button>
+    </ion-content>
+</ion-view>
+</script>
+
+<script id="search.html" type="text/ng-template">
+<ion-view title="Search">
+    <!--<ion-nav-buttons side="right">
+        <button class="button button-clear" ng-click="vm.filterSearch()"><i class="icon ion-ios-list"></i></button>
+    </ion-nav-buttons>-->
+    <ion-content class="has-header has-footer">
+        <div class="button-bar"></div>
+        <form ng-submit="vm.search(vm.searchString)">
+            <div class="item item-input-inset">
+                <label class="item-input-wrapper">
+                    <input type="search" ng-model="vm.searchString" placeholder="Search by Title or Artist">
+                </label>
+                <div class="button button-small button-clear" ng-click="vm.searchString=''" ng-show="vm.searchString.length>0"><i class="icon ion-close-round"></i></div>
+                <button class="button button-small button-light"><i class="icon ion-search"></i></button>
+            </div>
+        </form>
+
+       <!-- <label class="item item-input" name="songSearch">
+            <i class="icon ion-search placeholder-icon"></i>
+            <input type="search" ng-model="vm.searchString" placeholder="Search for Songs by Title or Artist">
+        </label>
+        <button type="button" ng-click="vm.search()">Go</button>-->
+
+        <ion-list>
+            <div ng-repeat="(header, songs) in vm.songGroups">
+                <div class="item item-divider" ng-click="vm.exactSearch(header)" title="View all songs for {{header}}">
+                    {{header}}
+                </div>
+                <ion-item ng-repeat="song in songs">{{song.title}}</ion-item>
+            </div>
+        </ion-list>
+    </ion-content>
+</ion-view>
+</script>
+
+<script id="sing.html" type="text/ng-template">
+<ion-view title="Sing">
+</ion-view>
+</script>
+    
+<script id="home.html" type="text/ng-template">
+<ion-view title="DJVB">
+    <ion-content padding="true" class="has-header">
+        <ion-list>
+            <ion-item ng-repeat="song in vm.songs">{{song.title}}</ion-item>
+        </ion-list>
+    </ion-content>
+</ion-view>
+</script>
+    </body>
+    <script src="bower_components/requirejs/require.js" data-main="scripts/main.js"></script>
+</html>
