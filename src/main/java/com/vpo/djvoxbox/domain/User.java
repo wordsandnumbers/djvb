@@ -22,6 +22,7 @@ public class User {
 	private String phoneNumber;
 	private String role;
 	private String name;
+	private String screenName;
 	
 	
 	public User() {
@@ -84,6 +85,14 @@ public class User {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getScreenName() {
+		return screenName;
+	}
+
+	public void setScreenName(String screenName) {
+		this.screenName = screenName;
 	}
 	
 	

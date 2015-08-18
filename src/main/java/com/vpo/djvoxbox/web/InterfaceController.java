@@ -2,6 +2,7 @@ package com.vpo.djvoxbox.web;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.Principal;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,13 +12,16 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UrlPathHelper;
 
+import com.vpo.djvoxbox.domain.User;
 import com.vpo.djvoxbox.domain.UserRepository;
 import com.vpo.djvoxbox.util.DigitsResponse;
 
@@ -56,4 +60,21 @@ public class InterfaceController {
 	public String test() {
 		return "foo";
 	}
+	
+	@RequestMapping(value = "/user", method=RequestMethod.GET)
+	public @ResponseBody User getLoggedInUser(Principal principal) {
+		return userRepository.findById(principal.getName());
+	}
+	
+	@RequestMapping(value = "/user", method=RequestMethod.PUT)
+	public @ResponseBody User updateUser(@RequestBody User user, Principal principal) {
+		User lUser = userRepository.findById(principal.getName());
+		lUser.setEmail(user.getEmail());
+		lUser.setName(user.getName());
+		lUser.setScreenName(user.getScreenName());
+		userRepository.save(lUser);
+		return lUser;
+		
+	}
+	
 }
