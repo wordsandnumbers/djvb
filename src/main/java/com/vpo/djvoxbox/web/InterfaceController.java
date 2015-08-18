@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UrlPathHelper;
@@ -29,7 +30,7 @@ public class InterfaceController {
 	private String digitsConsumerKey;
 	
 	@RequestMapping("/login/verify")
-	public String verifyLogin(@RequestParam String authHeader, @RequestParam String apiUrl) {
+	public @ResponseBody boolean verifyLogin(@RequestParam String authHeader, @RequestParam String apiUrl) {
 		boolean uri_valid = true;
 		URI uri = null;
 		try {
@@ -46,8 +47,9 @@ public class InterfaceController {
 			System.out.println(response.getBody());
 		} else {
 			System.out.println("rejected");
+			return false;
 		}
-		return "foo";
+		return true;
 	}
 	 
 	@RequestMapping("/login/test")
