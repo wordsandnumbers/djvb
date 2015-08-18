@@ -4,6 +4,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
+import com.vpo.vbclient.song.SongClient;
+
 @Configuration
 public class VoxBoxConfig {
 	// configure beans
@@ -12,4 +14,8 @@ public class VoxBoxConfig {
 		return new RestTemplate();
 	}
 
+	@Bean
+	SongClient songClient() {
+		return new SongClient();
+	}
 }
