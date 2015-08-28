@@ -1,6 +1,0 @@
-{
-    "jscodehints.detectedExclusions": [
-        "bower_components/angular-mocks/angular-mocks.js",
-        "/Users/jsawyer/Documents/workspace/djvb-ui/test/test-main.js"
-    ]
-}
