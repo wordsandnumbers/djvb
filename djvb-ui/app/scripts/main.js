@@ -10,7 +10,6 @@ require.config({
     'angular-sanitize': '../../bower_components/angular-sanitize/angular-sanitize',
     'angular-touch': '../../bower_components/angular-touch/angular-touch',
     'angular-aria': '../../bower_components/angular-aria/angular-aria',
-    'angular-material': '../../bower_components/angular-material/angular-material',
     ionic: '../../bower_components/ionic/release/js/ionic',
     'ionic-angular': '../../bower_components/ionic/release/js/ionic-angular',
     'angular-ui-router': '../../bower_components/angular-ui-router/release/angular-ui-router',
