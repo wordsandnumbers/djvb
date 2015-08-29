@@ -21,6 +21,9 @@
   "appPath": "app",
   "moduleName": "djvbApp",
   "resolutions": {
-    "angular": "1.4.3"
+    "angular": "^1.4.0",
+    "angular-sanitize": "^1.4.0",
+    "angular-animate": "^1.4.0",
+    "angular-ui-router": "~0.2.15"
   }
 }
