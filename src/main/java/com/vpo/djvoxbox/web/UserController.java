@@ -18,18 +18,22 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UrlPathHelper;
 
 import com.vpo.djvoxbox.domain.User;
 import com.vpo.djvoxbox.domain.UserRepository;
 import com.vpo.djvoxbox.util.DigitsResponse;
+import com.vpo.vbclient.model.Session;
+import com.vpo.vbclient.session.SessionClient;
 
 @RestController
-public class InterfaceController {
+public class UserController {
 
 	@Autowired UserRepository userRepository;
 	@Autowired RestTemplate restTemplate;
+	@Autowired SessionClient sessionClient;
 	@Value("${digits.consumer.key}")
 	private String digitsConsumerKey;
 	
@@ -63,18 +67,70 @@ public class InterfaceController {
 	
 	@RequestMapping(value = "/user", method=RequestMethod.GET)
 	public @ResponseBody User getLoggedInUser(Principal principal) {
-		return userRepository.findById(principal.getName());
+		User user = userRepository.findById(principal.getName());
+		// check here for a valid session?
+		Session session = confirmAndEnsureSession(user);
+		if(session != null && (user.getSessionId() == null || !user.getSessionId().equals(session.getId()))) {
+			user.setSessionId(session.getId());
+			userRepository.save(user);
+		}
+		return user;
 	}
 	
+	private Session confirmAndEnsureSession(final User user) {
+		if(user.getSessionId() == null && user.getEmail() != null) {
+			// create a session
+			return createSessionFromUser(user);
+		} else if(user.getSessionId() != null) {
+			Session session = null;
+			try {
+			session =  sessionClient.getSessionById(user.getSessionId());
+			} catch (HttpClientErrorException e) {
+				return null;
+			}
+			if(session == null) {
+				return createSessionFromUser(user);
+			}
+			return session;
+		}
+		return null;
+	}
+
+	private Session createSessionFromUser(final User user) {
+		Session session = new Session();
+		session.setEmail(user.getEmail());
+		if(user.getScreenName() != null && !user.getScreenName().isEmpty()) {
+			session.setHandle(user.getScreenName());
+		}
+		return sessionClient.createSession(session);
+	}
+
 	@RequestMapping(value = "/user", method=RequestMethod.PUT)
 	public @ResponseBody User updateUser(@RequestBody User user, Principal principal) {
 		User lUser = userRepository.findById(principal.getName());
 		lUser.setEmail(user.getEmail());
 		lUser.setName(user.getName());
 		lUser.setScreenName(user.getScreenName());
+		
 		userRepository.save(lUser);
+		Session session = createOrUpdateSessionForUser(lUser);
+		if(session != null && (lUser.getSessionId() == null || !lUser.getSessionId().equals(session.getId()))) {
+			lUser.setSessionId(session.getId());
+			userRepository.save(lUser);
+		}
 		return lUser;
 		
+	}
+
+	private Session createOrUpdateSessionForUser(User user) {
+		Session session = confirmAndEnsureSession(user);
+		if(session != null) {
+			if(user.getScreenName() != null && !user.getScreenName().isEmpty()) {
+				session.setHandle(user.getScreenName());
+			}
+			return sessionClient.updateSession(session);
+		}
+		return null;
 	}
 	
 }
