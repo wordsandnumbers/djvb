@@ -143,6 +143,7 @@
                         <configuration>
                             <arguments>- -no-color</arguments>
                         </configuration>
+                        
                     </execution>
 
                     <execution>

@@ -23,6 +23,7 @@ public class User {
 	private String role;
 	private String name;
 	private String screenName;
+	private String sessionId;
 	
 	
 	public User() {
@@ -93,6 +94,14 @@ public class User {
 
 	public void setScreenName(String screenName) {
 		this.screenName = screenName;
+	}
+
+	public String getSessionId() {
+		return sessionId;
+	}
+
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
 	}
 	
 	

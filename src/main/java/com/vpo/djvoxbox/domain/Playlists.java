@@ -1,0 +1,62 @@
+package com.vpo.djvoxbox.domain;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.validation.constraints.NotNull;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties
+@Document
+public class Playlists {
+
+	public Playlists() {
+		super();
+	}
+
+	public Playlists(String ownerId) {
+		super();
+		this.ownerId = ownerId;
+		this.lists = new HashMap<String,Playlist>();
+		// make default lists
+		this.lists.put("Faves", new Playlist());
+	}
+
+	@Id
+	private String id;
+	@NotNull
+	@Indexed(unique=true)
+	private String ownerId;
+	private Map<String, Playlist> lists;
+
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getOwnerId() {
+		return ownerId;
+	}
+
+	public void setOwnerId(String ownerId) {
+		this.ownerId = ownerId;
+	}
+
+	public Map<String, Playlist> getLists() {
+		return lists;
+	}
+
+	public void setLists(Map<String, Playlist> lists) {
+		this.lists = lists;
+	}
+	
+}

@@ -1,6 +1,7 @@
 package com.vpo.djvoxbox.web;
 
 
+import java.security.Principal;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.vpo.djvoxbox.domain.User;
+import com.vpo.djvoxbox.domain.UserRepository;
 import com.vpo.vbclient.model.Session;
 import com.vpo.vbclient.song.Search;
 import com.vpo.vbclient.song.SongClient;
@@ -21,14 +24,51 @@ public class SearchController {
 	@Autowired
 	SongClient songClient;
 	
+	@Autowired
+	UserRepository userRepository;
+	
 
 	@RequestMapping("/query")
-	public @ResponseBody Search findSongs(@RequestParam Map<String,String> params) {
+	public @ResponseBody Search findSongs(@RequestParam Map<String,String> params, Principal principal) {
+		User user = userRepository.findById(principal.getName());
 		Search search = createSearch(params);
+		search.setSession(makeSession(user));
 		return songClient.findSongs(search);
 		
 	}
 
+
+	private Session makeSession(User user) {
+		
+		Session s = null;
+		if(user.getSessionId() != null) {
+			s.setId(user.getSessionId());
+		}
+		return s;
+	}
+
+	
+	@RequestMapping("/favorites")
+	public @ResponseBody Search getFavorites(@RequestParam Map<String,String> params, Principal principal) {
+		User user = userRepository.findById(principal.getName());
+		Search search = createSearch(params);
+		search.setSession(makeSession(user));
+		search.setFavorites(true);
+		return songClient.findSongs(search);
+		
+	}
+	
+	@RequestMapping("/playHistory")
+	public @ResponseBody Search getHistory(@RequestParam Map<String,String> params, Principal principal) {
+		User user = userRepository.findById(principal.getName());
+		Search search = createSearch(params);
+		search.setSession(makeSession(user));
+		search.setPlayHistory(true);
+		return songClient.findSongs(search);
+		
+	}
+
+	
 
 	private Search createSearch(Map<String, String> params) {
 		Search search = new Search();
