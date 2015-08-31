@@ -18,7 +18,7 @@ module.exports = function (grunt) {
   // Configurable paths for the application
   var appConfig = {
     app: require('./bower.json').appPath || 'app',
-    dist: '../target/classes/static/resources'
+    dist: 'target/classes/static/resources'
   };
 
   // Define the configuration for all the tasks
@@ -449,7 +449,7 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('build', [
-    //'clean:dist',
+    'clean:dist',
     'wiredep',
     'bowerRequirejs:app',
     'replace:test',
