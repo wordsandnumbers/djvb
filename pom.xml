@@ -93,66 +93,25 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
-                <!-- NB! Set <version> to the latest released version of frontend-maven-plugin, like in README.md -->
-                <version>0.0.25</version>
-
-                <executions>
-<!-- 					<execution>
-					    <id>grunt build</id>
-					    <goals>
-					        <goal>grunt</goal>
-					    </goals>
-					    <configuration>
-					        <arguments>build</arguments>
-					    </configuration>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/classes/static/resources</outputDirectory>
+							<resources>
+								<resource>
+									<directory>dist</directory>
+								</resource>
+							</resources>
+						</configuration>
 					</execution>
-                    <execution>
-                        <id>install node and npm</id>
-                        <goals>
-                            <goal>install-node-and-npm</goal>
-                        </goals>
-                        <configuration>
-                            <nodeVersion>v0.12.2</nodeVersion>
-                            <npmVersion>2.8.3</npmVersion>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>npm install</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>install</arguments>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>bower install</id>
-                        <goals>
-                            <goal>bower</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>install</arguments>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>javascript tests</id>
-                        <goals>
-                            <goal>karma</goal>
-                        </goals>
-                        <configuration>
-                            <karmaConfPath>src/test/javascript/karma.conf.ci.js</karmaConfPath>
-                        </configuration>
-                    </execution>
- -->
-                </executions>
-            </plugin>
-			
-	
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
