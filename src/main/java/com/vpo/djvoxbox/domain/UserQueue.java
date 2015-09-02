@@ -2,6 +2,7 @@ package com.vpo.djvoxbox.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
 
@@ -28,6 +29,7 @@ public class UserQueue {
 		this.roomCode = roomCode;
 		this.active = true;
 		this.queue = new ArrayList<Play>();
+		this.queued = new ArrayList<Play>();
 		this.organization = null;
 	}
 	
@@ -38,6 +40,7 @@ public class UserQueue {
 	private String ownerId;
 	@Indexed
 	private String roomCode;
+	private List<Play> queued;
 	private List<Play> queue;
 	private boolean active;
 	private Session session;
@@ -67,6 +70,12 @@ public class UserQueue {
 	public void setQueue(List<Play> queue) {
 		this.queue = queue;
 	}
+	public List<Play> getQueued() {
+		return queued;
+	}
+	public void setQueued(List<Play> queued) {
+		this.queued = queued;
+	}
 	public boolean isActive() {
 		return active;
 	}
@@ -94,6 +103,7 @@ public class UserQueue {
 	}
 	private Play playFromSong(Song song) {
 		Play play = new Play();
+		play.setPlayId(UUID.randomUUID().toString());
 		play.setArtist(song.getArtist());
 		play.setId(song.getId());
 		play.setTitle(song.getTitle());

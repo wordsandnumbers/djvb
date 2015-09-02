@@ -2,23 +2,23 @@
 <metadata modelVersion="1.1.0">
   <groupId>com.vpo</groupId>
   <artifactId>vbclient</artifactId>
-  <version>0.0.2-SNAPSHOT</version>
+  <version>0.0.4-SNAPSHOT</version>
   <versioning>
     <snapshot>
-      <timestamp>20150830.230825</timestamp>
+      <timestamp>20150902.060821</timestamp>
       <buildNumber>3</buildNumber>
     </snapshot>
-    <lastUpdated>20150830230825</lastUpdated>
+    <lastUpdated>20150902060821</lastUpdated>
     <snapshotVersions>
       <snapshotVersion>
         <extension>jar</extension>
-        <value>0.0.2-20150830.230825-3</value>
-        <updated>20150830230825</updated>
+        <value>0.0.4-20150902.060821-3</value>
+        <updated>20150902060821</updated>
       </snapshotVersion>
       <snapshotVersion>
         <extension>pom</extension>
-        <value>0.0.2-20150830.230825-3</value>
-        <updated>20150830230825</updated>
+        <value>0.0.4-20150902.060821-3</value>
+        <updated>20150902060821</updated>
       </snapshotVersion>
     </snapshotVersions>
   </versioning>

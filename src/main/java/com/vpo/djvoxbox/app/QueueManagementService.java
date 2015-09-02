@@ -70,22 +70,25 @@ public class QueueManagementService {
 			// if there are no plays, add top song.
 			int playCount = 0;
 			Integer next = null;
-			for (int i = 0; i < uq.getQueue().size(); i++) {
-				Play up = uq.getQueue().get(i);
+			for (int i = 0; i < uq.getQueued().size(); i++) {
+				Play up = uq.getQueued().get(i);
 				if(next == null && up.getPlayId() == null) {
 					next = i;
 				}
 				if(q.getPlayIds().contains(up.getPlayId())) {
 					playCount++;
 				} else if(up.getPlayId() != null) {
-					uq.getQueue().remove(i--);
+					uq.getQueued().remove(i--);
 				}
 			}
 			if(playCount == 0 && uq.getQueue().size() != 0) {
-				Play newPlay = queueClient.addSong(new PlayRequest(uq.getRoomCode(), uq.getQueue().get(next).getId()), uq.getSession());
-				uq.getQueue().get(next).setPlayId(newPlay.getPlayId());
-				uq.getQueue().get(next).setPosition(newPlay.getPosition());
-				uq.getQueue().get(next).setIndex(newPlay.getIndex());
+				Play nextPlay = uq.getQueue().get(next);
+				Play newPlay = queueClient.addSong(new PlayRequest(uq.getRoomCode(), nextPlay.getId()), uq.getSession());
+				nextPlay.setPlayId(newPlay.getPlayId());
+				nextPlay.setPosition(newPlay.getPosition());
+				nextPlay.setIndex(newPlay.getIndex());
+				uq.getQueued().add(nextPlay);
+				uq.getQueue().remove(next);
 
 			} else if (playCount != 0 && uq.getQueue().size() != 0) {
 				// TODO: look up if we want to add 1 song per X songs and do it...

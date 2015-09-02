@@ -64,14 +64,30 @@ public class QueueController {
 	
 	@RequestMapping(value="/add", method=RequestMethod.PUT)
 	public @ResponseBody UserQueue addToQueue(@RequestBody PlayRequest request, Principal principal) {
-		//Queue q = queueClient.getQueue(request.getRoomCode());
 		UserQueue uq = createUserQueue(new QueueRequest(request.getRoomCode()) , principal);
 		Song song = songClient.getSongById(request.getSongId());
 		uq.addSongToQueue(song);
 		userQueueRepository.save(uq);
 		return uq;
 	}
+	
+	@RequestMapping(value="/replace", method=RequestMethod.PUT)
+	public @ResponseBody UserQueue replaceQueued(@RequestBody PlayRequest request, Principal principal) {
+		UserQueue uq = createUserQueue(new QueueRequest(request.getRoomCode()) , principal);
+		Song song = songClient.getSongById(request.getSongId());
+		// is it a new song, or is it already in the queue?
+		// if it's a new song, then just post the replacement and delete out of the queue
 		
+		// if it's a current queue play, then remove it too
+		
+		
+		
+		uq.addSongToQueue(song);
+		userQueueRepository.save(uq);
+		return uq;
+	}
+	
+	
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	private static class QueueRequest{
 		

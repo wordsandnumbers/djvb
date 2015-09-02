@@ -40,10 +40,11 @@ public class SearchController {
 
 	private Session makeSession(User user) {
 		
-		Session s = null;
+		Session s = new Session();
 		if(user.getSessionId() != null) {
-			s.setId(user.getSessionId());
+			s.setSession(user.getSessionId());
 		}
+		s.setHideHandle(false);
 		return s;
 	}
 

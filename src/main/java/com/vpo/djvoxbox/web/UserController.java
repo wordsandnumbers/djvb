@@ -70,8 +70,8 @@ public class UserController {
 		User user = userRepository.findById(principal.getName());
 		// check here for a valid session?
 		Session session = confirmAndEnsureSession(user);
-		if(session != null && (user.getSessionId() == null || !user.getSessionId().equals(session.getId()))) {
-			user.setSessionId(session.getId());
+		if(session != null && (user.getSessionId() == null || !user.getSessionId().equals(session.getSession()))) {
+			user.setSessionId(session.getSession());
 			userRepository.save(user);
 		}
 		return user;
@@ -114,8 +114,8 @@ public class UserController {
 		
 		userRepository.save(lUser);
 		Session session = createOrUpdateSessionForUser(lUser);
-		if(session != null && (lUser.getSessionId() == null || !lUser.getSessionId().equals(session.getId()))) {
-			lUser.setSessionId(session.getId());
+		if(session != null && (lUser.getSessionId() == null || !lUser.getSessionId().equals(session.getSession()))) {
+			lUser.setSessionId(session.getSession());
 			userRepository.save(lUser);
 		}
 		return lUser;
