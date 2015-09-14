@@ -18,7 +18,8 @@ module.exports = function (grunt) {
   // Configurable paths for the application
   var appConfig = {
     app: require('./bower.json').appPath || 'app',
-    dist: 'dist'
+    dist: 'dist', 
+    target: 'target/classes/static/resources'
   };
 
   // Define the configuration for all the tasks
@@ -60,6 +61,10 @@ module.exports = function (grunt) {
           '.tmp/styles/{,*/}*.css',
           '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
         ]
+      },
+      java: {
+    	  files: '<%= yeoman.app %>/**',
+    	  tasks: ['sync:java']
       }
     },
 
@@ -376,6 +381,13 @@ module.exports = function (grunt) {
         options: {
           exclude: ['requirejs', 'json3', 'es5-shim']
         }
+      },
+      java: {
+        rjsConfig: '<%= yeoman.target %>/scripts/main.js',
+        options: {
+          exclude: ['requirejs', 'json3', 'es5-shim'], 
+          baseUrl: 'resources'
+        }
       }
     },
 
@@ -413,8 +425,32 @@ module.exports = function (grunt) {
           }
         }
       }
-    }
-  });
+    },
+  sync: {
+	java: {
+		files: [
+			{ cwd: '<%= yeoman.app %>', src: '**', dest: '<%= yeoman.target %>' }
+		]
+	}
+  },
+  bower: {
+	  java: {
+	    dest: '<%= yeoman.target %>/bower_components',
+	    options: {
+	        expand: true
+	    }
+	  }
+	}
+});
+
+  grunt.registerTask('java', [
+    'clean:server',
+    'wiredep',
+    'bower:java',
+    'sync:java', 
+    'bowerRequirejs:java',
+    'watch:java'
+  ]);
 
 
   grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {

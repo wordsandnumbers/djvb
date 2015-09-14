@@ -9,10 +9,9 @@ define(['angular', 'digits'], function (angular, Digits) {
      * Controller of the djvbApp
      */
     angular.module('djvbApp.controllers.LoginCtrl', [])
-        .controller('LoginCtrl', function ($log, $http) {
+        .controller('LoginCtrl', function ($log, $http, $httpParamSerializer, $location) {
             var vm = this;
             vm.digitsLogin = digitsLogin;
-
 
             function digitsLogin(event) {
                 Digits.logIn()
@@ -24,15 +23,21 @@ define(['angular', 'digits'], function (angular, Digits) {
                 // Send headers to your server and validate user by calling Digits’ API
                 var oAuthHeaders = loginResponse.oauth_echo_headers;
                 var verifyData = {
-                    authHeader: oAuthHeaders['X-Verify-Credentials-Authorization'],
-                    apiUrl: oAuthHeaders['X-Auth-Service-Provider']
+                    'authHeader': oAuthHeaders['X-Verify-Credentials-Authorization'],
+                    'apiUrl': oAuthHeaders['X-Auth-Service-Provider']
                 };
 
-                $http.get('http://localhost:8080/login/verify', {params: verifyData})
-                    .then(function(){ 
-                        
-                    });
-            }
+				$http({
+					method : 'POST',
+					url : '/login/login',
+					headers : {
+						'Content-Type' : 'application/x-www-form-urlencoded'
+					},
+					data : $httpParamSerializer(verifyData)
+				}).then(function() {
+				
+				});
+			}
 
             function onLoginFailure() {
                 $log.error("Couldn't do Digits login.");

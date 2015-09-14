@@ -35,7 +35,7 @@ define(['angular', 'lodash'], function (angular, _) {
                     template: 'Loading...'
                 });
 
-                $http.get('http://voiceboxpdx.com/api/v1/songs/search.json', {
+                $http.get('/songs/query', {
                     params: {
                         query: searchString,
                         per_page: 25,
