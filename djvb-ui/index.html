@@ -109,6 +109,7 @@
 <script id="home.html" type="text/ng-template">
 <ion-view title="DJVB">
     <ion-content padding="true" class="has-header">
+		<pre>user: {{vm.user | json}}</pre>
         <ion-list>
             <ion-item ng-repeat="song in vm.songs">{{song.title}}</ion-item>
         </ion-list>

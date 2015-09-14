@@ -1,4 +1,6 @@
-define(['angular', 'controllers/main', 'controllers/about', 'controllers/search', 'controllers/login'] /*deps*/ , function (angular, MainCtrl, AboutCtrl, SearchCtrl, LoginCtrl) /*invoke*/ {
+/*jshint unused: vars */
+define(['angular', 'controllers/about', 'controllers/search', 'controllers/login', 'controllers/home', 'services/user']/*deps*/,
+function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService) /*invoke*/ {
     'use strict';
 
     /**
@@ -10,11 +12,13 @@ define(['angular', 'controllers/main', 'controllers/about', 'controllers/search'
      * Main module of the application.
      */
     return angular
-        .module('djvbApp', ['djvbApp.controllers.MainCtrl',
+        .module('djvbApp', [
             'djvbApp.controllers.AboutCtrl',
             'djvbApp.controllers.SearchCtrl',
             'djvbApp.controllers.LoginCtrl',
-/*angJSDeps*/
+			'djvbApp.services.UserSvc',
+			'djvbApp.controllers.HomeCtrl',
+			/*angJSDeps*/
             'ngCookies',
             'ngResource',
             'ngSanitize',
@@ -55,7 +59,8 @@ define(['angular', 'controllers/main', 'controllers/about', 'controllers/search'
             })
             .state('home', {
                 url: '/home',
-                templateUrl: 'home.html'
+                templateUrl: 'home.html', 
+                controller: 'HomeCtrl as vm'
             });
             // if none of the above states are matched, use this as the fallback
             $urlRouterProvider.otherwise('login');
