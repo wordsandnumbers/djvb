@@ -35,12 +35,64 @@ define(['angular', 'digits'], function (angular, Digits) {
 					},
 					data : $httpParamSerializer(verifyData)
 				}).then(function() {
-				
+					$location.url('/home')
 				});
+                
+                /*var headers = {authorization : "Basic "
+                    + btoa(verifyData.apiUrl + ":" + verifyData.authHeader)};
+                
+                $http.get('/user', {headers : headers}).success(function(data) {
+                    if (data.name) {
+                      $rootScope.authenticated = true;
+                    } else {
+                      $rootScope.authenticated = false;
+                    }
+                    callback && callback();
+                  }).error(function() {
+                    $rootScope.authenticated = false;
+                    callback && callback();
+                  });*/
+                
 			}
 
             function onLoginFailure() {
                 $log.error("Couldn't do Digits login.");
             }
+            
+            /*var authenticate = function(credentials, callback) {
+
+                var headers = credentials ? {authorization : "Basic "
+                    + btoa(credentials.username + ":" + credentials.password)
+                } : {};
+
+                $http.get('user', {headers : headers}).success(function(data) {
+                  if (data.name) {
+                    $rootScope.authenticated = true;
+                  } else {
+                    $rootScope.authenticated = false;
+                  }
+                  callback && callback();
+                }).error(function() {
+                  $rootScope.authenticated = false;
+                  callback && callback();
+                });
+
+              }
+
+              authenticate();
+              $scope.credentials = {};
+              $scope.login = function() {
+                  authenticate($scope.credentials, function() {
+                    if ($rootScope.authenticated) {
+                      $location.path("/");
+                      $scope.error = false;
+                    } else {
+                      $location.path("/login");
+                      $scope.error = true;
+                    }
+                  });
+              };*/
+            
+            
         });
 });

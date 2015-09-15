@@ -1,0 +1,40 @@
+<ion-view title="Search">
+    <!--<ion-nav-buttons side="right">
+        <button class="button button-clear" ng-click="vm.filterSearch()"><i class="icon ion-ios-list"></i></button>
+    </ion-nav-buttons>-->
+    <ion-content class="has-header has-footer">
+        <div class="button-bar"></div>
+        <form ng-submit="vm.search(vm.searchString)">
+            <div class="item item-input-inset">
+                <label class="item-input-wrapper">
+                    <input type="search" ng-model="vm.searchString" placeholder="Search by Title or Artist">
+                </label>
+                <div class="button button-small button-clear" ng-click="vm.clearSearch()" ng-show="vm.searchString.length>0"><i class="icon ion-close-round"></i></div>
+                <button class="button button-small button-light"><i class="icon ion-search"></i></button>
+            </div>
+        </form>
+
+       <!-- <label class="item item-input" name="songSearch">
+            <i class="icon ion-search placeholder-icon"></i>
+            <input type="search" ng-model="vm.searchString" placeholder="Search for Songs by Title or Artist">
+        </label>
+        <button type="button" ng-click="vm.search()">Go</button>-->
+        <ion-list ng-if="vm.hasSongGroups()">
+            <div ng-repeat="(artist, songs) in vm.songGroups">
+                <div class="item item-divider" ng-click="vm.exactSearch(artist)" title="View all songs for {{artist}}">
+                    {{artist}}
+                </div>
+                <ion-item ng-repeat="song in songs">{{song.title}}</ion-item>
+            </div>
+        </ion-list>
+        <ion-list ng-if="!vm.hasSongGroups()">
+			<ion-item ng-if="vm.noResults">No search results</ion-item>
+            <ion-item class="item-icon-right" ng-repeat="recentSearch in vm.recentSearches track by $index" ng-click="vm.search(recentSearch)" title="Search for '{{recentSearch}}' again">
+				<a href="" class="subdued">{{recentSearch}} <i class="icon ion-ios-undo-outline"></i></a>
+            </ion-item>
+			<div class="item item-icon-right" ng-click="vm.recentSearches=[]" ng-if="vm.recentSearches.length>0">
+				Clear Recent Searches <i class="icon ion-ios-close-empty"></i>
+			</div>
+        </ion-list>
+    </ion-content>
+</ion-view>

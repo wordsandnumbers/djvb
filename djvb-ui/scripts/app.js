@@ -1,6 +1,6 @@
 /*jshint unused: vars */
-define(['angular', 'controllers/about', 'controllers/search', 'controllers/login', 'controllers/home', 'services/user']/*deps*/,
-function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService) /*invoke*/ {
+define(['angular', 'controllers/about', 'controllers/search', 'controllers/login', 'controllers/home', 'services/user', 'controllers/usersetup']/*deps*/,
+function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, UserSetupCtrl)/*invoke*/{
     'use strict';
 
     /**
@@ -18,6 +18,7 @@ function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService) /*in
             'djvbApp.controllers.LoginCtrl',
 			'djvbApp.services.UserSvc',
 			'djvbApp.controllers.HomeCtrl',
+			'djvbApp.controllers.UserSetupCtrl',
 			/*angJSDeps*/
             'ngCookies',
             'ngResource',
@@ -45,21 +46,26 @@ function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService) /*in
             $stateProvider
             .state('login', {
                 url: '/login',
-                templateUrl: 'login.html', 
+                templateUrl: 'views/login.html', 
                 controller: 'LoginCtrl as vm'
+            })
+            .state('setup', {
+                url: '/setup',
+                templateUrl: 'views/setup.html', 
+                controller: 'UserSetupCtrl as vm'
             })
             .state('search', {
                 url: '/search',
-                templateUrl: 'search.html', 
+                templateUrl: 'views/search.html', 
                 controller: 'SearchCtrl as vm'
             })
             .state('sing', {
                 url: '/sing',
-                templateUrl: 'sing.html'
+                templateUrl: 'views/sing.html'
             })
             .state('home', {
                 url: '/home',
-                templateUrl: 'home.html', 
+                templateUrl: 'views/home.html', 
                 controller: 'HomeCtrl as vm'
             });
             // if none of the above states are matched, use this as the fallback

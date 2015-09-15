@@ -1,0 +1,26 @@
+<ion-view title="Setup">
+	<ion-content class="has-header has-footer">
+		<form name="vm.userForm">
+			<div class="list">
+				<label class="item item-input">
+					<span class="input-label">Name</span>
+					<input ng-model="vm.user.name" type="text" placeholder="Tony">
+				</label>
+				<label class="item item-input">
+					<span class="input-label">Screen Name</span>
+					<input ng-model="vm.user.screenName" type="text" placeholder="This shows on the monitor">
+				</label>
+				<label class="item item-input">
+					<span class="input-label">Email</span>
+					<input ng-model="vm.user.email" type="email" placeholder="tony@djvb.com">
+				</label>
+			</div>
+		</form>
+		<div class="padding">
+			<button class="button button-block button-positive" ng-click="vm.putUser()" ng-disabled="vm.userForm.$invalid || vm.userForm.$pristine">
+				Save
+			</button>
+		</div>
+<!-- 		<pre>{{vm.userForm}}</pre>
+ -->	</ion-content>
+</ion-view>
