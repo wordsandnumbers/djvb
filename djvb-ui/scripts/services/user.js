@@ -11,7 +11,7 @@ define(['angular'], function (angular) {
   angular.module('djvbApp.services.UserSvc', [])
 	.service('UserSvc', function ($http, $q) {
 		
-		var user = {};
+		var user;
 		
 		return {
 			getUser: getUser, 
@@ -20,12 +20,16 @@ define(['angular'], function (angular) {
 		
 		function getUser() {
 			return $q(function (resolve, reject) {
-				$http.get('/user').then(function(config) {
-					user = config.data;
+				if (user === undefined) {
+					$http.get('/user').then(function(config) {
+						user = config.data;
+						resolve(user);
+					}, function(error) {
+						reject(error);
+					});
+				} else {
 					resolve(user);
-				}, function(error) {
-					reject(error);
-				});
+				}
 			});
 		}
 		

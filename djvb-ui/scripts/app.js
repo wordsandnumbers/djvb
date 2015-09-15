@@ -52,7 +52,12 @@ function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, User
             .state('setup', {
                 url: '/setup',
                 templateUrl: 'views/setup.html', 
-                controller: 'UserSetupCtrl as vm'
+                controller: 'UserSetupCtrl as vm', 
+                resolve: {
+                	user: function(UserSvc){
+                		return UserSvc.getUser();
+                	}
+                }
             })
             .state('search', {
                 url: '/search',
