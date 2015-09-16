@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UrlPathHelper;
 
 import com.vpo.djvoxbox.domain.User;
 import com.vpo.djvoxbox.domain.UserRepository;
@@ -65,7 +64,7 @@ public class UserController {
 		return "foo";
 	}
 	
-	@RequestMapping(value = "/user", method=RequestMethod.GET)
+	@RequestMapping(value ="/api/v1/user/user", method=RequestMethod.GET)
 	public @ResponseBody User getLoggedInUser(Principal principal) {
 		User user = userRepository.findById(principal.getName());
 		// check here for a valid session?
@@ -105,7 +104,7 @@ public class UserController {
 		return sessionClient.createSession(session);
 	}
 
-	@RequestMapping(value = "/user", method=RequestMethod.PUT)
+	@RequestMapping(value = "/api/v1/user", method=RequestMethod.PUT)
 	public @ResponseBody User updateUser(@RequestBody User user, Principal principal) {
 		User lUser = userRepository.findById(principal.getName());
 		lUser.setEmail(user.getEmail());

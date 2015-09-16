@@ -21,15 +21,12 @@ public class UserQueue {
 	
 	public UserQueue() {
 		super();
-		this.queue = new ArrayList<Play>();
 		
 	}
 	public UserQueue(String roomCode) {
 		super();
 		this.roomCode = roomCode;
 		this.active = true;
-		this.queue = new ArrayList<Play>();
-		this.queued = new ArrayList<Play>();
 		this.organization = null;
 	}
 	
@@ -40,8 +37,8 @@ public class UserQueue {
 	private String ownerId;
 	@Indexed
 	private String roomCode;
-	private List<Play> queued;
-	private List<Play> queue;
+	private List<Play> queued = new ArrayList<Play>();
+	private List<Play> queue  = new ArrayList<Play>();
 	private boolean active;
 	private Session session;
 	private String organization;

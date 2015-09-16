@@ -82,13 +82,7 @@ public class QueueManagementService {
 				}
 			}
 			if(playCount == 0 && uq.getQueue().size() != 0) {
-				Play nextPlay = uq.getQueue().get(next);
-				Play newPlay = queueClient.addSong(new PlayRequest(uq.getRoomCode(), nextPlay.getId()), uq.getSession());
-				nextPlay.setPlayId(newPlay.getPlayId());
-				nextPlay.setPosition(newPlay.getPosition());
-				nextPlay.setIndex(newPlay.getIndex());
-				uq.getQueued().add(nextPlay);
-				uq.getQueue().remove(next);
+				playNext(uq, next);
 
 			} else if (playCount != 0 && uq.getQueue().size() != 0) {
 				// TODO: look up if we want to add 1 song per X songs and do it...
@@ -96,6 +90,16 @@ public class QueueManagementService {
 			userQueueRepository.save(uq);
 		}
 		
+	}
+	
+	public void playNext(UserQueue uq, Integer next) {
+		Play nextPlay = uq.getQueue().get(next);
+		Play newPlay = queueClient.addSong(new PlayRequest(uq.getRoomCode(), nextPlay.getId()), uq.getSession());
+		nextPlay.setPlayId(newPlay.getPlayId());
+		nextPlay.setPosition(newPlay.getPosition());
+		nextPlay.setIndex(newPlay.getIndex());
+		uq.getQueued().add(nextPlay);
+		uq.getQueue().remove(next);
 	}
 	
 	private boolean sameOrg(UserQueue uq) {

@@ -29,6 +29,10 @@
         <id>djvb.local</id>
         <name>djvb</name>
         <url>file:${project.basedir}/repo</url>
+        <snapshots>
+            <enabled>true</enabled>
+            <updatePolicy>always</updatePolicy>
+      </snapshots>
     </repository>
 </repositories>
 
@@ -36,8 +40,9 @@
 		<dependency>
 		    <groupId>com.vpo</groupId>
 		    <artifactId>vbclient</artifactId>
-		    <version>0.0.4-SNAPSHOT</version>
+		    <version>0.1.0-RELEASE</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>

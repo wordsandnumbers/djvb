@@ -5,6 +5,7 @@ import java.security.Principal;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,7 +19,7 @@ import com.vpo.vbclient.song.Search;
 import com.vpo.vbclient.song.SongClient;
 
 @RestController
-@RequestMapping("/songs")
+@RequestMapping("/api/v1/songs")
 public class SearchController {
 	
 	@Autowired
@@ -27,9 +28,20 @@ public class SearchController {
 	@Autowired
 	UserRepository userRepository;
 	
+	@Value("${default.language}")
+	private String defaultLanguage;
 
 	@RequestMapping("/query")
 	public @ResponseBody Search findSongs(@RequestParam Map<String,String> params, Principal principal) {
+		User user = userRepository.findById(principal.getName());
+		Search search = createSearch(params);
+		search.setSession(makeSession(user));
+		return songClient.findSongs(search);
+		
+	}
+
+	@RequestMapping("/browse")
+	public @ResponseBody Search browseSongs(@RequestParam Map<String,String> params, Principal principal) {
 		User user = userRepository.findById(principal.getName());
 		Search search = createSearch(params);
 		search.setSession(makeSession(user));
@@ -74,7 +86,7 @@ public class SearchController {
 	private Search createSearch(Map<String, String> params) {
 		Search search = new Search();
 		search.setQuery(params.get("query"));
-		search.setLanguage(params.get("language"));
+		search.setLanguage((params.get("language") != null) ? params.get("language") : defaultLanguage);
 		search.setPage(Integer.getInteger(params.get("page")));
 		search.setPerPage(Integer.getInteger(params.get("per_page")));
 		search.setTag(params.get("tag"));
