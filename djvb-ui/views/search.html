@@ -24,7 +24,10 @@
                 <div class="item item-divider" ng-click="vm.exactSearch(artist)" title="View all songs for {{artist}}">
                     {{artist}}
                 </div>
-                <ion-item ng-repeat="song in songs">{{song.title}}</ion-item>
+                <ion-item class="item-icon-right" ng-repeat="song in songs" ng-click="vm.selectSong(song)">
+                	{{song.title}}
+                	<button class="button button-clear button-stable button-icon icon ion-more"></button>
+                </ion-item>
             </div>
         </ion-list>
         <ion-list ng-if="!vm.hasSongGroups()">

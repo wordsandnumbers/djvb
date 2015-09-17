@@ -9,7 +9,7 @@ define(['angular', 'lodash'], function (angular, _) {
    * Controller of the djvbApp
    */
   angular.module('djvbApp.controllers.SearchCtrl', [])
-    .controller('SearchCtrl', function ($scope, $log, $http, $ionicScrollDelegate, $ionicLoading) {
+    .controller('SearchCtrl', function ($scope, $log, $http, $ionicScrollDelegate, $ionicLoading, $ionicActionSheet) {
         var vm = this;
         vm.searchString = '';
         vm.songGroups = {};
@@ -19,6 +19,7 @@ define(['angular', 'lodash'], function (angular, _) {
         vm.exactSearch = exactSearch;
         vm.hasSongGroups = hasSongGroups;
         vm.clearSearch = clearSearch;
+        vm.selectSong = selectSong;
             
         function exactSearch(searchString) {
             search('"' + searchString + '"');
@@ -58,6 +59,31 @@ define(['angular', 'lodash'], function (angular, _) {
                     $ionicLoading.hide();
                 });
             }
+        }
+        
+        function selectSong(song) {
+			var hideSheet = $ionicActionSheet.show({
+				buttons : [{
+					text : '<strong>Sing Now!</strong>'
+				}, {
+					text : 'Add to Playlist'
+				}],
+				titleText : song.artist + ' - ' + song.title,
+				cancelText : 'Cancel',
+				buttonClicked : function(index) {
+					$ionicActionSheet.show({
+						buttons : [{
+							text : '<strong>stuff!</strong>'
+						}],
+						titleText : song.artist + ' - ' + song.title + '<br>Add to Playlist:',
+						cancelText : 'Cancel',
+						buttonClicked : function(index) {
+							return true;
+						}
+					})
+					return true;
+				}
+			});
         }
         
         function clearSearch() {
