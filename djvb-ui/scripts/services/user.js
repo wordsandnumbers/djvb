@@ -21,7 +21,7 @@ define(['angular'], function (angular) {
 		function getUser() {
 			return $q(function (resolve, reject) {
 				if (user === undefined) {
-					$http.get('/user').then(function(config) {
+					$http.get('/api/v1/user/user').then(function(config) {
 						user = config.data;
 						resolve(user);
 					}, function(error) {
@@ -35,7 +35,7 @@ define(['angular'], function (angular) {
 		
 		function putUser(user) {
 			return $q(function (resolve, reject) {
-				$http.put('/user', user).then(function(config) {
+				$http.put('/api/v1/user', user).then(function(config) {
 					user = config.data;
 					resolve(user);
 				}, function(error) {

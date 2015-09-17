@@ -35,7 +35,7 @@ define(['angular', 'lodash'], function (angular, _) {
                     template: 'Loading...'
                 });
 
-                $http.get('/songs/query', {
+                $http.get('/api/v1/songs/query', {
                     params: {
                         query: searchString,
                         per_page: 25,
