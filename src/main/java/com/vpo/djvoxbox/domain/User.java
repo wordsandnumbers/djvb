@@ -23,6 +23,7 @@ public class User {
 	private String role;
 	private String name;
 	private String screenName;
+	private String savedListsId;
 	private String sessionId;
 	
 	
@@ -94,6 +95,14 @@ public class User {
 
 	public void setScreenName(String screenName) {
 		this.screenName = screenName;
+	}
+
+	public String getSavedListsId() {
+		return savedListsId;
+	}
+
+	public void setSavedListsId(String savedListsId) {
+		this.savedListsId = savedListsId;
 	}
 
 	public String getSessionId() {
