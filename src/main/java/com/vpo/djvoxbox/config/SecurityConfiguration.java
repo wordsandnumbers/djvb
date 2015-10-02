@@ -61,7 +61,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .csrf().csrfTokenRepository(csrfTokenRepository())
                 .and()
             .formLogin()
-                .loginPage("/login/login.html")
+                .loginPage("/resources/index.html")
                 .loginProcessingUrl("/login/login")
                 .usernameParameter("apiUrl")
                 .passwordParameter("authHeader")

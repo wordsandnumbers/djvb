@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -46,6 +47,11 @@ public class QueueController {
 	@Autowired
 	QueueManagementService queueManagementService;
 	
+	@RequestMapping(value="/lights/{roomCode}/{level}", method=RequestMethod.GET)
+	public void lights(@PathVariable("roomCode") String code, @PathVariable("level") Integer level) {
+		sessionClient.controlLights(code, level);
+	}
+	
 	@RequestMapping(value="/join", method=RequestMethod.POST)
 	public @ResponseBody UserQueue createUserQueue(@RequestBody QueueRequest request, Principal principal) {
 		User user = userRepository.findById(principal.getName());
@@ -66,6 +72,13 @@ public class QueueController {
 		return uq;
 	}
 	
+	@RequestMapping(value="/queues", method=RequestMethod.GET)
+	public @ResponseBody List<UserQueue> getQueues(Principal principal) {
+		User user = userRepository.findById(principal.getName());
+		return userQueueRepository.findByOwnerId(user.getIdentifier());
+	}
+	
+	
 	@RequestMapping(value="/queue", method=RequestMethod.POST)
 	public @ResponseBody UserQueue addToQueue(@RequestBody PlayRequest request, Principal principal) {
 		UserQueue uq = createUserQueue(new QueueRequest(request.getRoomCode()) , principal);
@@ -78,6 +91,8 @@ public class QueueController {
 		userQueueRepository.save(uq);
 		return uq;
 	}
+	
+	
 	
 	@RequestMapping(value="/qeued", method=RequestMethod.PUT)
 	public @ResponseBody UserQueue replaceQueued(@RequestBody PlayRequest request, Principal principal) {

@@ -36,6 +36,11 @@ public class UserController {
 	@Value("${digits.consumer.key}")
 	private String digitsConsumerKey;
 	
+	@RequestMapping("/")
+	public String redirect() {
+		return "redirect:/resources/index.html";
+	}
+	
 	@RequestMapping("/login/verify")
 	public @ResponseBody boolean verifyLogin(@RequestParam String authHeader, @RequestParam String apiUrl) {
 		boolean uri_valid = true;
