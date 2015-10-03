@@ -9,11 +9,15 @@ define(['angular'], function (angular) {
    * Controller of the djvbApp
    */
   angular.module('djvbApp.controllers.HomeCtrl', [])
-    .controller('HomeCtrl', function (UserSvc) {
+    .controller('HomeCtrl', function (UserSvc, PlaylistsSvc) {
     	var vm = this;
     	vm.user = {};
+    	vm.playlists;
     	UserSvc.getUser().then(function(user) {
     		vm.user = user;
     	});
+    	/*PlaylistsSvc.getPlaylists().then(function(playlists) {
+    		vm.playlists = playlists;
+    	});*/
     });
 });

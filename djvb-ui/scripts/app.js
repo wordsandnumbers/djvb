@@ -1,6 +1,6 @@
 /*jshint unused: vars */
-define(['angular', 'controllers/about', 'controllers/search', 'controllers/login', 'controllers/home', 'services/user', 'controllers/usersetup']/*deps*/,
-function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, UserSetupCtrl)/*invoke*/{
+define(['angular', 'controllers/about', 'controllers/search', 'controllers/login', 'controllers/home', 'services/user', 'controllers/usersetup', 'services/queue', 'controllers/queue', 'services/playlists', 'controllers/playlists']/*deps*/,
+function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, UserSetupCtrl, QueueService, QueueCtrl, PlaylistsService, PlaylistsCtrl)/*invoke*/{
     'use strict';
 
     /**
@@ -19,7 +19,11 @@ function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, User
 			'djvbApp.services.UserSvc',
 			'djvbApp.controllers.HomeCtrl',
 			'djvbApp.controllers.UserSetupCtrl',
-			/*angJSDeps*/
+			'djvbApp.services.QueueSvc',
+			'djvbApp.controllers.QueueCtrl',
+			'djvbApp.services.PlaylistsSvc',
+			'djvbApp.controllers.PlaylistsCtrl',
+/*angJSDeps*/
             'ngCookies',
             'ngResource',
             'ngSanitize',
@@ -66,7 +70,13 @@ function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, User
             })
             .state('sing', {
                 url: '/sing',
-                templateUrl: 'views/sing.html'
+                templateUrl: 'views/sing.html', 
+                controller: 'QueueCtrl as vm'
+            })
+            .state('playlists', {
+                url: '/playlists',
+                templateUrl: 'views/playlists.html', 
+                controller: 'PlaylistsCtrl as vm'
             })
             .state('home', {
                 url: '/home',

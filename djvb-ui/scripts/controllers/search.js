@@ -9,7 +9,23 @@ define(['angular', 'lodash'], function (angular, _) {
    * Controller of the djvbApp
    */
   angular.module('djvbApp.controllers.SearchCtrl', [])
-    .controller('SearchCtrl', function ($scope, $log, $http, $ionicScrollDelegate, $ionicLoading, $ionicActionSheet) {
+  .directive('focusMe', function($timeout) {
+	  return {
+	    scope: { trigger: '=focusMe' },
+	    link: function(scope, element) {
+	      scope.$watch('trigger', function(value) {
+	        if(value === true) { 
+	          //console.log('trigger',value);
+	          $timeout(function() {
+	            element[0].focus();
+	            scope.trigger = false;
+	          });
+	        }
+	      });
+	    }
+	  };
+  })
+  .controller('SearchCtrl', function ($scope, $log, $http, $ionicScrollDelegate, $ionicLoading, $ionicActionSheet, $ionicModal, $ionicPopup, QueueSvc, PlaylistsSvc) {
         var vm = this;
         vm.searchString = '';
         vm.songGroups = {};
@@ -20,7 +36,26 @@ define(['angular', 'lodash'], function (angular, _) {
         vm.hasSongGroups = hasSongGroups;
         vm.clearSearch = clearSearch;
         vm.selectSong = selectSong;
-            
+        vm.searchComplete = false;
+        vm.queues = [];
+        vm.playlists;
+        vm.joinRoom = joinRoom;
+        
+        QueueSvc.getQueues().then(function(queues) {
+        	vm.queues = queues;
+        })
+
+        PlaylistsSvc.getPlaylistsList().then(function(playlists) {
+        	vm.playlists = playlists;
+        })
+
+		$ionicModal.fromTemplateUrl('views/roomcodemodal.html', {
+			scope: $scope,
+			animation: 'slide-in-up'
+		}).then(function(modal) {
+			vm.roomCodeModal = modal;
+		});
+        
         function exactSearch(searchString) {
             search('"' + searchString + '"');
         }
@@ -51,6 +86,7 @@ define(['angular', 'lodash'], function (angular, _) {
                     		vm.recentSearches.unshift(searchString); 
                     	}
                     	vm.noResults = false;
+                    	vm.searchComplete = true;
                     } else {
                     	vm.noResults = true;
                     }
@@ -71,19 +107,49 @@ define(['angular', 'lodash'], function (angular, _) {
 				titleText : song.artist + ' - ' + song.title,
 				cancelText : 'Cancel',
 				buttonClicked : function(index) {
-					$ionicActionSheet.show({
-						buttons : [{
-							text : '<strong>stuff!</strong>'
-						}],
-						titleText : song.artist + ' - ' + song.title + '<br>Add to Playlist:',
-						cancelText : 'Cancel',
-						buttonClicked : function(index) {
-							return true;
-						}
-					})
+					switch (index) {
+						case 0:
+							if (vm.queues.length > 0) {
+								// Add song to queue
+								QueueSvc.addSongToQueue(vm.queues[0], song).then(function(response) {
+									// Success
+								}, function(config) {
+									// Error
+									$ionicPopup.alert({
+										title: "Error",
+										template: JSON.stringify(config.data)
+									});
+								});
+							} else {
+								// Join a room
+							    vm.roomCodeModal.show();
+							}
+							break;
+						case 1:
+							$ionicActionSheet.show({
+								buttons : _.map(_.keys(vm.playlists), function(key) {
+									return {text: key};
+								}),
+								titleText : song.artist + ' - ' + song.title + '<br>Add to Playlist:',
+								cancelText : 'Cancel',
+								buttonClicked : function(index, button) {
+									PlaylistsSvc.addSongToPlaylist(button.text, song).then(function(response) {
+										// Success
+									}, function(response) {
+										// Error
+									});
+									return true;
+								}
+							})
+							break;
+					}
 					return true;
 				}
 			});
+        }
+        
+        function joinRoom(roomCode) {
+        	QueueSvc.join(roomCode);
         }
         
         function clearSearch() {

@@ -1,2 +1,23 @@
 <ion-view title="Sing">
+	<ion-content class="has-header has-footer">
+		<div ng-repeat="song in vm.queues[0].queue">
+		</div>
+		
+		<div class="card" ng-if="vm.queues.length===0" ng-cloak>
+			<div class="item item-divider text-center">
+				<p>You're not singing yet!</p>
+			</div>
+			<div class="item item-text-wrap text-center">
+				<a href="#search" class="button button-stable icon-left ion-search">Find some songs!</a>
+			</div>
+		</div>
+		
+		<ion-list ng-if="vm.queues.length">
+			<ion-item class="item-icon-right" ng-repeat="play in vm.queues[0].queue" ng-click="vm.selectPlay(play)">
+				{{play.title}}
+				<p>{{play.artist}}</p>
+				<button class="button button-clear button-stable button-icon icon ion-more"></button>
+			</ion-item>
+		</ion-list>
+	</ion-content>
 </ion-view>
