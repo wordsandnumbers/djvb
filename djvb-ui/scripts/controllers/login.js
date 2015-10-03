@@ -9,7 +9,7 @@ define(['angular', 'digits'], function (angular, Digits) {
      * Controller of the djvbApp
      */
     angular.module('djvbApp.controllers.LoginCtrl', [])
-        .controller('LoginCtrl', function ($log, $http, $httpParamSerializer, $location) {
+        .controller('LoginCtrl', function ($log, $http, $httpParamSerializer, $location, $ionicPopup, UserSvc) {
             var vm = this;
             vm.digitsLogin = digitsLogin;
 
@@ -34,8 +34,13 @@ define(['angular', 'digits'], function (angular, Digits) {
 						'Content-Type' : 'application/x-www-form-urlencoded'
 					},
 					data : $httpParamSerializer(verifyData)
-				}).then(function() {
+				}).then(function(response) {
 					$location.url('/home')
+				}, function(response) {
+					$ionicPopup.alert({
+						title: "Error",
+						template: JSON.stringify(response.data)
+					});
 				});
                 
                 /*var headers = {authorization : "Basic "
@@ -56,7 +61,10 @@ define(['angular', 'digits'], function (angular, Digits) {
 			}
 
             function onLoginFailure() {
-                $log.error("Couldn't do Digits login.");
+				$ionicPopup.alert({
+					title: "Error",
+					template: "Couldn't do Digits login."
+				});
             }
             
             /*var authenticate = function(credentials, callback) {

@@ -16,6 +16,9 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
@@ -45,27 +48,38 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
+		http
         	.sessionManagement()
         	.sessionFixation().migrateSession()
         	.and()
         	.csrf().disable()
             .authorizeRequests()
                 .anyRequest().authenticated()
-/*                .and()
+                .and()
                 .addFilterAfter(new CsrfHeaderFilter(), CsrfFilter.class)
-                    .csrf().csrfTokenRepository(csrfTokenRepository())*/
+                    .csrf().csrfTokenRepository(csrfTokenRepository())
                 .and()
             .formLogin()
                 .loginPage("/resources/index.html")
                 .loginProcessingUrl("/login/login")
                 .usernameParameter("apiUrl")
                 .passwordParameter("authHeader")
+                .successHandler(new LoginSuccessHandler())
                 .permitAll()
              .and()
              .logout()
              .permitAll();
     }
+
+	public class LoginSuccessHandler implements AuthenticationSuccessHandler {
+		
+		public void onAuthenticationSuccess(HttpServletRequest request,
+				HttpServletResponse response, Authentication auth)
+				throws IOException, ServletException {
+			response.getWriter().print("{\"responseCode\":\"SUCCESS\"}");
+			response.getWriter().flush();
+		}
+	}
     
 	public static class CsrfHeaderFilter extends OncePerRequestFilter {
 		@Override
