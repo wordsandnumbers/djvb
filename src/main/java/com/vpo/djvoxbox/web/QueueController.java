@@ -86,7 +86,7 @@ public class QueueController {
 		uq.addSongToQueue(song);
 		// if this is your first song, put it in now!
 		if(uq.getQueued().size() == 0 && uq.getQueue().size() == 1) {
-			queueManagementService.playNext(uq, 0);
+			queueManagementService.playNext(uq);
 		}
 		userQueueRepository.save(uq);
 		return uq;

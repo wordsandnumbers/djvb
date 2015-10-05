@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,8 @@ public class UpdateService {
 	@Autowired ManagerRepository managerRepository;
 	@Autowired QueueManagementService queueManagementService;
 	
-	private static final String MANAGER_NAME = "VOXBOXTWO";
+	@Value("${manager.name}")
+	private String MANAGER_NAME;
 	
 	@Scheduled(fixedDelay=25000)
 	public void update() {
@@ -35,7 +37,7 @@ public class UpdateService {
 				queueManagementService.manageQueues();
 			} catch(Exception e) {
 				
-				System.out.println("Whoops" + e.toString());
+				System.out.println("Whoops : " + e.toString());
 			}
 			manager.setLastUpdate(new Date());
 			manager.setUsurping(null);

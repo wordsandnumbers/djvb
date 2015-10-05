@@ -51,14 +51,20 @@ public class QueueManagementService {
 	}
 	
 	public void manageQueues(){
+		// all queues in the db
 		List<UserQueue> uqs = getAllQueues();
 		ConvenientQueue q = null;
+		// loop over the queues
 		for (UserQueue uq : uqs) {
+			// ignore test queues
 			if(!sameOrg(uq)) {
 				continue;
 			}
+			// find the queue for the current room 
+			// we only poll VB when the room code is different
 			q = getQueue(uq.getRoomCode(), q);
 			if(q.getQueue() == null) {
+				// if the roomcode doesnt work anymore, mark uq for deletion or delete it
 				downgradeQueueStatus(uq);
 				continue;
 			} else if (!uq.isActive()) {
@@ -69,12 +75,9 @@ public class QueueManagementService {
 			// determine if any of current user plays are in playlist
 			// if there are no plays, add top song.
 			int playCount = 0;
-			Integer next = null;
 			for (int i = 0; i < uq.getQueued().size(); i++) {
 				Play up = uq.getQueued().get(i);
-				if(next == null && up.getPlayId() == null) {
-					next = i;
-				}
+	
 				if(q.getPlayIds().contains(up.getPlayId())) {
 					playCount++;
 				} else if(up.getPlayId() != null) {
@@ -82,7 +85,7 @@ public class QueueManagementService {
 				}
 			}
 			if(playCount == 0 && uq.getQueue().size() != 0) {
-				playNext(uq, next);
+				playNext(uq);
 
 			} else if (playCount != 0 && uq.getQueue().size() != 0) {
 				// TODO: look up if we want to add 1 song per X songs and do it...
@@ -92,14 +95,25 @@ public class QueueManagementService {
 		
 	}
 	
-	public void playNext(UserQueue uq, Integer next) {
-		Play nextPlay = uq.getQueue().get(next);
-		Play newPlay = queueClient.addSong(new PlayRequest(uq.getRoomCode(), nextPlay.getId()), uq.getSession());
-		nextPlay.setPlayId(newPlay.getPlayId());
-		nextPlay.setPosition(newPlay.getPosition());
-		nextPlay.setIndex(newPlay.getIndex());
-		uq.getQueued().add(nextPlay);
-		uq.getQueue().remove(next);
+	public void playNext(UserQueue uq) {
+		Play nextPlay = uq.getQueue().get(0);
+		Play newPlay = null;
+		try {
+			newPlay = queueClient.addSong(new PlayRequest(uq.getRoomCode(), nextPlay.getId()), uq.getSession());
+		} catch(HttpClientErrorException e) {
+			if(e.getStatusCode().value() !=  HttpStatus.SC_NOT_FOUND) {
+				// if it's not found, skip it?  
+				// TODO: how to communicate better with the client
+				throw e;
+			}
+		}
+		if(newPlay != null) {
+			nextPlay.setPlayId(newPlay.getPlayId());
+			nextPlay.setPosition(newPlay.getPosition());
+			nextPlay.setIndex(newPlay.getIndex());
+			uq.getQueued().add(nextPlay);
+		}
+		uq.getQueue().remove(0);
 	}
 	
 	private boolean sameOrg(UserQueue uq) {

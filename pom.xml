@@ -40,7 +40,7 @@
 		<dependency>
 		    <groupId>com.vpo</groupId>
 		    <artifactId>vbclient</artifactId>
-		    <version>0.1.0-RELEASE</version>
+		    <version>0.1.1-RELEASE</version>
 		</dependency>
 		
 		<dependency>
