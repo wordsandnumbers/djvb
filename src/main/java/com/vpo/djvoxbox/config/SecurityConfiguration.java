@@ -17,8 +17,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
@@ -84,7 +85,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			
 			configureCsrf(http, csrfDisabled)
 				.exceptionHandling()
-					.authenticationEntryPoint(new Http403ForbiddenEntryPoint());
+					.authenticationEntryPoint(new AuthenticationEntryPoint() {
+						@Override
+						public void commence(HttpServletRequest request, HttpServletResponse response,
+								AuthenticationException ex) throws IOException, ServletException {
+					        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");							
+						}
+					});
 		}
 	}
 		
