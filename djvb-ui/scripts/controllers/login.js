@@ -12,6 +12,7 @@ define(['angular', 'digits'], function (angular, Digits) {
         .controller('LoginCtrl', function ($log, $http, $httpParamSerializer, $location, $ionicPopup, UserSvc) {
             var vm = this;
             vm.digitsLogin = digitsLogin;
+            vm.emailLogin = emailLogin;
 
             function digitsLogin(event) {
                 Digits.logIn()
@@ -65,6 +66,26 @@ define(['angular', 'digits'], function (angular, Digits) {
 					title: "Error",
 					template: "Couldn't do Digits login."
 				});
+            }
+            
+            function emailLogin() {
+            	
+				$http({
+					method : 'POST',
+					url : '/login/login',
+					headers : {
+						'Content-Type' : 'application/x-www-form-urlencoded'
+					},
+					data : $httpParamSerializer({'apiUrl':vm.email})
+				}).then(function(response) {
+					$location.url('/home');
+				}, function(response) {
+					$ionicPopup.alert({
+						title: "Error",
+						template: JSON.stringify(response.data)
+					});
+				});
+
             }
             
             /*var authenticate = function(credentials, callback) {

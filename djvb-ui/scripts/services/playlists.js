@@ -11,7 +11,7 @@ define(['angular'], function (angular) {
   angular.module('djvbApp.services.PlaylistsSvc', [])
 	.service('PlaylistsSvc', function ($http, $q) {
 		
-		var playlists = {};
+		var playlists = [];
 		
 		return {
 			getPlaylistsList: getPlaylistsList, 
@@ -24,7 +24,12 @@ define(['angular'], function (angular) {
 		function getPlaylists() {
 			return $q(function(resolve, reject) {
 				$http.get('/api/v1/playlists/').then(function(response) {
-					angular.extend(playlists, response.data.lists);
+					// Let's fix the response so it's an array. Will fix server later.
+					var playlists = _.map(_.keys(response.data.lists), function(key) {
+						var playlist = response.data.lists[key];
+						playlist.name = key;
+						return playlist;
+					});
 					resolve(playlists);
 				}, function(response) {
 					reject(response);
@@ -57,21 +62,22 @@ define(['angular'], function (angular) {
 			});
 		}
 		
-		function updatePlaylist(name) {
+		function updatePlaylist(playlist) {
 			return $q(function(resolve, reject) {
-				$http.put('/api/v1/playlists/' + name, playlists[name]).then(function(response) {
-					Array.prototype.splice.apply(playlists[name].songs, [0, playlists[name].songs.length].concat(response.data.songs));
-					resolve(playlists[name]);
+				$http.put('/api/v1/playlists/' + playlist.name, playlist).then(function(response) {
+					var foundPlaylist = _.find(playlists, {id: playlist.id});
+					Array.prototype.splice.apply(foundPlaylist.songs, [0, foundPlaylist.songs.length].concat(response.data.songs));
+					resolve(foundPlaylist);
 				}, function(response) {
 					reject(response);
 				});
 			});
 		}
 		
-		function addSongToPlaylist(playlistKey, song) {
+		function addSongToPlaylist(playlist, song) {
 			return $q(function(resolve, reject) {
-				playlists[playlistKey].songs.push(song);
-				updatePlaylist(playlistKey, playlists[playlistKey].songs).then(function (response) {
+				playlist.songs.push(song);
+				updatePlaylist(playlist).then(function (response) {
 					resolve(response);
 				}, function(response) {
 					reject(response);

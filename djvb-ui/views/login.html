@@ -6,10 +6,13 @@
             </div>
         </div>
         <button class="button button-stable button-block button-royal" ng-click="vm.digitsLogin($event)"><i class="icon ion-ios-telephone-outline"></i> Log in with Phone Number</button>
-         or
-        <label class="item item-input">
-            <input type="text" ng-model="vm.email" type="email" placeholder="Your Email">
-        </label>
-        <button class="button button-stable button-block button-royal" ng-click="vm.digitsLogin($event)"><i class="icon ion-ios-email-outline"></i> Log in with Email</button>
+        <p class="text-center"><em>- or -</em></p>
+        <form name="vm.emailForm">
+	        <label class="item item-input">
+	            <input type="email" ng-model="vm.email" placeholder="Your Email" ng-required="true">
+	        </label>
+	        <button class="button button-stable button-block button-royal" ng-disabled="vm.emailForm.$invalid" ng-click="vm.emailLogin($event)"><i class="icon ion-ios-email-outline"></i> Log in with Email</button>
+		</form>
+		<!-- <pre>{{vm.emailForm | json}}</pre> -->
     </ion-content>
 </ion-view>

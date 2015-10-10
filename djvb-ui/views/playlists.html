@@ -1,8 +1,8 @@
 <ion-view title="Playlists">
 	<ion-content class="has-header has-footer">
 		<ion-list>
-			<ion-item class="item-icon-right" ng-repeat="(title, playlist) in vm.playlists" ng-click="vm.selectPlay(play)">
-				{{title}}
+			<ion-item class="item-icon-right" ng-repeat="playlist in vm.playlists" href="#playlists/{{playlist.id}}">
+				{{playlist.name}}
 				<span class="badge badge-calm">{{playlist.songs.length}}</span>
 			</ion-item>
 		</ion-list>

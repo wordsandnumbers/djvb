@@ -1,6 +1,6 @@
 /*jshint unused: vars */
-define(['angular', 'controllers/about', 'controllers/search', 'controllers/login', 'controllers/home', 'services/user', 'controllers/usersetup', 'services/queue', 'controllers/queue', 'services/playlists', 'controllers/playlists']/*deps*/,
-function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, UserSetupCtrl, QueueService, QueueCtrl, PlaylistsService, PlaylistsCtrl)/*invoke*/{
+define(['angular', 'controllers/about', 'controllers/search', 'controllers/login', 'controllers/home', 'services/user', 'controllers/usersetup', 'services/queue', 'controllers/queue', 'services/playlists', 'controllers/playlists', 'controllers/playlist']/*deps*/,
+function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, UserSetupCtrl, QueueService, QueueCtrl, PlaylistsService, PlaylistsCtrl, PlaylistCtrl)/*invoke*/{
     'use strict';
 
     /**
@@ -23,6 +23,7 @@ function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, User
 			'djvbApp.controllers.QueueCtrl',
 			'djvbApp.services.PlaylistsSvc',
 			'djvbApp.controllers.PlaylistsCtrl',
+'djvbApp.controllers.PlaylistCtrl',
 /*angJSDeps*/
             'ngCookies',
             'ngResource',
@@ -46,7 +47,7 @@ function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, User
                 }
             });
         })
-        .config(function ($stateProvider, $urlRouterProvider) {
+        .config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
             $stateProvider
             .state('login', {
                 url: '/login',
@@ -78,6 +79,11 @@ function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, User
                 templateUrl: 'views/playlists.html', 
                 controller: 'PlaylistsCtrl as vm'
             })
+            .state('playlist', {
+                url: '/playlists/:playlistId',
+                templateUrl: 'views/playlist.html', 
+                controller: 'PlaylistCtrl as vm'
+            })
             .state('home', {
                 url: '/home',
                 templateUrl: 'views/home.html', 
@@ -85,5 +91,17 @@ function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, User
             });
             // if none of the above states are matched, use this as the fallback
             $urlRouterProvider.otherwise('login');
+            
+    		// Globablly intercept response, redirect to login if not authorized for API
+    		$httpProvider.interceptors.push(function($q, $location) {
+    			return {
+    				responseError: function(response) {
+    					if (response.status === 401) {
+    						$location.url('/login')
+    					}
+    					return $q.reject(response);
+    				}
+    			};
+    		});
         });
 });

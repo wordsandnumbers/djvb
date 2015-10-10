@@ -12,12 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
@@ -56,9 +58,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .authorizeRequests()
                 .anyRequest().authenticated()
                 .and()
-                .addFilterAfter(new CsrfHeaderFilter(), CsrfFilter.class)
+/*                .addFilterAfter(new CsrfHeaderFilter(), CsrfFilter.class)
                     .csrf().csrfTokenRepository(csrfTokenRepository())
-                .and()
+                .and()*/
             .formLogin()
                 .loginPage("/resources/index.html")
                 .loginProcessingUrl("/login/login")
@@ -71,16 +73,40 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
              .permitAll();
     }
 
+	@Configuration
+	public static class ApiWebSecurityConfig extends WebSecurityConfigurerAdapter {
+		private boolean csrfDisabled = true;
+		
+		@Override
+		protected void configure(HttpSecurity http) throws Exception {
+			http.antMatcher("/api/**")
+			.authorizeRequests()
+			.anyRequest().authenticated();
+			
+			configureCsrf(http, csrfDisabled)
+				.exceptionHandling()
+					.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
+		}
+	}
+		
 	public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 		
 		public void onAuthenticationSuccess(HttpServletRequest request,
 				HttpServletResponse response, Authentication auth)
 				throws IOException, ServletException {
-			response.getWriter().print("{\"responseCode\":\"SUCCESS\"}");
-			response.getWriter().flush();
 		}
 	}
-    
+	
+	private static HttpSecurity configureCsrf(HttpSecurity http, boolean disabled) throws Exception {
+		if (disabled) {
+			return http.csrf().disable();
+		} else {
+			http.addFilterAfter(new CsrfHeaderFilter(), CsrfFilter.class)
+				.csrf().csrfTokenRepository(csrfTokenRepository());
+			return http;
+		}
+	}
+
 	public static class CsrfHeaderFilter extends OncePerRequestFilter {
 		@Override
 		protected void doFilterInternal(HttpServletRequest request,

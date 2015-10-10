@@ -2,7 +2,10 @@
     <ion-content padding="true" class="has-header">
 		<pre>user: {{vm.user | json}}</pre>
         <ion-list>
-            <ion-item ng-repeat="song in vm.songs">{{song.title}}</ion-item>
+            <ion-item href="#playlists">
+	            Playlists
+				<span class="badge badge-calm">{{vm.playlists.length}}</span>
+            </ion-item>
         </ion-list>
     </ion-content>
 </ion-view>

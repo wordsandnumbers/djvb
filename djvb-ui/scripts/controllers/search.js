@@ -127,13 +127,13 @@ define(['angular', 'lodash'], function (angular, _) {
 							break;
 						case 1:
 							$ionicActionSheet.show({
-								buttons : _.map(_.keys(vm.playlists), function(key) {
-									return {text: key};
+								buttons : _.map(vm.playlists, function(playlist) {
+									return {text: playlist.name, playlist: playlist};
 								}),
 								titleText : song.artist + ' - ' + song.title + '<br>Add to Playlist:',
 								cancelText : 'Cancel',
 								buttonClicked : function(index, button) {
-									PlaylistsSvc.addSongToPlaylist(button.text, song).then(function(response) {
+									PlaylistsSvc.addSongToPlaylist(button.playlist, song).then(function(response) {
 										// Success
 									}, function(response) {
 										// Error

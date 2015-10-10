@@ -16,8 +16,8 @@ define(['angular'], function (angular) {
     	UserSvc.getUser().then(function(user) {
     		vm.user = user;
     	});
-    	/*PlaylistsSvc.getPlaylists().then(function(playlists) {
+    	PlaylistsSvc.getPlaylistsList().then(function(playlists) {
     		vm.playlists = playlists;
-    	});*/
+    	});
     });
 });
