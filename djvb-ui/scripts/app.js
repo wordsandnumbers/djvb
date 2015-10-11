@@ -49,48 +49,78 @@ function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, User
         })
         .config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
             $stateProvider
+			.state('tabs', {
+				url: "",
+				abstract: true,
+				templateUrl: "views/tabs.html"
+			})
             .state('login', {
                 url: '/login',
                 templateUrl: 'views/login.html', 
                 controller: 'LoginCtrl as vm'
             })
-            .state('setup', {
+            .state('tabs.setup', {
                 url: '/setup',
-                templateUrl: 'views/setup.html', 
-                controller: 'UserSetupCtrl as vm', 
-                resolve: {
-                	user: function(UserSvc){
-                		return UserSvc.getUser();
+                views: {
+                	'tab-home': {
+                        templateUrl: 'views/setup.html', 
+                        controller: 'UserSetupCtrl as vm', 
+                        resolve: {
+                        	user: function(UserSvc){
+                        		return UserSvc.getUser();
+                        	}
+                        }
                 	}
                 }
             })
-            .state('search', {
-                url: '/search',
-                templateUrl: 'views/search.html', 
-                controller: 'SearchCtrl as vm'
-            })
-            .state('sing', {
-                url: '/sing',
-                templateUrl: 'views/sing.html', 
-                controller: 'QueueCtrl as vm'
-            })
-            .state('playlists', {
-                url: '/playlists',
-                templateUrl: 'views/playlists.html', 
-                controller: 'PlaylistsCtrl as vm'
-            })
-            .state('playlist', {
-                url: '/playlists/:playlistId',
-                templateUrl: 'views/playlist.html', 
-                controller: 'PlaylistCtrl as vm'
-            })
-            .state('home', {
+            .state('tabs.home', {
                 url: '/home',
-                templateUrl: 'views/home.html', 
-                controller: 'HomeCtrl as vm'
+                views: {
+                	'tab-home': {
+                        templateUrl: 'views/home.html', 
+                        controller: 'HomeCtrl as vm'                		
+                	}
+                }
+            })
+            .state('tabs.playlists', {
+                url: '/playlists',
+                views: {
+                	'tab-home': {
+                        templateUrl: 'views/playlists.html', 
+                        controller: 'PlaylistsCtrl as vm'
+                	}
+                }
+            })
+            .state('tabs.playlist', {
+                url: '/playlists/:playlistId',
+                views: {
+                	'tab-home': {
+                        templateUrl: 'views/playlist.html', 
+                        controller: 'PlaylistCtrl as vm'
+                	}
+                }
+            })
+            .state('tabs.search', {
+                url: '/search',
+                views: {
+                	'tab-search': {
+                        templateUrl: 'views/search.html', 
+                        controller: 'SearchCtrl as vm'
+                	}
+                }
+            })
+            .state('tabs.sing', {
+                url: '/sing',
+                views: {
+                	'tab-sing': {
+                        templateUrl: 'views/sing.html', 
+                        controller: 'QueueCtrl as vm'
+                	}
+                }
             });
+            
             // if none of the above states are matched, use this as the fallback
-            $urlRouterProvider.otherwise('login');
+            $urlRouterProvider.otherwise('/home');
             
     		// Globablly intercept response, redirect to login if not authorized for API
     		$httpProvider.interceptors.push(function($q, $location) {

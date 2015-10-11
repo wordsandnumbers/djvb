@@ -1,14 +1,13 @@
 <ion-view view-title="{{vm.playlist.name}}">
     <ion-nav-buttons side="primary">
-	    <button class="button button-icon icon ion-ios-minus-outline"
+	    <button class="button button-icon icon ion-ios-minus-outline" title="Delete"
 	      ng-click="vm.data.showDelete = !vm.data.showDelete; vm.data.showReorder = false"></button>
     </ion-nav-buttons>
     <ion-nav-buttons side="secondary">
-	    <button class="button" ng-click="vm.data.showDelete = false; vm.data.showReorder = !vm.data.showReorder">
-	        Reorder
-	    </button>
+	    <button class="button button-icon icon ion-navicon" title="Reorder"
+	      ng-click="vm.data.showDelete = false; vm.data.showReorder = !vm.data.showReorder"></button>
     </ion-nav-buttons>
-	<ion-content class="has-header has-footer">
+	<ion-content class="has-header">
 		<ion-list 
 		  show-delete="vm.data.showDelete"
           show-reorder="vm.data.showReorder">

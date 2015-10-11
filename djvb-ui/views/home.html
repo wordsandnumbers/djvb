@@ -1,9 +1,12 @@
 <ion-view title="DJVB">
+    <ion-nav-buttons side="primary">
+	    <a class="button button-stable button-icon icon ion-ios-gear-outline" title="Delete"
+	       href="#setup"></a>
+    </ion-nav-buttons>
     <ion-content padding="true" class="has-header">
-		<pre>user: {{vm.user | json}}</pre>
         <ion-list>
             <ion-item href="#playlists">
-	            Playlists
+	            My Playlists
 				<span class="badge badge-calm">{{vm.playlists.length}}</span>
             </ion-item>
         </ion-list>
