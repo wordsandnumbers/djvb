@@ -1,9 +1,11 @@
 <ion-view title="Sing">
 	<ion-content class="has-header has-footer">
-		<h4 class="text-center">You're not singing yet!</h4>
-		<p class="text-center">
-			<a href="#search" class="button button-stable icon-left ion-search">Search Songs</a>
-		</p>
+		<div ng-if="vm.queues.length===0">
+			<h4 class="text-center">You're not singing yet!</h4>
+			<p class="text-center">
+				<a href="#search" class="button button-stable icon-left ion-search">Search Songs</a>
+			</p>
+		</div>
 		<ion-list ng-if="vm.queues.length">
 			<ion-item class="item-icon-right" ng-repeat="play in vm.queues[0].queue" ng-click="vm.selectPlay(play)">
 				{{play.title}}
