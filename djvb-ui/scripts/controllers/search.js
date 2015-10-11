@@ -25,21 +25,38 @@ define(['angular', 'lodash'], function (angular, _) {
 	    }
 	  };
   })
-  .controller('SearchCtrl', function ($scope, $log, $http, $ionicScrollDelegate, $ionicLoading, $ionicActionSheet, $ionicModal, $ionicPopup, QueueSvc, PlaylistsSvc) {
+.directive('capitalize', function() {
+   return {
+     require: 'ngModel',
+     link: function(scope, element, attrs, modelCtrl) {
+        var capitalize = function(inputValue) {
+           if(inputValue == undefined) inputValue = '';
+           var capitalized = inputValue.toUpperCase();
+           if(capitalized !== inputValue) {
+              modelCtrl.$setViewValue(capitalized);
+              modelCtrl.$render();
+            }         
+            return capitalized;
+         }
+         modelCtrl.$parsers.push(capitalize);
+         capitalize(scope[attrs.ngModel]);  // capitalize initial value
+     }
+   };
+})
+.controller('SearchCtrl', function ($scope, $log, $http, $ionicScrollDelegate, $ionicLoading, $ionicActionSheet, $ionicModal, $ionicPopup, QueueSvc, PlaylistsSvc) {
         var vm = this;
         vm.searchString = '';
         vm.songGroups = {};
         vm.recentSearches = [];
         vm.noResults = false;
+        vm.searchComplete = false;
+        vm.queues = [];
+        vm.playlists;
         vm.search = search;
         vm.exactSearch = exactSearch;
         vm.hasSongGroups = hasSongGroups;
         vm.clearSearch = clearSearch;
         vm.selectSong = selectSong;
-        vm.searchComplete = false;
-        vm.queues = [];
-        vm.playlists;
-        vm.joinRoom = joinRoom;
         
         QueueSvc.getQueues().then(function(queues) {
         	vm.queues = queues;
@@ -49,13 +66,6 @@ define(['angular', 'lodash'], function (angular, _) {
         	vm.playlists = playlists;
         })
 
-		$ionicModal.fromTemplateUrl('views/roomcodemodal.html', {
-			scope: $scope,
-			animation: 'slide-in-up'
-		}).then(function(modal) {
-			vm.roomCodeModal = modal;
-		});
-        
         function exactSearch(searchString) {
             search('"' + searchString + '"');
         }
@@ -122,7 +132,7 @@ define(['angular', 'lodash'], function (angular, _) {
 								});
 							} else {
 								// Join a room
-							    vm.roomCodeModal.show();
+							    roomCodePopup();
 							}
 							break;
 						case 1:
@@ -148,10 +158,42 @@ define(['angular', 'lodash'], function (angular, _) {
 			});
         }
         
-        function joinRoom(roomCode) {
-        	QueueSvc.join(roomCode);
+		function roomCodePopup() {
+        	vm.roomCode = '';
+	        var popup = $ionicPopup.show({
+				template : '<label class="item item-input">' +
+		        	'<input ng-model="vm.roomCode" type="text" placeholder="Room Code" capitalize>' +
+		        	'</label>',
+				title : 'Enter Room Code',
+				subTitle : "It's on the screen in your room.",
+				scope : $scope,
+				buttons : [ 
+					{
+						text : 'Cancel'
+					}, {
+						text : '<b>OK</b>',
+						type : 'button-positive',
+						onTap : function(e) {
+							if (!$scope.vm.roomCode) {
+								e.preventDefault();
+							} else {
+					        	QueueSvc.join($scope.vm.roomCode).then(function() {
+					        		return $scope.vm.roomCode;
+					        	}, function() {
+									$ionicPopup.alert({
+										title: "Error",
+										template: 'Invalid Room Code'
+									});
+					        	});
+							}
+						}
+					} 
+				]
+			});
+	        popup.then(function(roomCode) {
+      	  	}); 
         }
-        
+                
         function clearSearch() {
         	vm.searchString = '';
         	vm.songGroups = {};

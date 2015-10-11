@@ -25,7 +25,7 @@ define(['angular'], function (angular) {
 			return $q(function(resolve, reject) {
 				$http.get('/api/v1/playlists/').then(function(response) {
 					// Let's fix the response so it's an array. Will fix server later.
-					var playlists = _.map(_.keys(response.data.lists), function(key) {
+					playlists = _.map(_.keys(response.data.lists), function(key) {
 						var playlist = response.data.lists[key];
 						playlist.name = key;
 						return playlist;

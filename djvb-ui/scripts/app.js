@@ -23,8 +23,8 @@ function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, User
 			'djvbApp.controllers.QueueCtrl',
 			'djvbApp.services.PlaylistsSvc',
 			'djvbApp.controllers.PlaylistsCtrl',
-'djvbApp.controllers.PlaylistCtrl',
-/*angJSDeps*/
+			'djvbApp.controllers.PlaylistCtrl',
+			/*angJSDeps*/
             'ngCookies',
             'ngResource',
             'ngSanitize',
