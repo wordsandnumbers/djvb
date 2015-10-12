@@ -20,6 +20,7 @@ define(['angular'], function (angular) {
 			addSongToQueue: addSongToQueue, 
 			deletePlayFromQueue: deletePlayFromQueue, 
 			updateQueue: updateQueue, 
+			deleteQueue: deleteQueue, 
 			updateQueued: updateQueued, 
 			setLights: setLights
 		}
@@ -97,17 +98,27 @@ define(['angular'], function (angular) {
 				$http.put('/api/v1/queue/queue', {
 					'room_code':queue.roomCode, 
 					'song_id':queue.queue[0].id
-				}).then(function(config){
-					queue = config.data;
+				}).then(function(response){
+					queue = response.data;
 					resolve(queue);
-				}, function(error) {
-					reject(error);
+				}, function(response) {
+					reject(response);
 				});
 			});	
 		}
 		
 		function updateQueued(queued) {
 			
+		}
+		
+		function deleteQueue(queue) {
+			return $q(function(resolve, reject) {
+				$http.delete('/api/v1/queue/uq/' + queue.id).then(function(response) {
+					resolve(response);
+				}, function(response) {
+					reject(response);
+				});
+			});
 		}
 		
 		function setLights() {

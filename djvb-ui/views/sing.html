@@ -1,6 +1,10 @@
 <ion-view title="Sing">
+    <ion-nav-buttons side="secondary">
+	    <button class="button button-icon icon ion-log-out" title="Delete Queue"
+	      ng-click="vm.deleteQueue()"></button>
+    </ion-nav-buttons>
 	<ion-content class="has-header has-footer">
-		<div ng-if="vm.queues.length===0">
+		<div ng-if="vm.queues.length===0 || vm.queues[0].queue.length===0">
 			<h4 class="text-center">You're not singing yet!</h4>
 			<p class="text-center">
 				<a href="#search" class="button button-stable icon-left ion-search">Search Songs</a>

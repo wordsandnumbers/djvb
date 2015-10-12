@@ -18,7 +18,8 @@ define(['angular'], function (angular) {
 			getPlaylists: getPlaylists, 
 			getPlaylist: getPlaylist,
 			updatePlaylist: updatePlaylist, 
-			addSongToPlaylist: addSongToPlaylist
+			addSongToPlaylist: addSongToPlaylist, 
+			deleteSongFromPlaylist: deleteSongFromPlaylist
 		}
 
 		function getPlaylists() {
@@ -84,5 +85,16 @@ define(['angular'], function (angular) {
 				});
 			});
 		}
+		
+		function deleteSongFromPlaylist(playlist, index) {
+			return $q(function(resolve, reject) {
+				playlist.songs.splice(index, 1);
+				updatePlaylist(playlist).then(function (response) {
+					resolve(response);
+				}, function(response) {
+					reject(response);
+				});
+			});
+		}		
 	});
 });

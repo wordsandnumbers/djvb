@@ -1,24 +1,23 @@
 <ion-view view-title="{{vm.playlist.name}}">
-    <ion-nav-buttons side="primary">
-	    <button class="button button-icon icon ion-ios-minus-outline" title="Delete"
-	      ng-click="vm.data.showDelete = !vm.data.showDelete; vm.data.showReorder = false"></button>
-    </ion-nav-buttons>
     <ion-nav-buttons side="secondary">
 	    <button class="button button-icon icon ion-navicon" title="Reorder"
 	      ng-click="vm.data.showDelete = false; vm.data.showReorder = !vm.data.showReorder"></button>
     </ion-nav-buttons>
 	<ion-content class="has-header">
-		<ion-list 
-		  show-delete="vm.data.showDelete"
-          show-reorder="vm.data.showReorder">
-			<ion-item class="item-icon-right" ng-repeat="song in vm.playlist.songs" ng-click="vm.selectSong(song)">
+		<div class="card" ng-if="vm.playlist.songs.length === 0">
+			<div class="item item-text-wrap text-center">
+				Playlist is empty.
+			</div>
+		</div>
+		<ion-list  
+show-reorder="vm.data.showReorder">
+			<ion-item class="item-icon-right" ng-repeat="song in vm.playlist.songs track by $index" ng-click="vm.selectSong($index)">
 				{{song.title}}
 				<p>{{song.artist}}</p>
-			    <ion-delete-button class="ion-minus-circled"
-			                       ng-click="">
+				<button class="button button-clear button-stable button-icon icon ion-more"></button>
+			    <ion-delete-button class="ion-minus-circled" ng-click="">
 			    </ion-delete-button>
-			    <ion-reorder-button class="ion-navicon"
-			                        on-reorder="">
+			    <ion-reorder-button class="ion-navicon" on-reorder="">
 			    </ion-reorder-button>
 			</ion-item>
 		</ion-list>
