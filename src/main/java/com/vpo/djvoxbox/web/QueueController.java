@@ -72,6 +72,15 @@ public class QueueController {
 		return uq;
 	}
 	
+	@RequestMapping(value="/uq/{userQueueId}", method=RequestMethod.DELETE)
+	public void deleteUserQueue(@PathVariable("userQueueId") String userQueueId, Principal principal) {
+		User user = userRepository.findById(principal.getName());
+		UserQueue uq = userQueueRepository.findOne(userQueueId);
+		if(uq.getOwnerId().equals(user.getIdentifier())) {
+			userQueueRepository.delete(uq);
+		}
+	}
+	
 	@RequestMapping(value="/queues", method=RequestMethod.GET)
 	public @ResponseBody List<UserQueue> getQueues(Principal principal) {
 		User user = userRepository.findById(principal.getName());
