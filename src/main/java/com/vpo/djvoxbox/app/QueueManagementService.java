@@ -36,7 +36,7 @@ public class QueueManagementService {
 	// look up the room queue on vb
 	// TODO: move error handling into the client
 	private ConvenientQueue getQueue(final String roomCode, final ConvenientQueue queue) {
-		if(queue != null && queue.getQueue() != null && queue.getQueue().getRoomCode().equals(roomCode)) {
+		if(queue != null && queue.getQueue() != null && queue.getQueue().getRoomCode() != null &&queue.getQueue().getRoomCode().equals(roomCode)) {
 			return queue;
 		}
 		ConvenientQueue q = null;
