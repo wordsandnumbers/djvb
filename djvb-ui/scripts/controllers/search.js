@@ -121,18 +121,13 @@ define(['angular', 'lodash'], function (angular, _) {
 						case 0:
 							if (vm.queues.length > 0) {
 								// Add song to queue
-								QueueSvc.addSongToQueue(vm.queues[0], song).then(function(response) {
-									// Success
-								}, function(config) {
-									// Error
-									$ionicPopup.alert({
-										title: "Error",
-										template: JSON.stringify(config.data)
-									});
-								});
+								addSongToQueue(song);
 							} else {
 								// Join a room
-							    roomCodePopup();
+								var callback = function() {
+									addSongToQueue(song);
+								};
+							    roomCodePopup(callback);
 							}
 							break;
 						case 1:
@@ -158,7 +153,7 @@ define(['angular', 'lodash'], function (angular, _) {
 			});
         }
         
-		function roomCodePopup() {
+		function roomCodePopup(callback) {
         	vm.roomCode = '';
 	        var popup = $ionicPopup.show({
 				template : '<label class="item item-input">' +
@@ -178,6 +173,9 @@ define(['angular', 'lodash'], function (angular, _) {
 								e.preventDefault();
 							} else {
 					        	QueueSvc.join($scope.vm.roomCode).then(function() {
+					        		if (callback != undefined) {
+					        			callback();
+					        		}
 					        		return $scope.vm.roomCode;
 					        	}, function() {
 									$ionicPopup.alert({
@@ -190,8 +188,7 @@ define(['angular', 'lodash'], function (angular, _) {
 					} 
 				]
 			});
-	        popup.then(function(roomCode) {
-      	  	}); 
+	        return popup;
         }
                 
         function clearSearch() {
@@ -202,6 +199,18 @@ define(['angular', 'lodash'], function (angular, _) {
         
         function hasSongGroups() {
         	return _.keys(vm.songGroups).length > 0 ? true : false;
+        }
+        
+        function addSongToQueue(song) {
+			QueueSvc.addSongToQueue(vm.queues[0], song).then(function(response) {
+				// Success
+			}, function(response) {
+				// Error
+				$ionicPopup.alert({
+					title: "Error",
+					template: JSON.stringify(response.data)
+				});
+			});        	
         }
     });
 });

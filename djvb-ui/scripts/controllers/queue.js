@@ -8,14 +8,23 @@ define([ 'angular' ], function(angular) {
 	 * # QueueCtrl
 	 * Controller of the djvbApp
 	 */
-	angular.module('djvbApp.controllers.QueueCtrl', [])
-	.controller('QueueCtrl', function($ionicActionSheet, $ionicPopup, QueueSvc) {
+	angular.module('djvbApp.controllers.QueueCtrl', ['ionic'])
+	.controller('QueueCtrl', function($scope, $ionicActionSheet, $ionicPopup, $ionicModal, QueueSvc) {
 		var vm = this;
 		vm.queues = [];
 		vm.selectPlay = selectPlay;
+		vm.showSettings = showSettings;
+		vm.deleteQueue = deleteQueue;
 		
 		QueueSvc.getQueuesList().then(function(queues) {
 			vm.queues = queues;
+		});
+
+		$ionicModal.fromTemplateUrl('views/queuesettingsmodal.html', {
+			scope: $scope,
+			animation: 'slide-in-up'
+		}).then(function(modal) {
+			vm.queueSettingsModal = modal;
 		});
 		
         function selectPlay(play) {
@@ -42,6 +51,21 @@ define([ 'angular' ], function(angular) {
 					return true;
 				}
 			});
-        }		
+        }
+        
+        function showSettings() {
+        	vm.queueSettingsModal.show();
+        }
+        
+        function deleteQueue(queue) {
+        	QueueSvc.deleteQueue(vm.queues[0]).then(function(response) {
+        		vm.queueSettingsModal.hide();
+        	}, function(response) {
+				$ionicPopup.alert({
+					title: "Error",
+					template: JSON.stringify(response.data)
+				});        		
+        	})
+        }
 	});
 });

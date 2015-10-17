@@ -9,9 +9,11 @@ define(['angular'], function (angular) {
    * Service in the djvbApp.
    */
   angular.module('djvbApp.services.QueueSvc', [])
-	.service('QueueSvc', function ($http, $q) {
+	.service('QueueSvc', function ($http, $q, $timeout) {
 
 		var queues;
+		
+		pollQueues();
 		
 		return {
 			join: join, 
@@ -25,10 +27,17 @@ define(['angular'], function (angular) {
 			setLights: setLights
 		}
 		
-		function join(roomCode) {
+        function pollQueues() {
+        	getQueues();
+            // Get queues every 30 seconds
+            $timeout(pollQueues, 30000);
+        }
+
+        function join(roomCode) {
 			return $q(function(resolve, reject) {
 				$http.post('/api/v1/queue/join', {'roomCode': roomCode}).then(function(response){
-					resolve(queues.unshift(response.data));
+					queues.unshift(response.data);
+					resolve(response.data);
 				}, function(error) {
 					reject(error);
 				});
@@ -37,8 +46,20 @@ define(['angular'], function (angular) {
 		
 		function getQueues() {
 			return $q(function(resolve, reject) {
-				$http.get('/api/v1/queue/queues').then(function(config){
-					queues = config.data;
+				$http.get('/api/v1/queue/queues').then(function(response){
+					if (queues === undefined) {
+						queues = response.data;
+					} else {
+	                    // Use `splice` to replace array members so the original array reference is maintained
+						_.forEach(response.data, function(queue) {
+							var queueIndex = _.findIndex(queues, {'id': queue.id});
+							if (queueIndex > -1) {
+								spliceQueue(queues[queueIndex], queue);
+							} else {
+								queues.push(queue);
+							}
+						})
+					}
 					resolve(queues);
 				}, function(error) {
 					reject(error);
@@ -49,10 +70,10 @@ define(['angular'], function (angular) {
 		function getQueuesList() {
 			return $q(function(resolve, reject) {
 				if (queues === undefined) {
-					getQueues().then(function (config) {
-						resolve(config);
-					}, function(config) {
-						reject(config);
+					getQueues().then(function (response) {
+						resolve(response);
+					}, function(response) {
+						reject(response);
 					});
 				} else {
 					resolve(queues);
@@ -62,10 +83,9 @@ define(['angular'], function (angular) {
 		
 		function addSongToQueue(queue, song) {
 			return $q(function(resolve, reject) {
-				$http.post('/api/v1/queue/queue', {'room_code':queue.roomCode, 'song_id':song.id}).then(function(config){
-					// Replace array of songs using splice to preserve array reference
-					Array.prototype.splice.apply(queues[0].queue, [0, config.data.queue.length].concat(config.data.queue));
-					resolve(queues[0]);
+				$http.post('/api/v1/queue/queue', {'room_code':queue.roomCode, 'song_id':song.id}).then(function(response){
+					spliceQueue(queue, response.data);
+					resolve(queue);
 				}, function(error) {
 					reject(error);
 				});
@@ -83,12 +103,11 @@ define(['angular'], function (angular) {
 					headers: {
 						'Content-Type': 'application/json'
 					}
-				}).then(function(config){
-					// Replace array of songs using splice to preserve array reference
-					Array.prototype.splice.apply(queues[0].queue, [0, config.data.queue.length].concat(config.data.queue));
-					resolve(queues[0]);
-				}, function(error) {
-					reject(error);
+				}).then(function(response){
+					spliceQueue(queue, response.data);
+					resolve(queue);
+				}, function(response) {
+					reject(response);
 				});
 			});			
 		}
@@ -114,6 +133,10 @@ define(['angular'], function (angular) {
 		function deleteQueue(queue) {
 			return $q(function(resolve, reject) {
 				$http.delete('/api/v1/queue/uq/' + queue.id).then(function(response) {
+					var foundIndex = _.findIndex(queues, {'id': queue.id});
+					if (foundIndex > -1) {
+						queues.splice(foundIndex, 1);
+					}
 					resolve(response);
 				}, function(response) {
 					reject(response);
@@ -123,6 +146,12 @@ define(['angular'], function (angular) {
 		
 		function setLights() {
 			
+		}
+		
+		function spliceQueue(oldQueue, newQueue) {
+			// Replace arrays of songs using splice to preserve array references
+			oldQueue.queue.splice.apply(oldQueue.queue, [0, oldQueue.queue.length].concat(newQueue.queue));
+			oldQueue.queued.splice.apply(oldQueue.queued, [0, oldQueue.queued.length].concat(newQueue.queued));
 		}
 	});
 });

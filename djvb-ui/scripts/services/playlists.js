@@ -16,7 +16,8 @@ define(['angular'], function (angular) {
 		return {
 			getPlaylistsList: getPlaylistsList, 
 			getPlaylists: getPlaylists, 
-			getPlaylist: getPlaylist,
+			getPlaylist: getPlaylist, 
+			createPlaylist: createPlaylist, 
 			updatePlaylist: updatePlaylist, 
 			addSongToPlaylist: addSongToPlaylist, 
 			deleteSongFromPlaylist: deleteSongFromPlaylist
@@ -25,12 +26,13 @@ define(['angular'], function (angular) {
 		function getPlaylists() {
 			return $q(function(resolve, reject) {
 				$http.get('/api/v1/playlists/').then(function(response) {
+					playlists = response.data.lists;
 					// Let's fix the response so it's an array. Will fix server later.
-					playlists = _.map(_.keys(response.data.lists), function(key) {
+					/*playlists = _.map(_.keys(response.data.lists), function(key) {
 						var playlist = response.data.lists[key];
 						playlist.name = key;
 						return playlist;
-					});
+					});*/
 					resolve(playlists);
 				}, function(response) {
 					reject(response);
@@ -52,9 +54,9 @@ define(['angular'], function (angular) {
 			});			
 		}
 		
-		function getPlaylist(name) {
+		function getPlaylist(playlistId) {
 			return $q(function(resolve, reject) {
-				$http.get('/api/v1/playlists/' + name).then(function(response) {
+				$http.get('/api/v1/playlists/' + playlistId).then(function(response) {
 					playlists[name] = response.data;
 					resolve(playlists[name]);
 				}, function(response) {
@@ -63,9 +65,20 @@ define(['angular'], function (angular) {
 			});
 		}
 		
+		function createPlaylist(name) {
+			return $q(function(resolve, reject) {
+				$http.post('/api/v1/playlists/', {'name': name, 'songs': []}).then(function(response) {
+					playlists.push(response.data);
+					resolve(response.data);
+				}, function(response) {
+					reject(response);
+				});
+			});
+		}
+		
 		function updatePlaylist(playlist) {
 			return $q(function(resolve, reject) {
-				$http.put('/api/v1/playlists/' + playlist.name, playlist).then(function(response) {
+				$http.put('/api/v1/playlists/', playlist).then(function(response) {
 					var foundPlaylist = _.find(playlists, {id: playlist.id});
 					Array.prototype.splice.apply(foundPlaylist.songs, [0, foundPlaylist.songs.length].concat(response.data.songs));
 					resolve(foundPlaylist);

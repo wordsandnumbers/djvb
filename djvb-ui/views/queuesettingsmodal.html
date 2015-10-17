@@ -1,0 +1,11 @@
+      <ion-modal-view>
+        <ion-header-bar class="bar bar-header bar-positive">
+          <h1 class="title">Room Settings</h1>
+          <button class="button button-clear button-primary" ng-click="vm.queueSettingsModal.hide()">Cancel</button>
+        </ion-header-bar>
+        <ion-content class="padding">
+          <div class="list" ng-if="vm.queues.length > 0">
+            <button class="button button-full button-assertive icon-left ion-close" ng-click="vm.deleteQueue()">Leave the Room</button>
+          </div>
+        </ion-content>
+      </ion-modal-view>
