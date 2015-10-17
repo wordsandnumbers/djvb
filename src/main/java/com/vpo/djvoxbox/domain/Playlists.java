@@ -1,7 +1,9 @@
 package com.vpo.djvoxbox.domain;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 
@@ -22,9 +24,9 @@ public class Playlists {
 	public Playlists(String ownerId) {
 		super();
 		this.ownerId = ownerId;
-		this.lists = new HashMap<String,Playlist>();
+		this.lists = new HashSet<Playlist>();
 		// make default lists
-		this.lists.put("Faves", new Playlist());
+		this.lists.add(new Playlist("Faves"));
 	}
 
 	@Id
@@ -32,7 +34,7 @@ public class Playlists {
 	@NotNull
 	@Indexed(unique=true)
 	private String ownerId;
-	private Map<String, Playlist> lists;
+	private Set<Playlist> lists;
 
 
 	public String getId() {
@@ -51,11 +53,11 @@ public class Playlists {
 		this.ownerId = ownerId;
 	}
 
-	public Map<String, Playlist> getLists() {
+	public Set<Playlist> getLists() {
 		return lists;
 	}
 
-	public void setLists(Map<String, Playlist> lists) {
+	public void setLists(Set<Playlist> lists) {
 		this.lists = lists;
 	}
 	

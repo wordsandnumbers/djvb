@@ -1,5 +1,7 @@
 package com.vpo.djvoxbox.app;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -35,27 +37,36 @@ public class UserService {
 		return lists;
 	}
 	
-	public Playlist getPlaylist(User user, String listName) {
+	public Playlist getPlaylist(User user, String id) {
 		Playlists lists = getPlaylists(user);
-		Playlist list = lists.getLists().get(listName);
-		if(list == null) {
-			list = new Playlist();
-			lists.getLists().put(listName, list);
-			playlistsRepository.save(lists);
+		for (Playlist l : lists.getLists()) {
+			if(l.getId().equals(id)) {
+				return l;
+			}
 		}
+		return null;
+	}
+	
+	public Playlist addPlaylist(User user, Playlist list) {
+		Playlists lists = getPlaylists(user);
+		list.setId(UUID.randomUUID().toString());
+		lists.getLists().add(list);
+		playlistsRepository.save(lists);
 		return list;
 	}
 	
-	public Playlist updatePlaylist(User user, String listName, Playlist list) {
+	
+	public Playlist updatePlaylist(User user, Playlist list) {
 		Playlists lists = getPlaylists(user);
-		lists.getLists().put(listName, list);
+		lists.getLists().remove(list);
+		lists.getLists().add(list);
 		playlistsRepository.save(lists);
 		return list;
 	}
 
-	public void removePlaylist(User user, String listName) {
+	public void removePlaylist(User user, Playlist list) {
 		Playlists lists = getPlaylists(user);
-		lists.getLists().remove(listName);
+		lists.getLists().remove(list);
 		playlistsRepository.save(lists);
 	}
 
