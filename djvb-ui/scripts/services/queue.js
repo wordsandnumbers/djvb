@@ -29,8 +29,8 @@ define(['angular'], function (angular) {
 		
         function pollQueues() {
         	getQueues();
-            // Get queues every 30 seconds
-            $timeout(pollQueues, 30000);
+            // Get queues every 15 seconds
+            $timeout(pollQueues, 15000);
         }
 
         function join(roomCode) {

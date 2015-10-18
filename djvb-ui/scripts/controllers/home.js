@@ -19,5 +19,11 @@ define(['angular'], function (angular) {
     	PlaylistsSvc.getPlaylistsList().then(function(playlists) {
     		vm.playlists = playlists;
     	});
+    	
+    	vm.showUserSettingsModal = showUserSettingsModal;
+    	
+    	function showUserSettingsModal() {
+    		UserSvc.showSettingsModal();
+    	}
     });
 });
