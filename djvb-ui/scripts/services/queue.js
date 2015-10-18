@@ -126,8 +126,24 @@ define(['angular'], function (angular) {
 			});	
 		}
 		
-		function updateQueued(queued) {
-			
+		function updateQueued(queue, play) {
+			return $q(function(resolve, reject) {
+				$http.put('/api/v1/queue/queued', {
+					'room_code': queue.roomCode, 
+					'song_id': play.song_id,
+					'to': queue.queued[0].play_id
+				}).then(function(response){
+					var queueIndex = _.findIndex(queues, {'id': queue.id});
+					if (queueIndex > -1) {
+						spliceQueue(queues[queueIndex], queue);
+					} else {
+						queues.push(queue);
+					}
+					resolve(queue);
+				}, function(response) {
+					reject(response);
+				});
+			});	
 		}
 		
 		function deleteQueue(queue) {

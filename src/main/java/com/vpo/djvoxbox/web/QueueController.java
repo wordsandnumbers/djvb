@@ -103,7 +103,7 @@ public class QueueController {
 	
 	
 	
-	@RequestMapping(value="/qeued", method=RequestMethod.PUT)
+	@RequestMapping(value="/queued", method=RequestMethod.PUT)
 	public @ResponseBody UserQueue replaceQueued(@RequestBody PlayRequest request, Principal principal) {
 		UserQueue uq = createUserQueue(new QueueRequest(request.getRoomCode()) , principal);
 		Song song = songClient.getSongById(request.getSongId());		

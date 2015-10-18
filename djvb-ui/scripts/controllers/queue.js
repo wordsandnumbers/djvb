@@ -29,6 +29,7 @@ define([ 'angular' ], function(angular) {
 		
         function selectPlay(play) {
 			var hideSheet = $ionicActionSheet.show({
+				buttons : vm.queues[0].queued.length > 0 ? [{text:'Swap for Next Song'}] : [],
 				titleText : play.title + ' - ' + play.artist,
 				destructiveText: 'Delete', 
 				cancelText : 'Cancel',
@@ -37,16 +38,32 @@ define([ 'angular' ], function(angular) {
 						// Add song to queue
 						QueueSvc.deletePlayFromQueue(vm.queues[0], play).then(function(response) {
 							// Success
-						}, function(config) {
+						}, function(response) {
 							// Error
 							$ionicPopup.alert({
 								title: "Error",
-								template: JSON.stringify(config.data)
+								template: JSON.stringify(response.data)
 							});
 						});
 					} else {
 						// Join a room
 					    //vm.roomCodeModal.show();
+					}
+					return true;
+				},
+				buttonClicked : function(index) {
+					switch (index) {
+						case 0:
+							QueueSvc.updateQueued(vm.queues[0], play).then(function() {
+								
+							}, function(response) {
+								// Error
+								$ionicPopup.alert({
+									title: "Error",
+									template: JSON.stringify(response.data)
+								});
+							});
+							break;
 					}
 					return true;
 				}

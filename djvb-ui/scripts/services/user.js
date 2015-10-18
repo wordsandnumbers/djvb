@@ -68,7 +68,9 @@ define(['angular'], function (angular) {
 		function showSettingsModal() {
 			getUser().then(function(user) {
 	            modalScope.userCopy = angular.copy(user);
-				userSettingsModal.show();
+				userSettingsModal.show().then(function() {
+
+				});
 			})
 		}
 	
