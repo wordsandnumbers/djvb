@@ -112,7 +112,8 @@ public class QueueController {
 		Play newPlay = null;
 		User user = userRepository.findById(principal.getName());
 		Session s = sessionClient.getSessionById(user.getSessionId());
-		for (Play play : queued) {
+		Play[] queuedArray = queued.toArray(new Play[queued.size()]);
+		for (Play play : queuedArray) {
 			if(play.getPlayId().equals(request.getTo())) {
 				newPlay = queueClient.replace(request.getRoomCode(), play, request, s);
 				uq.getQueued().remove(play);
