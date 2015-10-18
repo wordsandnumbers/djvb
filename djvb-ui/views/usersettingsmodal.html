@@ -1,32 +1,31 @@
 <ion-modal-view>
 	<form name="userForm">
-	<ion-header-bar class="bar-stable">
-		<h1 class="title">User Settings</h1>
-		<button class="button button-clear" ng-click="closeModal()">Cancel</button>
-	</ion-header-bar>
-	<ion-content>
-			<div class="list">
-				<label class="item item-input">
-					<span class="input-label">Name</span>
-					<input ng-model="user.name" type="text" placeholder="Your actual name">
-				</label>
-				<label class="item item-input">
-					<span class="input-label">Screen Name</span>
-					<input ng-model="user.screenName" type="text" placeholder="This will show on the monitor">
-				</label>
-				<label class="item item-input">
-					<span class="input-label">Email</span>
-					<input ng-model="user.email" type="email">
-				</label>
+		<ion-header-bar class="bar-stable">
+			<div class="buttons">
+				<button class="button button-clear" ng-click="closeModal()">Cancel</button>
 			</div>
-<!-- 		<pre>{{userForm | json}}</pre>
-		<pre>{{user | json}}</pre> -->
-	</ion-content>
-	<ion-footer-bar class="bar-stable">
-		<h1 class="title"></h1>
-		<div class="buttons">
-			<button class="button button-clear" ng-click="putUser(user)" ng-disabled="userForm.$invalid || userForm.$pristine">Save</button>
-		</div>
-	</ion-footer-bar>
+			<h1 class="title">User Settings</h1>
+			<div class="buttons">
+				<button class="button button-clear" ng-click="putUser()" ng-disabled="userForm.$invalid || userForm.$pristine">Save</button>
+			</div>
+		</ion-header-bar>
+		<ion-content>
+				<div class="list">
+					<label class="item item-input">
+						<span class="input-label">Name</span>
+						<input ng-model="userCopy.name" type="text" placeholder="Your actual name">
+					</label>
+					<label class="item item-input">
+						<span class="input-label">Screen Name</span>
+						<input ng-model="userCopy.screenName" type="text" placeholder="This will show on the monitor">
+					</label>
+					<label class="item item-input">
+						<span class="input-label">Email</span>
+						<input ng-model="userCopy.email" type="email">
+					</label>
+				</div>
+	<!-- 		<pre>{{userForm | json}}</pre>
+			<pre>{{user | json}}</pre> -->
+		</ion-content>
 	</form>
 </ion-modal-view>

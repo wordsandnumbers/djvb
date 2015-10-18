@@ -21,14 +21,13 @@ define(['angular'], function (angular) {
 		}).then(function(modal) {
             modalScope.modal = modal;
 			userSettingsModal = modal;
-			modalScope.userForm = {};
 
             modalScope.closeModal = function () {
                 modalScope.modal.hide();
             }
             
             modalScope.putUser = function () {
-            	putUser(modalScope.user).then(function () {
+            	putUser(modalScope.userCopy).then(function () {
             		modalScope.modal.hide();
             	});
             }
@@ -55,9 +54,9 @@ define(['angular'], function (angular) {
 			});
 		}
 		
-		function putUser(user) {
+		function putUser(updatedUser) {
 			return $q(function (resolve, reject) {
-				$http.put('/api/v1/user', user).then(function(config) {
+				$http.put('/api/v1/user', updatedUser).then(function(config) {
 					user = config.data;
 					resolve(user);
 				}, function(error) {
@@ -68,9 +67,8 @@ define(['angular'], function (angular) {
 
 		function showSettingsModal() {
 			getUser().then(function(user) {
-				userSettingsModal.show().then(function() {
-		            modalScope.user = user;
-				});
+	            modalScope.userCopy = angular.copy(user);
+				userSettingsModal.show();
 			})
 		}
 	
