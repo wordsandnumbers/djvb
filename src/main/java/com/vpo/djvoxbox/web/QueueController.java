@@ -161,14 +161,14 @@ public class QueueController {
 	public @ResponseBody UserQueue removeFromQueue(@RequestBody PlayRequest request, Principal principal) {
 		UserQueue uq = createUserQueue(new QueueRequest(request.getRoomCode()) , principal);
 		Play from = null;
-		Integer fromIndex = null;
+		int fromIndex = -1;
 		try {
 			fromIndex = Integer.parseInt(request.getFrom());
 			from = uq.getQueue().get(fromIndex);
 		} catch (Exception e) {
 			// either it wasn't a number or it was out of bounds
 		}
-		if(from != null && from.getPlayId().equals(request.getPlayId())) {
+		if(from != null && fromIndex != -1 && from.getPlayId().equals(request.getPlayId())) {
 			uq.getQueue().remove(fromIndex);
 		} else {
 			// throw an appropriate error
