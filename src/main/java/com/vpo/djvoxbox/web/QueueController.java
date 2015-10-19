@@ -125,11 +125,12 @@ public class QueueController {
 		List<Play> queue = uq.getQueue();
 		// if it's a current queue play, then remove it too
 		if(newPlay != null) {
-			for (Play play : queue) {
-				if(play.getPlayId().equals(request.getFrom())) {
-					uq.getQueue().remove(play);
+			Play[] queueArray = queue.toArray(new Play[queue.size()]);
+			for (int i = 0; i < queueArray.length; i++) {
+				Play play = queueArray[i];
+				if(play.getId().equals(request.getSongId())) {
+					uq.getQueue().remove(i);
 				}
-				
 			}
 		}
 		userQueueRepository.save(uq);
