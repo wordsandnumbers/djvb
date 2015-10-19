@@ -2,7 +2,7 @@
 	<form name="userForm">
 		<ion-header-bar class="bar-stable">
 			<div class="buttons">
-				<button class="button button-clear" ng-click="closeModal()">Cancel</button>
+				<button class="button button-clear" ng-click="closeModal()" ng-if="user.screenName && user.email">Cancel</button>
 			</div>
 			<h1 class="title">User Settings</h1>
 			<div class="buttons">
@@ -10,20 +10,20 @@
 			</div>
 		</ion-header-bar>
 		<ion-content>
-				<div class="list">
-					<label class="item item-input">
-						<span class="input-label">Name</span>
-						<input ng-model="userCopy.name" type="text" placeholder="Your actual name">
-					</label>
-					<label class="item item-input">
-						<span class="input-label">Screen Name</span>
-						<input ng-model="userCopy.screenName" type="text" placeholder="This will show on the monitor">
-					</label>
-					<label class="item item-input">
-						<span class="input-label">Email</span>
-						<input ng-model="userCopy.email" type="email">
-					</label>
-				</div>
+			<div class="list">
+				<label class="item item-input">
+					<span class="input-label">Name</span>
+					<input ng-model="userCopy.name" type="text" placeholder="Your actual name">
+				</label>
+				<label class="item item-input">
+					<span class="input-label">Screen Name</span>
+					<input ng-model="userCopy.screenName" type="text" required="required" placeholder="This shows on the screen">
+				</label>
+				<label class="item item-input">
+					<span class="input-label">Email</span>
+					<input ng-model="userCopy.email" type="email" required="required">
+				</label>
+			</div>
 	<!-- 		<pre>{{userForm | json}}</pre>
 			<pre>{{user | json}}</pre> -->
 		</ion-content>

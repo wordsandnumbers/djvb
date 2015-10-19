@@ -133,13 +133,14 @@ define(['angular'], function (angular) {
 					'song_id': play.song_id,
 					'to': queue.queued[0].play_id
 				}).then(function(response){
-					var queueIndex = _.findIndex(queues, {'id': queue.id});
+					var responseQueue = response.data;
+					var queueIndex = _.findIndex(queues, {'id': responseQueue.id});
 					if (queueIndex > -1) {
-						spliceQueue(queues[queueIndex], queue);
+						spliceQueue(queues[queueIndex], responseQueue);
 					} else {
-						queues.push(queue);
+						queues.push(responseQueue);
 					}
-					resolve(queue);
+					resolve(responseQueue);
 				}, function(response) {
 					reject(response);
 				});
