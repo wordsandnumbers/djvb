@@ -11,7 +11,9 @@ define(['angular'], function (angular) {
   angular.module('djvbApp.services.PlaylistsSvc', [])
 	.service('PlaylistsSvc', function ($http, $q) {
 		
-		var playlists = [];
+		var playlists = [],
+			favorites = [], 
+			history = []
 		
 		return {
 			getPlaylistsList: getPlaylistsList, 
@@ -20,19 +22,15 @@ define(['angular'], function (angular) {
 			createPlaylist: createPlaylist, 
 			updatePlaylist: updatePlaylist, 
 			addSongToPlaylist: addSongToPlaylist, 
-			deleteSongFromPlaylist: deleteSongFromPlaylist
+			deleteSongFromPlaylist: deleteSongFromPlaylist, 
+			getFavorites: getFavorites, 
+			getPlayHistory: getPlayHistory
 		}
 
 		function getPlaylists() {
 			return $q(function(resolve, reject) {
 				$http.get('/api/v1/playlists/').then(function(response) {
 					playlists = response.data.lists;
-					// Let's fix the response so it's an array. Will fix server later.
-					/*playlists = _.map(_.keys(response.data.lists), function(key) {
-						var playlist = response.data.lists[key];
-						playlist.name = key;
-						return playlist;
-					});*/
 					resolve(playlists);
 				}, function(response) {
 					reject(response);
@@ -108,6 +106,28 @@ define(['angular'], function (angular) {
 					reject(response);
 				});
 			});
-		}		
+		}
+		
+		function getFavorites() {
+			return $q(function(resolve, reject) {
+				$http.get('/api/v1/songs/favorites').then(function(response) {
+					favorites = response.data;
+					resolve(favorites);
+				}, function(response) {
+					reject(response);
+				})
+			});
+		}
+		
+		function getPlayHistory() {
+			return $q(function(resolve, reject) {
+				$http.get('/api/v1/songs/playHistory').then(function(response) {
+					history = response.data;
+					resolve(history);
+				}, function(response) {
+					reject(response);
+				})
+			});
+		}
 	});
 });

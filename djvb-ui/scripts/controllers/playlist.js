@@ -9,13 +9,18 @@ define(['angular'], function (angular) {
    * Controller of the djvbApp
    */
   angular.module('djvbApp.controllers.PlaylistCtrl', [])
-    .controller('PlaylistCtrl', function ($stateParams, $ionicActionSheet, $ionicPopup, PlaylistsSvc) {
+    .controller('PlaylistCtrl', function ($stateParams, $ionicActionSheet, $ionicPopup, PlaylistsSvc, $location) {
     	var vm = this;
     	vm.selectSong = selectSong;
     	
     	PlaylistsSvc.getPlaylistsList().then(function (response) {
     		vm.playlists = response;
-    		vm.playlist = _.find(vm.playlists, {id: $stateParams.playlistId});
+    		var foundPlaylist = _.find(vm.playlists, {id: $stateParams.playlistId});
+    		if (foundPlaylist !== undefined) {
+    			vm.playlist = foundPlaylist;
+    		} else {
+    			$location.url('/playlists');
+    		}
     	})
     	
         function selectSong(songIndex) {

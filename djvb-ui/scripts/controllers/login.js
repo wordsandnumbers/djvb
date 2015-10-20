@@ -36,29 +36,13 @@ define(['angular', 'digits'], function (angular, Digits) {
 					},
 					data : $httpParamSerializer(verifyData)
 				}).then(function(response) {
-					$location.url('/home')
+					checkUser();
 				}, function(response) {
 					$ionicPopup.alert({
 						title: "Error",
 						template: JSON.stringify(response.data)
 					});
 				});
-                
-                /*var headers = {authorization : "Basic "
-                    + btoa(verifyData.apiUrl + ":" + verifyData.authHeader)};
-                
-                $http.get('/user', {headers : headers}).success(function(data) {
-                    if (data.name) {
-                      $rootScope.authenticated = true;
-                    } else {
-                      $rootScope.authenticated = false;
-                    }
-                    callback && callback();
-                  }).error(function() {
-                    $rootScope.authenticated = false;
-                    callback && callback();
-                  });*/
-                
 			}
 
             function onLoginFailure() {
@@ -69,7 +53,6 @@ define(['angular', 'digits'], function (angular, Digits) {
             }
             
             function emailLogin() {
-            	
 				$http({
 					method : 'POST',
 					url : '/login/login',
@@ -78,14 +61,27 @@ define(['angular', 'digits'], function (angular, Digits) {
 					},
 					data : $httpParamSerializer({'apiUrl':vm.email})
 				}).then(function(response) {
-					$location.url('/home');
+					checkUser();
 				}, function(response) {
 					$ionicPopup.alert({
 						title: "Error",
 						template: JSON.stringify(response.data)
 					});
 				});
-
+            }
+            
+            function checkUser() {
+	    		UserSvc.getUser().then(function(user) {
+	    			if (_.isEmpty(user.screenName) || _.isEmpty(user.email)) {
+		    			UserSvc.showSettingsModal();
+	    			}
+	    			$location.url('/home');
+	    		}, function(response) {
+					$ionicPopup.alert({
+						title: "Error",
+						template: JSON.stringify(response.data)
+					});
+	    		});
             }
             
             /*var authenticate = function(credentials, callback) {

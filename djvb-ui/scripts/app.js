@@ -1,6 +1,6 @@
 /*jshint unused: vars */
-define(['angular', 'controllers/about', 'controllers/search', 'controllers/login', 'controllers/home', 'services/user', 'controllers/usersetup', 'services/queue', 'controllers/queue', 'services/playlists', 'controllers/playlists', 'controllers/playlist']/*deps*/,
-function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, UserSetupCtrl, QueueService, QueueCtrl, PlaylistsService, PlaylistsCtrl, PlaylistCtrl)/*invoke*/{
+define(['angular', 'controllers/about', 'controllers/search', 'controllers/login', 'controllers/home', 'services/user', 'controllers/usersetup', 'services/queue', 'controllers/queue', 'services/playlists', 'controllers/playlists', 'controllers/playlist', 'controllers/playhistory', 'controllers/favorites']/*deps*/,
+function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, UserSetupCtrl, QueueService, QueueCtrl, PlaylistsService, PlaylistsCtrl, PlaylistCtrl, PlayHistoryCtrl, FavoritesCtrl)/*invoke*/{
     'use strict';
 
     /**
@@ -24,6 +24,8 @@ function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, User
 			'djvbApp.services.PlaylistsSvc',
 			'djvbApp.controllers.PlaylistsCtrl',
 			'djvbApp.controllers.PlaylistCtrl',
+			'djvbApp.controllers.PlayHistoryCtrl',
+			'djvbApp.controllers.FavoritesCtrl',
 			/*angJSDeps*/
             'ngCookies',
             'ngResource',
@@ -97,6 +99,24 @@ function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, User
                 	'tab-home': {
                         templateUrl: 'views/playlist.html', 
                         controller: 'PlaylistCtrl as vm'
+                	}
+                }
+            })
+            .state('tabs.playHistory', {
+                url: '/playhistory',
+                views: {
+                	'tab-home': {
+                        templateUrl: 'views/playhistory.html', 
+                        controller: 'PlayHistoryCtrl as vm'
+                	}
+                }
+            })
+            .state('tabs.favorites', {
+                url: '/favorites',
+                views: {
+                	'tab-home': {
+                        templateUrl: 'views/favorites.html', 
+                        controller: 'FavoritesCtrl as vm'
                 	}
                 }
             })
