@@ -12,8 +12,8 @@ define(['angular'], function (angular) {
 	.service('PlaylistsSvc', function ($http, $q) {
 		
 		var playlists = [],
-			favorites = [], 
-			history = []
+			favorites, 
+			playHistory;
 		
 		return {
 			getPlaylistsList: getPlaylistsList, 
@@ -24,7 +24,9 @@ define(['angular'], function (angular) {
 			addSongToPlaylist: addSongToPlaylist, 
 			deleteSongFromPlaylist: deleteSongFromPlaylist, 
 			getFavorites: getFavorites, 
-			getPlayHistory: getPlayHistory
+			getFavoritesList: getFavoritesList, 
+			getPlayHistory: getPlayHistory, 
+			getPlayHistoryList: getPlayHistoryList
 		}
 
 		function getPlaylists() {
@@ -97,9 +99,10 @@ define(['angular'], function (angular) {
 			});
 		}
 		
-		function deleteSongFromPlaylist(playlist, index) {
+		function deleteSongFromPlaylist(playlist, song) {
 			return $q(function(resolve, reject) {
-				playlist.songs.splice(index, 1);
+				var foundIndex = _.findIndex(playlist.songs, {'id': song.id});
+				playlist.songs.splice(foundIndex, 1);
 				updatePlaylist(playlist).then(function (response) {
 					resolve(response);
 				}, function(response) {
@@ -119,15 +122,43 @@ define(['angular'], function (angular) {
 			});
 		}
 		
+		function getFavoritesList() {
+			return $q(function(resolve, reject) {
+				if (favorites === undefined) {
+					getFavorites().then(function (response) {
+						resolve(response);
+					}, function(response) {
+						reject(response);
+					});
+				} else {
+					resolve(favorites);
+				}
+			});			
+		}
+		
 		function getPlayHistory() {
 			return $q(function(resolve, reject) {
 				$http.get('/api/v1/songs/playHistory').then(function(response) {
-					history = response.data;
-					resolve(history);
+					playHistory = response.data;
+					resolve(playHistory);
 				}, function(response) {
 					reject(response);
 				})
 			});
+		}
+		
+		function getPlayHistoryList() {
+			return $q(function(resolve, reject) {
+				if (playHistory === undefined) {
+					getPlayHistory().then(function (response) {
+						resolve(response);
+					}, function(response) {
+						reject(response);
+					});
+				} else {
+					resolve(playHistory);
+				}
+			});			
 		}
 	});
 });

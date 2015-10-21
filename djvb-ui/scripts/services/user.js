@@ -12,27 +12,8 @@ define(['angular'], function (angular) {
 	.service('UserSvc', function ($rootScope, $http, $q, $ionicModal) {
 		
 		var user,
-			modalScope = $rootScope.$new(), 
-			userSettingsModal;
-		
-		$ionicModal.fromTemplateUrl('views/usersettingsmodal.html', {
-			scope: modalScope,
-			animation: 'slide-in-up'
-		}).then(function(modal) {
-            modalScope.modal = modal;
-			userSettingsModal = modal;
+			modalScope = $rootScope.$new();
 
-            modalScope.closeModal = function () {
-                modalScope.modal.hide();
-            }
-            
-            modalScope.putUser = function () {
-            	putUser(modalScope.userCopy).then(function () {
-            		modalScope.modal.hide();
-            	});
-            }
-		});
-		
 		return {
 			getUser: getUser, 
 			putUser: putUser, 
@@ -69,10 +50,29 @@ define(['angular'], function (angular) {
 			getUser().then(function(user) {
 	            modalScope.user = user;
 	            modalScope.userCopy = angular.copy(user);
-				userSettingsModal.show().then(function() {
+	            createModal();
+	        })
+		}
+		
+		function createModal() {
+			$ionicModal.fromTemplateUrl('views/usersettingsmodal.html', {
+				scope: modalScope,
+				animation: 'slide-in-up'
+			}).then(function(modal) {
+	            modalScope.modal = modal;
+				modal.show();
 
-				});
-			})
+	            modalScope.closeModal = function () {
+	                modalScope.modal.hide();
+	    			modalScope.modal.remove();
+	            }
+	            
+	            modalScope.putUser = function () {
+	            	putUser(modalScope.userCopy).then(function () {
+	            		modalScope.modal.hide();
+	            	});
+	            }
+			});			
 		}
 	
 	});

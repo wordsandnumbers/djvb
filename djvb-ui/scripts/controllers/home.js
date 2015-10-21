@@ -13,11 +13,20 @@ define(['angular'], function (angular) {
     	var vm = this;
     	vm.user = {};
     	vm.playlists;
+    	vm.favorites;
+    	vm.playHistory;
+    	
     	UserSvc.getUser().then(function(user) {
     		vm.user = user;
     	});
     	PlaylistsSvc.getPlaylistsList().then(function(playlists) {
     		vm.playlists = playlists;
+    	});
+    	PlaylistsSvc.getPlayHistoryList().then(function(playHistory) {
+    		vm.playHistory = playHistory;
+    	});
+    	PlaylistsSvc.getFavoritesList().then(function(favorites) {
+    		vm.favorites = favorites;
     	});
     	
     	vm.showUserSettingsModal = showUserSettingsModal;

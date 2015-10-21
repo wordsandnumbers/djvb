@@ -9,13 +9,18 @@ define(['angular'], function (angular) {
    * Controller of the djvbApp
    */
   angular.module('djvbApp.controllers.FavoritesCtrl', [])
-    .controller('FavoritesCtrl', function (PlaylistsSvc) {
+    .controller('FavoritesCtrl', function (PlaylistsSvc, ActionSheetSvc) {
 		var vm = this;
 		vm.favorites = [];
+		vm.selectSong = selectSong;
 
-		PlaylistsSvc.getFavorites().then(function(favorites) {
+		PlaylistsSvc.getFavoritesList().then(function(favorites) {
 			vm.favorites = favorites;
 		})
+		
+		function selectSong(song) {
+			ActionSheetSvc.playlistSongActions(song);
+		}
 
     });
 });

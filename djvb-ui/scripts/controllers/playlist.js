@@ -9,7 +9,7 @@ define(['angular'], function (angular) {
    * Controller of the djvbApp
    */
   angular.module('djvbApp.controllers.PlaylistCtrl', [])
-    .controller('PlaylistCtrl', function ($stateParams, $ionicActionSheet, $ionicPopup, PlaylistsSvc, $location) {
+    .controller('PlaylistCtrl', function ($stateParams, $ionicActionSheet, $ionicPopup, $location, PlaylistsSvc, ActionSheetSvc) {
     	var vm = this;
     	vm.selectSong = selectSong;
     	
@@ -23,25 +23,8 @@ define(['angular'], function (angular) {
     		}
     	})
     	
-        function selectSong(songIndex) {
-    		var song = vm.playlist.songs[songIndex];
-			var hideSheet = $ionicActionSheet.show({
-				titleText : song.title + ' - ' + song.artist,
-				destructiveText: 'Delete', 
-				cancelText : 'Cancel',
-				destructiveButtonClicked : function() {
-					PlaylistsSvc.deleteSongFromPlaylist(vm.playlist, songIndex).then(function(response) {
-						// Success
-					}, function(config) {
-						// Error
-						$ionicPopup.alert({
-							title: "Error",
-							template: JSON.stringify(config.data)
-						});
-					});
-					return true;
-				}
-			});
+        function selectSong(song) {
+    		ActionSheetSvc.playlistSongActions(vm.playlist, song);
         }		
     });
 });

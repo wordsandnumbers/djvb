@@ -9,13 +9,17 @@ define([ 'angular' ], function(angular) {
 	 * Controller of the djvbApp
 	 */
 	angular.module('djvbApp.controllers.PlayHistoryCtrl', [])
-	.controller('PlayHistoryCtrl', function(PlaylistsSvc) {
+	.controller('PlayHistoryCtrl', function(PlaylistsSvc, ActionSheetSvc) {
 		var vm = this;
 		vm.history = [];
+		vm.selectPlay = selectPlay;
 
-		PlaylistsSvc.getPlayHistory().then(function(history) {
+		PlaylistsSvc.getPlayHistoryList().then(function(history) {
 			vm.history = history;
 		})
 
+		function selectPlay(play) {
+			ActionSheetSvc.playHistoryActions(play);
+		}
 	});
 });

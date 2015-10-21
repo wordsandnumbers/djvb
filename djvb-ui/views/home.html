@@ -1,4 +1,4 @@
-<ion-view title="DJVB Home">
+<ion-view title="Home">
     <ion-nav-buttons side="secondary">
 	    <a class="button button-stable button-icon icon ion-ios-gear-outline" title="User Settings"
 	       ng-click="vm.showUserSettingsModal()"></a>
@@ -15,7 +15,7 @@
 			</ion-item>
 			<ion-item class="item-icon-right" href="#playhistory">
 				VoiceBox Play History
-				<span class="badge badge-calm">{{vm.history.total_entries}}</span>
+				<span class="badge badge-calm">{{vm.playHistory.total_entries}}</span>
 			</ion-item>            
         </ion-list>
     </ion-content>

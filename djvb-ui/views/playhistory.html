@@ -6,7 +6,7 @@
 			</div>
 		</div>
 		<ion-list>
-			<ion-item class="item-icon-right" ng-repeat="play in vm.history.plays track by $index" ng-click="vm.selectHistory($index)">
+			<ion-item class="item-icon-right" ng-repeat="play in vm.history.plays track by $index" ng-click="vm.selectPlay(play)">
 				{{play.title}}
 				<p>{{play.artist}}</p>
 				<button class="button button-clear button-stable button-icon icon ion-more"></button>

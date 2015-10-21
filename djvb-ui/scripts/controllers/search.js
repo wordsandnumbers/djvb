@@ -43,7 +43,7 @@ define(['angular', 'lodash'], function (angular, _) {
      }
    };
 })
-.controller('SearchCtrl', function ($scope, $log, $http, $ionicScrollDelegate, $ionicLoading, $ionicActionSheet, $ionicModal, $ionicPopup, QueueSvc, PlaylistsSvc) {
+.controller('SearchCtrl', function ($scope, $log, $http, $ionicScrollDelegate, $ionicLoading, $ionicActionSheet, $ionicModal, $ionicPopup, QueueSvc, PlaylistsSvc, ActionSheetSvc) {
         var vm = this;
         vm.searchString = '';
         vm.songGroups = {};
@@ -108,89 +108,9 @@ define(['angular', 'lodash'], function (angular, _) {
         }
         
         function selectSong(song) {
-			var hideSheet = $ionicActionSheet.show({
-				buttons : [{
-					text : '<strong>Sing Now!</strong>'
-				}, {
-					text : 'Add to Playlist'
-				}],
-				titleText : song.artist + ' - ' + song.title,
-				cancelText : 'Cancel',
-				buttonClicked : function(index) {
-					switch (index) {
-						case 0:
-							if (vm.queues.length > 0) {
-								// Add song to queue
-								addSongToQueue(song);
-							} else {
-								// Join a room
-								var callback = function() {
-									addSongToQueue(song);
-								};
-							    roomCodePopup(callback);
-							}
-							break;
-						case 1:
-							$ionicActionSheet.show({
-								buttons : _.map(vm.playlists, function(playlist) {
-									return {text: playlist.name, playlist: playlist};
-								}),
-								titleText : song.artist + ' - ' + song.title + '<br>Add to Playlist:',
-								cancelText : 'Cancel',
-								buttonClicked : function(index, button) {
-									PlaylistsSvc.addSongToPlaylist(button.playlist, song).then(function(response) {
-										// Success
-									}, function(response) {
-										// Error
-									});
-									return true;
-								}
-							})
-							break;
-					}
-					return true;
-				}
-			});
+        	ActionSheetSvc.searchSongActions(song);
         }
-        
-		function roomCodePopup(callback) {
-        	vm.roomCode = '';
-	        var popup = $ionicPopup.show({
-				template : '<label class="item item-input">' +
-		        	'<input ng-model="vm.roomCode" type="text" placeholder="Room Code" capitalize>' +
-		        	'</label>',
-				title : 'Enter Room Code',
-				subTitle : "It's on the screen in your room.",
-				scope : $scope,
-				buttons : [ 
-					{
-						text : 'Cancel'
-					}, {
-						text : '<b>OK</b>',
-						type : 'button-positive',
-						onTap : function(e) {
-							if (!$scope.vm.roomCode) {
-								e.preventDefault();
-							} else {
-					        	QueueSvc.join($scope.vm.roomCode).then(function() {
-					        		if (callback != undefined) {
-					        			callback();
-					        		}
-					        		return $scope.vm.roomCode;
-					        	}, function() {
-									$ionicPopup.alert({
-										title: "Error",
-										template: 'Invalid Room Code'
-									});
-					        	});
-							}
-						}
-					} 
-				]
-			});
-	        return popup;
-        }
-                
+               
         function clearSearch() {
         	vm.searchString = '';
         	vm.songGroups = {};
@@ -199,18 +119,6 @@ define(['angular', 'lodash'], function (angular, _) {
         
         function hasSongGroups() {
         	return _.keys(vm.songGroups).length > 0 ? true : false;
-        }
-        
-        function addSongToQueue(song) {
-			QueueSvc.addSongToQueue(vm.queues[0], song).then(function(response) {
-				// Success
-			}, function(response) {
-				// Error
-				$ionicPopup.alert({
-					title: "Error",
-					template: JSON.stringify(response.data)
-				});
-			});        	
         }
     });
 });

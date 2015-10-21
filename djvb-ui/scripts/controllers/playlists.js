@@ -15,7 +15,6 @@ define(['angular'], function (angular) {
     	vm.newPlaylistPopup = newPlaylistPopup;	
     		
     	function newPlaylistPopup() {
-        	vm.roomCode = '';
 	        var popup = $ionicPopup.show({
 				template : '<label class="item item-input">' +
 		        	'<input ng-model="vm.name" type="text" placeholder="Playlist Name">' +

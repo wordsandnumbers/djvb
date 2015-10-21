@@ -1,6 +1,6 @@
 /*jshint unused: vars */
-define(['angular', 'controllers/about', 'controllers/search', 'controllers/login', 'controllers/home', 'services/user', 'controllers/usersetup', 'services/queue', 'controllers/queue', 'services/playlists', 'controllers/playlists', 'controllers/playlist', 'controllers/playhistory', 'controllers/favorites']/*deps*/,
-function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, UserSetupCtrl, QueueService, QueueCtrl, PlaylistsService, PlaylistsCtrl, PlaylistCtrl, PlayHistoryCtrl, FavoritesCtrl)/*invoke*/{
+define(['angular', 'controllers/about', 'controllers/search', 'controllers/login', 'controllers/home', 'services/user', 'controllers/usersetup', 'services/queue', 'controllers/queue', 'services/playlists', 'controllers/playlists', 'controllers/playlist', 'controllers/playhistory', 'controllers/favorites', 'services/actionsheet']/*deps*/,
+function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, UserSetupCtrl, QueueService, QueueCtrl, PlaylistsService, PlaylistsCtrl, PlaylistCtrl, PlayHistoryCtrl, FavoritesCtrl, ActionSheetService)/*invoke*/{
     'use strict';
 
     /**
@@ -26,7 +26,8 @@ function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, User
 			'djvbApp.controllers.PlaylistCtrl',
 			'djvbApp.controllers.PlayHistoryCtrl',
 			'djvbApp.controllers.FavoritesCtrl',
-			/*angJSDeps*/
+			'djvbApp.services.ActionSheetSvc',
+/*angJSDeps*/
             'ngCookies',
             'ngResource',
             'ngSanitize',
