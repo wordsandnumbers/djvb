@@ -19,7 +19,7 @@ define(['angular'], function (angular) {
 		})
 		
 		function selectSong(song) {
-			ActionSheetSvc.playlistSongActions(song);
+			ActionSheetSvc.playHistoryActions(song);
 		}
 
     });
