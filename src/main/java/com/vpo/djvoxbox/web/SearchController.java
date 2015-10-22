@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -87,8 +86,8 @@ public class SearchController {
 		Search search = new Search();
 		search.setQuery(params.get("query"));
 		search.setLanguage((params.get("language") != null) ? params.get("language") : defaultLanguage);
-		search.setPage(Integer.getInteger(params.get("page")));
-		search.setPerPage(Integer.getInteger(params.get("per_page")));
+		search.setPage((params.get("page") == null) ? null : Integer.valueOf(params.get("page")));
+		search.setPerPage((params.get("per_page") == null) ? null : Integer.valueOf(params.get("per_page")));
 		search.setTag(params.get("tag"));
 		return search;
 	}
