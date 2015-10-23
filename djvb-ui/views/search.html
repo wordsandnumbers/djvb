@@ -6,9 +6,9 @@
         <form ng-submit="vm.search(vm.searchString)">
             <div class="item item-input-inset">
                 <label class="item-input-wrapper">
-                    <input type="search" ng-model="vm.searchString" placeholder="Search by Title or Artist">
+                    <input type="search" name="search" ng-model="vm.searchString" placeholder="Search by Title or Artist" autocomplete="off">
                 </label>
-                <div class="button button-small button-clear" ng-click="vm.clearSearch()" ng-show="vm.searchString.length>0"><i class="icon ion-close-round"></i></div>
+                <div class="button button-small button-clear" ng-click="vm.clearSearch()" ng-if="vm.searchString.length>0"><i class="icon ion-close-round"></i></div>
                 <button class="button button-small button-light" focus-me="vm.searchComplete"><i class="icon ion-search"></i></button>
             </div>
         </form>

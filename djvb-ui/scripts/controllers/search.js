@@ -64,19 +64,22 @@ define(['angular', 'lodash'], function (angular, _) {
         }
       
         function search(searchString) {
-        	if ((vm.searchResults || {}).query !== searchString && !_.isEmpty(vm.searchResults)) {
-        		delete vm.searchResults;
-        	}
         	vm.searchString = searchString;
-            
-            if (!_.isEmpty(searchString)) { 
-            	query({
-                    query: searchString,
-                    per_page: 50,
-                    page: 1, 
-                    by: 'title'
-                });
-            }
+        	
+        	if ((vm.searchResults || {}).query !== searchString) {
+                if (!_.isEmpty(searchString)) { 
+                	query({
+                        query: searchString,
+                        per_page: 50,
+                        page: 1, 
+                        by: 'title'
+                    });
+                }
+
+                if (!_.isEmpty(vm.searchResults)) {
+            		delete vm.searchResults;
+        		}
+        	}
         }
         
         function query(params) {
