@@ -3,7 +3,6 @@
         <button class="button button-clear" ng-click="vm.filterSearch()"><i class="icon ion-ios-list"></i></button>
     </ion-nav-buttons>-->
     <ion-content class="has-header">
-        <div class="button-bar"></div>
         <form ng-submit="vm.search(vm.searchString)">
             <div class="item item-input-inset">
                 <label class="item-input-wrapper">
@@ -20,11 +19,11 @@
         </label>
         <button type="button" ng-click="vm.search()">Go</button>-->
         <ion-list ng-if="vm.hasSongGroups()">
-            <div ng-repeat="(artist, songs) in vm.songGroups">
-                <div class="item item-divider" ng-click="vm.exactSearch(artist)" title="View all songs for {{artist}}">
+            <div ng-repeat="(artist, songs) in vm.songGroups | orderBy:'artist'">
+                <ion-item class="item item-divider" ng-click="vm.exactSearch(artist)" title="View all songs for {{artist}}">
                     {{artist}}
-                </div>
-                <ion-item class="item-icon-right" ng-repeat="song in songs" ng-click="vm.selectSong(song)">
+                </ion-item>
+                <ion-item class="item-icon-right" ng-repeat="song in songs | orderBy:'title'" ng-click="vm.selectSong(song)">
                 	{{song.title}}
                 	<button class="button button-clear button-stable button-icon icon ion-more"></button>
                 </ion-item>
@@ -39,5 +38,7 @@
 				Clear Recent Searches <i class="icon ion-ios-close-empty"></i>
 			</div>
         </ion-list>
+		<ion-infinite-scroll on-infinite="vm.nextPage()" distance="1%" ng-if="vm.hasMoreData()">
+		</ion-infinite-scroll>
     </ion-content>
 </ion-view>

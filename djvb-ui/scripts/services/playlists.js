@@ -26,7 +26,8 @@ define(['angular'], function (angular) {
 			getFavorites: getFavorites, 
 			getFavoritesList: getFavoritesList, 
 			getPlayHistory: getPlayHistory, 
-			getPlayHistoryList: getPlayHistoryList
+			getPlayHistoryList: getPlayHistoryList, 
+			nextPage: nextPage
 		}
 
 		function getPlaylists() {
@@ -113,12 +114,24 @@ define(['angular'], function (angular) {
 		
 		function getFavorites() {
 			return $q(function(resolve, reject) {
-				$http.get('/api/v1/songs/favorites').then(function(response) {
+				$http.get('/api/v1/songs/favorites', {'per_page': 20}).then(function(response) {
 					favorites = response.data;
 					resolve(favorites);
 				}, function(response) {
 					reject(response);
 				})
+			});
+		}
+		
+		function nextPage(pagedCollection) {
+			return $q(function(resolve, reject) {
+				var params = {
+					'per_page': (pagedCollection.per_page || 20),
+					'page': (pagedCollection.page || 0) + 1
+				}
+				getPlayHistory(params).then(function(response) {
+					resolve(response);
+				});
 			});
 		}
 		
@@ -136,10 +149,18 @@ define(['angular'], function (angular) {
 			});			
 		}
 		
-		function getPlayHistory() {
+		function getPlayHistory(params) {
+			if (params === undefined) {
+				params = {'per_page': 25};
+			}
 			return $q(function(resolve, reject) {
-				$http.get('/api/v1/songs/playHistory').then(function(response) {
-					playHistory = response.data;
+				$http.get('/api/v1/songs/playHistory', {'params': params}).then(function(response) {
+					if (playHistory === undefined) {
+						playHistory = response.data;
+					} else {
+						Array.prototype.splice.apply(playHistory.plays, [playHistory.plays.length-1].concat(response.data.plays));
+					}
+					angular.extend(playHistory, params);
 					resolve(playHistory);
 				}, function(response) {
 					reject(response);
