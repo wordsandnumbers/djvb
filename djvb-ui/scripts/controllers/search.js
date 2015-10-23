@@ -133,6 +133,7 @@ define(['angular', 'lodash'], function (angular, _) {
         function clearSearch() {
         	vm.searchString = '';
         	vm.songGroups = {};
+    		delete vm.searchResults;
         	vm.noResults = false;
         }
         
