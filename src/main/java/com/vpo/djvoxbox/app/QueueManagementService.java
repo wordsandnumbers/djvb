@@ -1,8 +1,14 @@
 package com.vpo.djvoxbox.app;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -78,7 +84,8 @@ public class QueueManagementService {
 			for (int i = 0; i < uq.getQueued().size(); i++) {
 				Play up = uq.getQueued().get(i);
 	
-				if(q.getPlayIds().contains(up.getPlayId())) {
+				if(q.getPlayData().containsKey((up.getPlayId()))) {
+					up.setEstimatedPlayTime(q.getPlayData().get(up.getPlayId()));
 					playCount++;
 				} else if(up.getPlayId() != null) {
 					uq.getQueued().remove(i--);
@@ -147,18 +154,31 @@ public class QueueManagementService {
 		}
 		
 		private void extractPlayIds() {
+			Long time = System.currentTimeMillis();
 			if(queue != null && queue.getCurrentSong() != null) {
-				this.playIds.add(queue.getCurrentSong().getPlayId());
+				
+				this.playData.put(queue.getCurrentSong().getPlayId(), time);
+				int playTime = 0;
+				if(queue.getCurrentSong().getDuration() != null && queue.getCurrentSong().getPosition() != null) {
+						playTime = queue.getCurrentSong().getDuration() - queue.getCurrentSong().getPosition();
+				}
+				time = makeTime(time, playTime);
 			}
 			if(queue != null && queue.getQueue() != null) {
 				for (Play play : queue.getQueue()) {
-					this.playIds.add(play.getPlayId());
+					this.playData.put(play.getPlayId(), time);
+					time = makeTime(time, play.getDuration());
 				}
 			}
 		}
 
+		private Long makeTime(Long time, Integer add ) {
+			
+			return time + 
+					((add != null) ? add.longValue() : 240000L);
+		}
 		private Queue queue;
-		private List<String> playIds = new ArrayList<String>();
+		private Map<String, Long> playData = new HashMap<String, Long>();
 		
 		public Queue getQueue() {
 			return queue;
@@ -168,12 +188,12 @@ public class QueueManagementService {
 			this.queue = queue;
 		}
 
-		public List<String> getPlayIds() {
-			return playIds;
+		public Map<String, Long> getPlayData() {
+			return playData;
 		}
 
-		public void setPlayIds(List<String> playIds) {
-			this.playIds = playIds;
+		public void setPlayData(Map<String, Long> playData) {
+			this.playData = playData;
 		}
 		
 		
