@@ -34,7 +34,7 @@ define(['angular', 'digits'], function (angular, Digits) {
 			}
 		};
 	})
-	.controller('LoginCtrl', function ($log, $http, $httpParamSerializer, $location, $ionicPopup, UserSvc) {
+	.controller('LoginCtrl', function ($rootScope, $log, $http, $httpParamSerializer, $location, $ionicPopup, UserSvc) {
             var vm = this;
             vm.digitsLogin = digitsLogin;
             vm.emailLogin = emailLogin;
@@ -61,8 +61,10 @@ define(['angular', 'digits'], function (angular, Digits) {
 					},
 					data : $httpParamSerializer(verifyData)
 				}).then(function(response) {
+                    $rootScope.authenticated = true;
 					checkUser();
 				}, function(response) {
+                    $rootScope.authenticated = false;
 					$ionicPopup.alert({
 						title: "Error",
 						template: JSON.stringify(response.data)
@@ -71,6 +73,7 @@ define(['angular', 'digits'], function (angular, Digits) {
 			}
 
             function onLoginFailure() {
+                $rootScope.authenticated = false;
 				$ionicPopup.alert({
 					title: "Error",
 					template: "Couldn't do Digits login."

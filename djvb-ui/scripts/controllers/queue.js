@@ -12,9 +12,11 @@ define([ 'angular' ], function(angular) {
 	.controller('QueueCtrl', function($scope, $ionicActionSheet, $ionicPopup, $ionicModal, QueueSvc) {
 		var vm = this;
 		vm.queues = [];
+		vm.showReorder = false;
 		vm.selectPlay = selectPlay;
 		vm.showSettings = showSettings;
 		vm.deleteQueue = deleteQueue;
+		vm.reorderPlay = reorderPlay;
 		
 		QueueSvc.getQueuesList().then(function(queues) {
 			vm.queues = queues;
@@ -81,6 +83,18 @@ define([ 'angular' ], function(angular) {
 				$ionicPopup.alert({
 					title: "Error",
 					template: JSON.stringify(response.data)
+				});        		
+        	})
+        }
+        
+        function reorderPlay(play, fromIndex, toIndex) {
+        	QueueSvc.reorderQueuePlay(vm.queues[0], play, fromIndex, toIndex).then(function(response) {
+        		// Success
+        		// TODO: highlight moved item?
+        	}, function(response) {
+				$ionicPopup.alert({
+					title: "Error",
+					template: JSON.stringify("Couldn't reorder queue.")
 				});        		
         	})
         }

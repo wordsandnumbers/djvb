@@ -21,7 +21,7 @@ define(['angular'], function (angular) {
 			getQueuesList: getQueuesList, 
 			addSongToQueue: addSongToQueue, 
 			deletePlayFromQueue: deletePlayFromQueue, 
-			updateQueue: updateQueue, 
+			reorderQueuePlay: reorderQueuePlay, 
 			deleteQueue: deleteQueue, 
 			updateQueued: updateQueued, 
 			setLights: setLights
@@ -112,13 +112,15 @@ define(['angular'], function (angular) {
 			});			
 		}
 		
-		function updateQueue(queue, song, fromIndex, toIndex) {
+		function reorderQueuePlay(queue, play, fromIndex, toIndex) {
 			return $q(function(resolve, reject) {
 				$http.put('/api/v1/queue/queue', {
 					'room_code':queue.roomCode, 
-					'song_id':queue.queue[0].id
+					'playId':play.play_id,
+					'from': fromIndex, 
+					'to': toIndex
 				}).then(function(response){
-					queue = response.data;
+					spliceQueue(queue, response.data);
 					resolve(queue);
 				}, function(response) {
 					reject(response);
@@ -161,8 +163,15 @@ define(['angular'], function (angular) {
 			});
 		}
 		
-		function setLights() {
-			
+		function setLights(queue, level) {
+			// Level: [0, 1, 2]
+			return $q(function(resolve, reject) {
+				$http.put('/lights/' + queue.roomCode + '/' + level).then(function(response){
+					resolve(response);
+				}, function(response) {
+					reject(response);
+				});
+			});	
 		}
 		
 		function spliceQueue(oldQueue, newQueue) {

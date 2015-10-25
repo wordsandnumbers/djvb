@@ -81,3 +81,8 @@ body {
     border-bottom: 0;
   }
 }
+
+/* Custom Styles */
+.item-divider .button {
+    top: 0;
+}
