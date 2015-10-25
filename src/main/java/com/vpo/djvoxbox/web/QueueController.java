@@ -132,7 +132,7 @@ public class QueueController {
 					uq.getQueue().remove(i);
 				}
 			}
-		}
+		}	
 		userQueueRepository.save(uq);
 		return uq;
 	}
@@ -184,11 +184,11 @@ public class QueueController {
 	private void  movePlay(UserQueue uq, Integer fromIndex, Integer toIndex) {
 		if(fromIndex > toIndex) {
 			Play play = uq.getQueue().get(fromIndex);
-			uq.getQueue().remove(fromIndex);
+			uq.getQueue().remove(fromIndex.intValue());
 			uq.getQueue().add(toIndex, play);
 		} else {
 			Play play = uq.getQueue().get(fromIndex);
-			uq.getQueue().remove(fromIndex);
+			uq.getQueue().remove(fromIndex.intValue());
 			if(uq.getQueue().size() == toIndex) {
 				uq.getQueue().add(play);
 			} else {
