@@ -2,6 +2,7 @@ package com.vpo.djvoxbox.web;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -113,10 +114,12 @@ public class QueueController {
 		User user = userRepository.findById(principal.getName());
 		Session s = sessionClient.getSessionById(user.getSessionId());
 		Play[] queuedArray = queued.toArray(new Play[queued.size()]);
+		Play oldPlay = null;
 		for (Play play : queuedArray) {
 			if(play.getPlayId().equals(request.getTo())) {
 				newPlay = queueClient.replace(request.getRoomCode(), play, request, s);
 				uq.getQueued().remove(play);
+				oldPlay = play;
 			}
 		}
 		if(newPlay != null) {
@@ -132,7 +135,11 @@ public class QueueController {
 					uq.getQueue().remove(i);
 				}
 			}
-		}	
+		}
+		if(oldPlay != null) {
+			oldPlay.setPlayId(UUID.randomUUID().toString());
+			uq.getQueue().add(oldPlay);
+		}
 		userQueueRepository.save(uq);
 		return uq;
 	}
