@@ -49,7 +49,7 @@ public class QueueManagementService {
 		try {
 			q = new ConvenientQueue(queueClient.getQueue(roomCode));
 		} catch(HttpClientErrorException e) {
-			if(!e.getStatusCode().equals(HttpStatus.SC_FORBIDDEN)) {
+			if(e.getStatusCode().value() != HttpStatus.SC_UNAUTHORIZED) {
 				throw e;
 			}
 		}
@@ -69,7 +69,7 @@ public class QueueManagementService {
 			// find the queue for the current room 
 			// we only poll VB when the room code is different
 			q = getQueue(uq.getRoomCode(), q);
-			if(q.getQueue() == null) {
+			if(q == null || q.getQueue() == null) {
 				// if the roomcode doesnt work anymore, mark uq for deletion or delete it
 				downgradeQueueStatus(uq);
 				continue;
