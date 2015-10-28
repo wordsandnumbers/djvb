@@ -25,6 +25,7 @@ define(['angular'], function (angular) {
 				if (user === undefined) {
 					$http.get('/api/v1/user/user').then(function(config) {
 						user = config.data;
+						$rootScope.authenticated = true;
 						resolve(user);
 					}, function(error) {
 						reject(error);

@@ -37,7 +37,20 @@ function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, User
             'ionic',
             'ui.router'
         ])
-        .run(function ($ionicPlatform) {
+        .run(function ($rootScope, $ionicPlatform, $location, UserSvc) {
+
+            $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+                // Don't allow login route if authenticated.
+            	UserSvc.getUser().then(function() {
+                	if (toState.url === '/login' && $rootScope.authenticated === true) {
+                        $location.path('/home');
+                	}
+            	})
+            });
+            
+        	// Get user immediately on app load.
+        	UserSvc.getUser();
+        	
             $ionicPlatform.ready(function () {
                 // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
                 // for form inputs)
@@ -51,7 +64,20 @@ function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, User
             });
         })
         .config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
-            $stateProvider
+    		// Globablly intercept response, redirect to login if not authorized for API
+    		$httpProvider.interceptors.push(function($q, $location, $rootScope) {
+    			return {
+    				responseError: function(response) {
+    					if (response.status === 401) {
+    						$rootScope.authenticated = false;
+    						$location.url('/login')
+    					}
+    					return $q.reject(response);
+    				}
+    			};
+    		});
+
+    		$stateProvider
 			.state('tabs', {
 				url: "",
 				abstract: true,
@@ -142,17 +168,5 @@ function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, User
             
             // if none of the above states are matched, use this as the fallback
             $urlRouterProvider.otherwise('/home');
-            
-    		// Globablly intercept response, redirect to login if not authorized for API
-    		$httpProvider.interceptors.push(function($q, $location) {
-    			return {
-    				responseError: function(response) {
-    					if (response.status === 401) {
-    						$location.url('/login')
-    					}
-    					return $q.reject(response);
-    				}
-    			};
-    		});
         });
 });

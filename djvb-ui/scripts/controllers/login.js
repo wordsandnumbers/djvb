@@ -34,12 +34,14 @@ define(['angular', 'digits'], function (angular, Digits) {
 			}
 		};
 	})
-	.controller('LoginCtrl', function ($rootScope, $log, $http, $httpParamSerializer, $location, $ionicPopup, UserSvc) {
+	.controller('LoginCtrl', function ($rootScope, $log, $http, $httpParamSerializer, $location, $ionicPopup, $ionicLoading, UserSvc) {
             var vm = this;
             vm.digitsLogin = digitsLogin;
             vm.emailLogin = emailLogin;
 
             function digitsLogin(event) {
+            	$ionicLoading.show();
+
                 Digits.logIn()
                 .done(onLogin) /*handle the response*/
                 .fail(onLoginFailure);
@@ -65,6 +67,7 @@ define(['angular', 'digits'], function (angular, Digits) {
 					checkUser();
 				}, function(response) {
                     $rootScope.authenticated = false;
+                    $ionicLoading.hide();
 					$ionicPopup.alert({
 						title: "Error",
 						template: JSON.stringify(response.data)
@@ -74,6 +77,7 @@ define(['angular', 'digits'], function (angular, Digits) {
 
             function onLoginFailure() {
                 $rootScope.authenticated = false;
+                $ionicLoading.hide();
 				$ionicPopup.alert({
 					title: "Error",
 					template: "Couldn't do Digits login."
@@ -81,6 +85,8 @@ define(['angular', 'digits'], function (angular, Digits) {
             }
             
             function emailLogin() {
+            	$ionicLoading.show();
+
 				$http({
 					method : 'POST',
 					url : '/login/login',
@@ -91,6 +97,7 @@ define(['angular', 'digits'], function (angular, Digits) {
 				}).then(function(response) {
 					checkUser();
 				}, function(response) {
+	                $ionicLoading.hide();
 					$ionicPopup.alert({
 						title: "Error",
 						template: JSON.stringify(response.data)
@@ -100,11 +107,13 @@ define(['angular', 'digits'], function (angular, Digits) {
             
             function checkUser() {
 	    		UserSvc.getUser().then(function(user) {
+	                $ionicLoading.hide();
 	    			if (_.isEmpty(user.screenName) || _.isEmpty(user.email)) {
 		    			UserSvc.showSettingsModal();
 	    			}
 	    			$location.url('/home');
 	    		}, function(response) {
+	                $ionicLoading.hide();
 					$ionicPopup.alert({
 						title: "Error",
 						template: JSON.stringify(response.data)
