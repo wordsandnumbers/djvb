@@ -43,7 +43,7 @@ define(['angular', 'lodash'], function (angular, _) {
      }
    };
 })
-.controller('SearchCtrl', function ($scope, $log, $http, $ionicScrollDelegate, $ionicLoading, ActionSheetSvc) {
+.controller('SearchCtrl', function ($scope, $log, $http, $ionicScrollDelegate, $ionicLoading, $ionicPopup, ActionSheetSvc) {
         var vm = this;
         vm.searchString = '';
         vm.searchResults;
@@ -110,8 +110,12 @@ define(['angular', 'lodash'], function (angular, _) {
                 } else {
                 	vm.noResults = true;
                 }
-            }, function(error) {
-                $log.error(error);
+            }, function(response) {
+				$ionicPopup.alert({
+					title: "Error",
+					template: JSON.stringify(response.data)
+				});
+                $log.error(response);
                 $ionicLoading.hide();
             });
         }

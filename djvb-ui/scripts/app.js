@@ -40,10 +40,13 @@ function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, User
         .run(function ($rootScope, $ionicPlatform, $location, UserSvc) {
 
             $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-                // Don't allow login route if authenticated.
             	UserSvc.getUser().then(function() {
+                    // Don't allow login route if authenticated.
                 	if (toState.url === '/login' && $rootScope.authenticated === true) {
                         $location.path('/home');
+                    // Route to login if not authenticated.
+                	} else if (toState.url !== '/login' && $rootScope.authenticated === false) {
+                		$location.path('/login');
                 	}
             	})
             });

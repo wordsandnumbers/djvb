@@ -1,7 +1,7 @@
 <ion-view title="DJVB Login">
     <ion-content padding="true">
         <div class="card">
-            <div class="item item-text-wrap">
+            <div class="item item-text-wrap text-center">
                 Welcome to DJVB! Please log in using your phone number or email address.
             </div>
         </div>
@@ -9,7 +9,7 @@
         <p class="text-center"><em>- or -</em></p>
         <form name="vm.emailForm">
 	        <label class="item item-input">
-	            <input type="email" ng-model="vm.email" placeholder="Your Email" ng-required="true" overwrite-email>
+	            <input class="text-center" type="email" ng-model="vm.email" placeholder="Your Email" ng-required="true" overwrite-email>
 	        </label>
 	        <button class="button button-stable button-block button-royal" ng-disabled="vm.emailForm.$invalid" ng-click="vm.emailLogin($event)"><i class="icon ion-ios-email-outline"></i> Log in with Email</button>
 		</form>

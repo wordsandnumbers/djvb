@@ -1,5 +1,5 @@
       <ion-modal-view>
-        <ion-header-bar class="bar bar-header bar-positive">
+        <ion-header-bar class="bar bar-header bar-stable">
           <h1 class="title">Room Settings</h1>
           <button class="button button-clear button-primary" ng-click="vm.queueSettingsModal.hide()">Cancel</button>
         </ion-header-bar>
@@ -10,8 +10,8 @@
           	<button class="button" ng-click="vm.deleteQueue()">Low</button>
           	<button class="button" ng-click="vm.deleteQueue()">High</button>
           </div> -->
-          <div class="list" ng-if="vm.queues.length > 0">
-            <button class="button button-full button-assertive icon-left ion-close" ng-click="vm.deleteQueue()">Leave the Room</button>
-          </div>
         </ion-content>
+		<ion-footer-bar class="bar bar-footer">
+            <button class="button icon-left ion-close button-assertive" ng-if="vm.queues.length > 0" ng-click="vm.deleteQueue()"> Leave the Room</button>
+		</ion-footer-bar>
       </ion-modal-view>

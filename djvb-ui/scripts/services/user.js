@@ -9,7 +9,7 @@ define(['angular'], function (angular) {
    * Service in the djvbApp.
    */
   angular.module('djvbApp.services.UserSvc', [])
-	.service('UserSvc', function ($rootScope, $http, $q, $ionicModal) {
+	.service('UserSvc', function ($rootScope, $http, $q, $ionicModal, $location) {
 		
 		var user,
 			modalScope = $rootScope.$new();
@@ -17,7 +17,8 @@ define(['angular'], function (angular) {
 		return {
 			getUser: getUser, 
 			putUser: putUser, 
-			showSettingsModal: showSettingsModal
+			showSettingsModal: showSettingsModal, 
+			logout: logout
 		};
 		
 		function getUser() {
@@ -47,6 +48,17 @@ define(['angular'], function (angular) {
 			});
 		}
 
+		function logout() {
+			return $q(function (resolve, reject) {
+				$http.get('/logout').then(function(response) {
+					$rootScope.authenticated = false;
+					resolve(response);
+				}, function(response) {
+					reject(response);
+				})			
+			})
+		}
+		
 		function showSettingsModal() {
 			getUser().then(function(user) {
 	            modalScope.user = user;
@@ -68,10 +80,16 @@ define(['angular'], function (angular) {
 	    			modalScope.modal.remove();
 	            }
 	            
-	            modalScope.putUser = function () {
-	            	putUser(modalScope.userCopy).then(function () {
-	            		modalScope.modal.hide();
+	            modalScope.logout = function() {
+	            	logout().then(function() {
+	            		modalScope.closeModal();
+                        $location.path('/login');
 	            	});
+	            }
+	            
+	            modalScope.putUser = function () {
+            		modalScope.closeModal();
+	            	putUser(modalScope.userCopy);
 	            }
 			});			
 		}

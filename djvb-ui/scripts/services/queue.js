@@ -125,6 +125,8 @@ define(['angular'], function (angular) {
 				}, function(response) {
 					reject(response);
 				});
+				// Swap out the items before the response comes back.
+				queue.queue[fromIndex] = queue.queue.splice(toIndex, 1, queue.queue[fromIndex])[0];
 			});	
 		}
 		

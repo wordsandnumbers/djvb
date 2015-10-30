@@ -9,7 +9,7 @@ define(['angular'], function (angular) {
    * Service in the djvbApp.
    */
   angular.module('djvbApp.services.ActionSheetSvc', [])
-	.service('ActionSheetSvc', function ($rootScope, $ionicPopup, $ionicActionSheet, UserSvc, PlaylistsSvc, QueueSvc) {
+	.service('ActionSheetSvc', function ($rootScope, $ionicPopup, $ionicActionSheet, UserSvc, PlaylistsSvc, QueueSvc, $timeout) {
 		var user,
 			modalScope = $rootScope.$new(), 
 			playlists = [], 
@@ -138,7 +138,7 @@ define(['angular'], function (angular) {
             $scope.data = {};
 	        var popup = $ionicPopup.show({
 				template : '<label class="item item-input">' +
-		        	'<input ng-model="data.roomCode" type="text" placeholder="Room Code" capitalize>' +
+		        	'<input ng-model="data.roomCode" type="text" class="text-center" maxlength="4" placeholder="Room Code" capitalize>' +
 		        	'</label>',
 				title : 'Enter Room Code',
 				subTitle : "It's on the screen in your room.",
