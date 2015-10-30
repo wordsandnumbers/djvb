@@ -168,7 +168,7 @@ define(['angular'], function (angular) {
 		function setLights(queue, level) {
 			// Level: [0, 1, 2]
 			return $q(function(resolve, reject) {
-				$http.put('/lights/' + queue.roomCode + '/' + level).then(function(response){
+				$http.get('/api/v1/queue/lights/' + queue.roomCode + '/' + level).then(function(response){
 					resolve(response);
 				}, function(response) {
 					reject(response);

@@ -13,10 +13,12 @@ define([ 'angular' ], function(angular) {
 		var vm = this;
 		vm.queues = [];
 		vm.showReorder = false;
+		vm.level = null;
 		vm.selectPlay = selectPlay;
 		vm.showSettings = showSettings;
 		vm.deleteQueue = deleteQueue;
 		vm.reorderPlay = reorderPlay;
+		vm.setLights = setLights;
 		
 		QueueSvc.getQueuesList().then(function(queues) {
 			vm.queues = queues;
@@ -97,6 +99,19 @@ define([ 'angular' ], function(angular) {
 					template: JSON.stringify("Couldn't reorder queue.")
 				});        		
         	})
+        }
+        
+        function setLights(level) {
+    		vm.level = level;
+        	QueueSvc.setLights(vm.queues[0], level).then(function() {
+        		vm.queueSettingsModal.hide();
+        	}, function(response) {
+        		vm.level = null;
+				$ionicPopup.alert({
+					title: "Error",
+					template: JSON.stringify("Couldn't set lights.")
+				});        		
+        	});
         }
 	});
 });

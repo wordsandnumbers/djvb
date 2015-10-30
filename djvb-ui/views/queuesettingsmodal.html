@@ -4,12 +4,12 @@
           <button class="button button-clear button-primary" ng-click="vm.queueSettingsModal.hide()">Cancel</button>
         </ion-header-bar>
         <ion-content class="padding">
-          <!-- <div class="item item-button-right">
-          	Lights
-          	<button class="button" ng-click="vm.deleteQueue()">Off</button>
-          	<button class="button" ng-click="vm.deleteQueue()">Low</button>
-          	<button class="button" ng-click="vm.deleteQueue()">High</button>
-          </div> -->
+          	<h4>Lights</h4>
+          	<div class="button-bar">
+	          	<button class="button" ng-click="vm.setLights(0)" ng-class="{'active':vm.level===0}"><i class="icon ion-ios-lightbulb"></i> Off</button>
+	          	<button class="button" ng-click="vm.setLights(1)" ng-class="{'active':vm.level===1}"><i class="icon ion-ios-lightbulb-outline"></i> Low</button>
+	          	<button class="button" ng-click="vm.setLights(2)" ng-class="{'active':vm.level===2}"><i class="icon ion-ios-lightbulb-outline"></i><i class="icon ion-ios-lightbulb-outline"></i> High</button>
+          	</div>
         </ion-content>
 		<ion-footer-bar class="bar bar-footer">
             <button class="button icon-left ion-close button-assertive" ng-if="vm.queues.length > 0" ng-click="vm.deleteQueue()"> Leave the Room</button>
