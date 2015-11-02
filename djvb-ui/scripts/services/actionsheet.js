@@ -117,9 +117,9 @@ define(['angular'], function (angular) {
 	
 		function playlistsAction(song) {
 			$ionicActionSheet.show({
-				buttons : _.map(playlists, function(playlist) {
+				buttons : _.sortBy(_.map(playlists, function(playlist) {
 					return {text: playlist.name, playlist: playlist};
-				}),
+				}), 'text'),
 				titleText : song.artist + ' - ' + song.title + '<br>Add to Playlist:',
 				cancelText : 'Cancel',
 				buttonClicked : function(index, button) {

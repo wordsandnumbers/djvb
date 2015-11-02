@@ -21,6 +21,7 @@ define(['angular'], function (angular) {
 			getPlaylist: getPlaylist, 
 			createPlaylist: createPlaylist, 
 			updatePlaylist: updatePlaylist, 
+			deletePlaylist: deletePlaylist, 
 			addSongToPlaylist: addSongToPlaylist, 
 			deleteSongFromPlaylist: deleteSongFromPlaylist, 
 			getFavorites: getFavorites, 
@@ -82,7 +83,20 @@ define(['angular'], function (angular) {
 				$http.put('/api/v1/playlists/', playlist).then(function(response) {
 					var foundPlaylist = _.find(playlists, {id: playlist.id});
 					Array.prototype.splice.apply(foundPlaylist.songs, [0, foundPlaylist.songs.length].concat(response.data.songs));
+					foundPlaylist.name = response.data.name;
 					resolve(foundPlaylist);
+				}, function(response) {
+					reject(response);
+				});
+			});
+		}
+		
+		function deletePlaylist(playlist) {
+			return $q(function(resolve, reject) {
+				$http.delete('/api/v1/playlists/', {headers: {'Content-Type': 'application/json'}, data: playlist}).then(function(response) {
+					var foundIndex = _.findIndex(playlists, {id: playlist.id});
+					playlists.splice(foundIndex, 1);
+					resolve();
 				}, function(response) {
 					reject(response);
 				});

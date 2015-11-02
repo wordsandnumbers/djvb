@@ -3,7 +3,7 @@
         <button class="button button-clear" ng-click="vm.filterSearch()"><i class="icon ion-ios-list"></i></button>
     </ion-nav-buttons>-->
     <ion-content class="has-header">
-        <form ng-submit="$event.preventDefault();vm.search(vm.searchString);" action=".">
+        <form ng-submit="$event.preventDefault();vm.search(vm.searchString);vm.searchComplete=true;" action=".">
             <div class="item item-input-inset">
                 <label class="item-input-wrapper">
                     <input type="search" name="search" ng-model="vm.searchString" placeholder="Search by Title or Artist" autocomplete="off">

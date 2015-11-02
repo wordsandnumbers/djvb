@@ -1,9 +1,11 @@
 <ion-view>
 	<ion-nav-title>{{vm.playlist.name}}</ion-nav-title>
-    <!-- <ion-nav-buttons side="secondary">
-	    <button class="button button-icon icon ion-navicon" title="Reorder"
+    <ion-nav-buttons side="secondary">
+		<button class="button button-clear button-stable button-icon icon ion-more" title="Playlist options"
+	      ng-click="vm.playlistMenu()"></button>
+<!-- 	    <button class="button button-icon icon ion-navicon" title="Reorder"
 	      ng-click="vm.data.showReorder = !vm.data.showReorder" ng-if="vm.playlist.songs.length>0"></button>
-    </ion-nav-buttons> -->
+ -->    </ion-nav-buttons>
 	<ion-content class="has-header">
 		<div class="card" ng-if="vm.playlist.songs.length === 0">
 			<div class="item item-text-wrap text-center">

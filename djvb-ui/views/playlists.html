@@ -4,6 +4,11 @@
 	      ng-click="vm.newPlaylistPopup()"></button>
     </ion-nav-buttons>
 	<ion-content class="has-header">
+		<div class="card" ng-if="vm.playlists.length === 0">
+			<div class="item item-text-wrap text-center">
+				You don't have any playlists.
+			</div>
+		</div>
 		<ion-list>
 			<ion-item class="item-icon-right" ng-repeat="playlist in vm.playlists | orderBy:'name'" href="#playlists/{{playlist.id}}">
 				{{playlist.name}}
