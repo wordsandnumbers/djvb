@@ -19,6 +19,7 @@ import com.vpo.djvoxbox.domain.User;
 import com.vpo.djvoxbox.domain.UserQueue;
 import com.vpo.djvoxbox.domain.UserQueueRepository;
 import com.vpo.djvoxbox.domain.UserRepository;
+import com.vpo.djvoxbox.util.SessionUtils;
 import com.vpo.vbclient.model.Play;
 import com.vpo.vbclient.model.Queue;
 import com.vpo.vbclient.model.Session;
@@ -52,6 +53,13 @@ public class QueueController {
 	public void lights(@PathVariable("roomCode") String code, @PathVariable("level") Integer level) {
 		sessionClient.controlLights(code, level);
 	}
+	
+	@RequestMapping(value="/popup/{roomcode}/", method=RequestMethod.POST)
+	public void popup(Principal principal, @PathVariable("roomCode") String roomCode, @RequestBody String message) {
+		User user = userRepository.findById(principal.getName());
+		sessionClient.postPopup(SessionUtils.makeSession(user), roomCode, message);
+	}
+	
 	
 	@RequestMapping(value="/join", method=RequestMethod.POST)
 	public @ResponseBody UserQueue createUserQueue(@RequestBody QueueRequest request, Principal principal) {
