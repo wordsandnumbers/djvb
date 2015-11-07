@@ -25,6 +25,7 @@ public class User {
 	private String screenName;
 	private String savedListsId;
 	private String sessionId;
+	private String color;
 	
 	
 	public User() {
@@ -111,6 +112,14 @@ public class User {
 
 	public void setSessionId(String sessionId) {
 		this.sessionId = sessionId;
+	}
+
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
 	}
 	
 	

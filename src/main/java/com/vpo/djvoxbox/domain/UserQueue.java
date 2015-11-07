@@ -42,6 +42,8 @@ public class UserQueue {
 	private boolean active;
 	private Session session;
 	private String organization;
+	private String mode;
+	private Integer queueInterval;
 	
 	public String getId() {
 		return id;
@@ -92,6 +94,21 @@ public class UserQueue {
 		this.organization = organization;
 	}
 	
+	// rules mode is "the rules"
+	// manual mode will allow instant plays, queue manager will only manage activity and refresh the userqueued
+	// metered mode will play every X songs as set in the queue
+	public String getMode() {
+		return mode;
+	}
+	public void setMode(String mode) {
+		this.mode = mode;
+	}
+	public Integer getQueueInterval() {
+		return queueInterval;
+	}
+	public void setQueueInterval(Integer queueInterval) {
+		this.queueInterval = queueInterval;
+	}
 	public Play addSongToQueue(Song song) {
 		Play p = playFromSong(song);
 		this.queue.add(p);

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.vpo.djvoxbox.domain.User;
 import com.vpo.djvoxbox.domain.UserRepository;
+import com.vpo.djvoxbox.util.SessionUtils;
 import com.vpo.vbclient.model.Session;
 import com.vpo.vbclient.song.Search;
 import com.vpo.vbclient.song.SongClient;
@@ -34,7 +35,7 @@ public class SearchController {
 	public @ResponseBody Search findSongs(@RequestParam Map<String,String> params, Principal principal) {
 		User user = userRepository.findById(principal.getName());
 		Search search = createSearch(params);
-		search.setSession(makeSession(user));
+		search.setSession(SessionUtils.makeSession(user));
 		return songClient.findSongs(search);
 		
 	}
@@ -43,20 +44,9 @@ public class SearchController {
 	public @ResponseBody Search browseSongs(@RequestParam Map<String,String> params, Principal principal) {
 		User user = userRepository.findById(principal.getName());
 		Search search = createSearch(params);
-		search.setSession(makeSession(user));
+		search.setSession(SessionUtils.makeSession(user));
 		return songClient.findSongs(search);
 		
-	}
-
-
-	private Session makeSession(User user) {
-		
-		Session s = new Session();
-		if(user.getSessionId() != null) {
-			s.setSession(user.getSessionId());
-		}
-		s.setHideHandle(false);
-		return s;
 	}
 
 	
@@ -64,7 +54,7 @@ public class SearchController {
 	public @ResponseBody Search getFavorites(@RequestParam Map<String,String> params, Principal principal) {
 		User user = userRepository.findById(principal.getName());
 		Search search = createSearch(params);
-		search.setSession(makeSession(user));
+		search.setSession(SessionUtils.makeSession(user));
 		search.setFavorites(true);
 		return songClient.findSongs(search);
 		
@@ -74,7 +64,7 @@ public class SearchController {
 	public @ResponseBody Search getHistory(@RequestParam Map<String,String> params, Principal principal) {
 		User user = userRepository.findById(principal.getName());
 		Search search = createSearch(params);
-		search.setSession(makeSession(user));
+		search.setSession(SessionUtils.makeSession(user));
 		search.setPlayHistory(true);
 		return songClient.findSongs(search);
 		

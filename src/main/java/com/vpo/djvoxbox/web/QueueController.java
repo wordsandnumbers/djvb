@@ -123,12 +123,16 @@ public class QueueController {
 		Session s = sessionClient.getSessionById(user.getSessionId());
 		Play[] queuedArray = queued.toArray(new Play[queued.size()]);
 		Play oldPlay = null;
-		for (Play play : queuedArray) {
-			if(play.getPlayId().equals(request.getTo())) {
-				newPlay = queueClient.replace(request.getRoomCode(), play, request, s);
-				uq.getQueued().remove(play);
-				oldPlay = play;
+		if(request.getTo() != null) {
+			for (Play play : queuedArray) {
+				if(play.getPlayId().equals(request.getTo())) {
+					newPlay = queueClient.replace(request.getRoomCode(), play, request, s);
+					uq.getQueued().remove(play);
+					oldPlay = play;
+				}
 			}
+		} else if(uq.getMode().equals("manual")) {
+			newPlay = queueClient.addSong(request, s);
 		}
 		if(newPlay != null) {
 			uq.getQueued().add(newPlay);

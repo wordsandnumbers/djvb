@@ -91,12 +91,34 @@ public class QueueManagementService {
 					uq.getQueued().remove(i--);
 				}
 			}
-			if(playCount == 0 && uq.getQueue().size() != 0) {
-				playNext(uq);
+			switch (uq.getMode()) {
+			// put in a song as soon as there are at least X songs after you in the queue
+			case "metered":
+				if(playCount == 0 && uq.getQueue().size() != 0) {
+					playNext(uq);
+				} else if (playCount != 0 && uq.getQueue().size() != 0) {
+					Play lastPlay = uq.getQueued().get(uq.getQueued().size()-1);
+					if(lastPlay != null) {
+						Integer location =  q.getQueue().getQueue().indexOf(lastPlay);
+						if(location != null && uq.getQueueInterval() != null
+								&& (q.getQueue().getQueue().size() - (location + 1) >= uq.getQueueInterval())) {
+							playNext(uq);
+						}
+					}
+					
+				}
+				break;
+			case "manual":
+				// we don't do anything in manual mode
+				break;
 
-			} else if (playCount != 0 && uq.getQueue().size() != 0) {
-				// TODO: look up if we want to add 1 song per X songs and do it...
+			default:
+				if(playCount == 0 && uq.getQueue().size() != 0) {
+					playNext(uq);
+				}
+				break;
 			}
+			
 			userQueueRepository.save(uq);
 		}
 		

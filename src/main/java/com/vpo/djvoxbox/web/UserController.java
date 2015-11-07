@@ -110,6 +110,7 @@ public class UserController {
 		lUser.setEmail(user.getEmail());
 		lUser.setName(user.getName());
 		lUser.setScreenName(user.getScreenName());
+		lUser.setColor(user.getColor());
 		
 		userRepository.save(lUser);
 		Session session = createOrUpdateSessionForUser(lUser);
@@ -126,6 +127,9 @@ public class UserController {
 		if(session != null) {
 			if(user.getScreenName() != null && !user.getScreenName().isEmpty()) {
 				session.setHandle(user.getScreenName());
+			}
+			if(user.getColor() != null && !user.getColor().isEmpty()) {
+				session.setColor(user.getColor());
 			}
 			return sessionClient.updateSession(session);
 		}
