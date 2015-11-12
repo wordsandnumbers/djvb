@@ -47,7 +47,7 @@ module.exports = function (grunt) {
       },
       styles: {
         files: ['<%= yeoman.app %>/styles/{,*/}*.css'],
-        tasks: ['newer:copy:styles', 'autoprefixer']
+        tasks: ['newer:copy:styles']
       },
       gruntfile: {
         files: ['Gruntfile.js']
@@ -156,32 +156,6 @@ module.exports = function (grunt) {
       server: '.tmp'
     },
 
-    // Add vendor prefixed styles
-    autoprefixer: {
-      options: {
-        browsers: ['last 1 version']
-      },
-      server: {
-        options: {
-          map: true,
-        },
-        files: [{
-          expand: true,
-          cwd: '.tmp/styles/',
-          src: '{,*/}*.css',
-          dest: '.tmp/styles/'
-        }]
-      },
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '.tmp/styles/',
-          src: '{,*/}*.css',
-          dest: '.tmp/styles/'
-        }]
-      }
-    },
-
     // Automatically inject Bower components into the app
     wiredep: {
       app: {
@@ -229,6 +203,9 @@ module.exports = function (grunt) {
     // minification. These next options are pre-configured if you do not wish
     // to use the Usemin blocks.
      cssmin: {
+       options: {
+    	 advanced: false
+       },
        dist: {
          files: {
            '<%= yeoman.dist %>/styles/main.css': [
@@ -462,7 +439,6 @@ module.exports = function (grunt) {
       'clean:server',
       'wiredep',
       'concurrent:server',
-      // 'autoprefixer:server',
       'connect:livereload',
       'watch'
     ]);
@@ -479,7 +455,6 @@ module.exports = function (grunt) {
     'replace:test',
     'wiredep',
     'concurrent:test',
-    // 'autoprefixer',
     'connect:test'/*,
     'karma'*/
   ]);
@@ -491,7 +466,6 @@ module.exports = function (grunt) {
     'replace:test',
     'useminPrepare',
     'concurrent:dist',
-    // 'autoprefixer',
     'concat',
     'ngAnnotate',
     'copy:dist',
