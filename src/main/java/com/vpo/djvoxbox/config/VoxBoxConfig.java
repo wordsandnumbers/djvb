@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.session.data.redis.config.ConfigureRedisAction;
 import org.springframework.web.client.RestTemplate;
 
+import com.vpo.djvoxbox.security.web.authentication.SpringSessionRememberMeServices;
 import com.vpo.vbclient.queue.QueueClient;
 import com.vpo.vbclient.session.SessionClient;
 import com.vpo.vbclient.song.SongClient;
@@ -43,12 +44,17 @@ public class VoxBoxConfig {
 	}
 	
 	@Bean
-	QueueClient queuClient() {
+	QueueClient queueClient() {
 		if(vbOrganization.isEmpty()) {
 			return new QueueClient();
 		} else {
 			return new QueueClient(null, vbOrganization);
 		}
+	}
+	
+	@Bean
+	public static SpringSessionRememberMeServices springSessionRememberMeServices() {
+		return new SpringSessionRememberMeServices();
 	}
 	
 	@Bean

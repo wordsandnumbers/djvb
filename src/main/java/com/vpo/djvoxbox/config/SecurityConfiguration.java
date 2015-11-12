@@ -28,6 +28,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
 
 import com.vpo.djvoxbox.security.authentication.DigitsAuthenticationProvider;
+import com.vpo.djvoxbox.security.web.authentication.SpringSessionRememberMeServices;
 
 @Configuration
 @Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
@@ -35,6 +36,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private DigitsAuthenticationProvider digitsAuthenticationProvider;
+	
+	@Autowired private static SpringSessionRememberMeServices springSessionRememberMeServices;
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
@@ -81,7 +84,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		protected void configure(HttpSecurity http) throws Exception {
 			http.antMatcher("/api/**")
 			.authorizeRequests()
-			.anyRequest().authenticated();
+			.anyRequest().authenticated()
+			.and().rememberMe()
+			.rememberMeServices(springSessionRememberMeServices);
 			
 			configureCsrf(http, csrfDisabled)
 				.exceptionHandling()

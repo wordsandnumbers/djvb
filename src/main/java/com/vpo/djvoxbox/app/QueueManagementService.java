@@ -91,7 +91,8 @@ public class QueueManagementService {
 					uq.getQueued().remove(i--);
 				}
 			}
-			switch (uq.getMode()) {
+			String mode = (uq.getMode() != null) ? uq.getMode() : "default";
+			switch (mode) {
 			// put in a song as soon as there are at least X songs after you in the queue
 			case "metered":
 				if(playCount == 0 && uq.getQueue().size() != 0) {
