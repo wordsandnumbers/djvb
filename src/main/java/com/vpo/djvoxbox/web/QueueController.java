@@ -73,10 +73,11 @@ public class QueueController {
 				uq = new UserQueue(request.getRoomCode());
 				uq.setOrganization(vbOrganization);
 				uq.setOwnerId(user.getIdentifier());
-				Session s = sessionClient.getSessionById(user.getSessionId());
-				uq.setSession(s);
-				userQueueRepository.save(uq);
-			}
+			} 
+			uq.setMode(request.getMode());
+			Session s = sessionClient.getSessionById(user.getSessionId());
+			uq.setSession(s);
+			userQueueRepository.save(uq);
 		}
 		return uq;
 	}
@@ -230,6 +231,7 @@ public class QueueController {
 		}
 
 		private String roomCode;
+		private String mode;
 
 		public String getRoomCode() {
 			return roomCode;
@@ -237,6 +239,14 @@ public class QueueController {
 
 		public void setRoomCode(String roomCode) {
 			this.roomCode = roomCode;
+		}
+
+		public String getMode() {
+			return mode;
+		}
+
+		public void setMode(String mode) {
+			this.mode = mode;
 		}
 		
 	}
