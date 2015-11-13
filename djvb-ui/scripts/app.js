@@ -28,12 +28,8 @@ function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, User
 			'djvbApp.controllers.FavoritesCtrl',
 			'djvbApp.services.ActionSheetSvc',
 /*angJSDeps*/
-            'ngCookies',
-            'ngResource',
             'ngSanitize',
-            'ngRoute',
             'ngAnimate',
-            'ngTouch',
             'ionic',
             'ui.router'
         ])
