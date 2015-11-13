@@ -1,10 +1,14 @@
 package com.vpo.djvoxbox.config;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
+import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
+import org.springframework.boot.context.embedded.MimeMappings;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.session.data.redis.config.ConfigureRedisAction;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import com.vpo.djvoxbox.security.web.authentication.SpringSessionRememberMeServices;
@@ -60,5 +64,16 @@ public class VoxBoxConfig {
 	@Bean
 	public static ConfigureRedisAction configureRedisAction() {
 	    return ConfigureRedisAction.NO_OP;
+	}
+	
+	@Component
+	public static class ServletCustomizer implements EmbeddedServletContainerCustomizer {
+
+	    @Override
+	    public void customize(ConfigurableEmbeddedServletContainer container) {
+	        MimeMappings mappings = new MimeMappings(MimeMappings.DEFAULT);
+	        mappings.add("ttf","application/x-font-truetype");
+	        container.setMimeMappings(mappings);
+	    }
 	}
 }
