@@ -16,5 +16,7 @@
 			    </ion-reorder-button>
 			</ion-item>
 		</ion-list>
+		<ion-infinite-scroll on-infinite="vm.nextPage()" distance="5%" ng-if="vm.hasMoreData()">
+		</ion-infinite-scroll>
 	</ion-content>
 </ion-view>

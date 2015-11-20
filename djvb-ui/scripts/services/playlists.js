@@ -126,10 +126,18 @@ define(['angular'], function (angular) {
 			});
 		}
 		
-		function getFavorites() {
+		function getFavorites(params) {
+			if (params === undefined) {
+				params = {'per_page': 25};
+			}
 			return $q(function(resolve, reject) {
-				$http.get('/api/v1/songs/favorites', {'per_page': 20}).then(function(response) {
-					favorites = response.data;
+				$http.get('/api/v1/songs/favorites', {'params': params}).then(function(response) {
+					if (favorites === undefined) {
+						favorites = response.data;
+					} else {
+						Array.prototype.splice.apply(favorites.songs, [favorites.songs.length-1].concat(response.data.songs));
+					}
+					angular.extend(favorites, params);
 					resolve(favorites);
 				}, function(response) {
 					reject(response);
@@ -143,9 +151,15 @@ define(['angular'], function (angular) {
 					'per_page': (pagedCollection.per_page || 20),
 					'page': (pagedCollection.page || 0) + 1
 				}
-				getPlayHistory(params).then(function(response) {
-					resolve(response);
-				});
+				if (pagedCollection.plays !== null) {
+					getPlayHistory(params).then(function(response) {
+						resolve(response);
+					});
+				} else {
+					getFavorites(params).then(function(response) {
+						resolve(response);
+					});
+				}
 			});
 		}
 		
