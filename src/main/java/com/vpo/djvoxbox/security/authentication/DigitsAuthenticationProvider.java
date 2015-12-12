@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -38,6 +39,7 @@ public class DigitsAuthenticationProvider implements AuthenticationProvider {
 	@Override
 	public Authentication authenticate(Authentication authenticate)
 			throws AuthenticationException {
+		// this is either the actual apiUrl, if digits, or else the email address
 		String apiUrl = authenticate.getName();
 		String authHeader = authenticate.getCredentials().toString();
 		authenticate = null;
@@ -47,8 +49,12 @@ public class DigitsAuthenticationProvider implements AuthenticationProvider {
 			grantedAuths.add(new SimpleGrantedAuthority(user.getRole()));
 			authenticate = new UsernamePasswordAuthenticationToken(user.getId(), authHeader, grantedAuths);
 		} else {
-			// one time user
-			User user = userRepository.save(new User(UUID.randomUUID().toString(), null, apiUrl));
+			// email only
+			String email = apiUrl;
+			User user = userRepository.findByIdentifier(email);
+			if(user == null) {
+				user = userRepository.save(new User(email, null, email));
+			} 
 			List<GrantedAuthority> grantedAuths = new ArrayList<>();
 			grantedAuths.add(new SimpleGrantedAuthority(user.getRole()));
 			authenticate = new UsernamePasswordAuthenticationToken(user.getId(), user.getEmail(), grantedAuths);
