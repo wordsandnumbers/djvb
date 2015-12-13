@@ -35,25 +35,30 @@ public class DigitsAuthenticationProvider implements AuthenticationProvider {
 	@Autowired RestTemplate restTemplate;
 	@Value("${digits.consumer.key}")
 	private String digitsConsumerKey;
+	@Value("${vb.organization}")
+	private String vbOrganization;
 	
 	@Override
 	public Authentication authenticate(Authentication authenticate)
 			throws AuthenticationException {
+		// if the organization is not empty, add a delimiter
+		String organization = (vbOrganization == null || vbOrganization.isEmpty()) ? "" : "|" + vbOrganization;
 		// this is either the actual apiUrl, if digits, or else the email address
 		String apiUrl = authenticate.getName();
 		String authHeader = authenticate.getCredentials().toString();
 		authenticate = null;
 		if(isDigits(apiUrl, authHeader)) {
-			User user = lookupOrCreateDigitsUser(apiUrl, authHeader);
+			User user = lookupOrCreateDigitsUser(apiUrl, authHeader, organization);
 			List<GrantedAuthority> grantedAuths = new ArrayList<>();
 			grantedAuths.add(new SimpleGrantedAuthority(user.getRole()));
 			authenticate = new UsernamePasswordAuthenticationToken(user.getId(), authHeader, grantedAuths);
 		} else {
 			// email only
 			String email = apiUrl;
-			User user = userRepository.findByIdentifier(email);
+			String identifier = email + "|" + organization;
+			User user = userRepository.findByIdentifier(identifier);
 			if(user == null) {
-				user = userRepository.save(new User(email, null, email));
+				user = userRepository.save(new User(identifier, null, email));
 			} 
 			List<GrantedAuthority> grantedAuths = new ArrayList<>();
 			grantedAuths.add(new SimpleGrantedAuthority(user.getRole()));
@@ -62,7 +67,7 @@ public class DigitsAuthenticationProvider implements AuthenticationProvider {
 		return authenticate;
 	}
 
-	private User lookupOrCreateDigitsUser(String apiUrl, String authHeader) {
+	private User lookupOrCreateDigitsUser(String apiUrl, String authHeader, String organization) {
 		boolean uri_valid = true;
 		URI uri = null;
 		try {
@@ -76,9 +81,10 @@ public class DigitsAuthenticationProvider implements AuthenticationProvider {
 			headers.set("authorization", authHeader);
 			HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
 			ResponseEntity<DigitsResponse> response = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, DigitsResponse.class);
-			User user = userRepository.findByIdentifier(response.getBody().getId());
+			String identifier = response.getBody().getId() + organization;
+			User user = userRepository.findByIdentifier(identifier);
 			if(user == null) {
-				user = userRepository.save(new User(response.getBody().getId(), response.getBody().getPhoneNumber(), null));
+				user = userRepository.save(new User(identifier, response.getBody().getPhoneNumber(), null));
 			}
 			return user;
 		} else {
