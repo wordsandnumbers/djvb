@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.session.data.redis.config.ConfigureRedisAction;
+import org.springframework.session.web.http.CookieSerializer;
+import org.springframework.session.web.http.DefaultCookieSerializer;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -65,6 +67,15 @@ public class VoxBoxConfig {
 	public static ConfigureRedisAction configureRedisAction() {
 	    return ConfigureRedisAction.NO_OP;
 	}
+	
+	@Bean
+    public CookieSerializer cookieSerializer() {
+            DefaultCookieSerializer serializer = new DefaultCookieSerializer();
+            serializer.setCookieName("JSESSIONID"); 
+            serializer.setCookiePath("/"); 
+            serializer.setCookieMaxAge(31557600);; 
+            return serializer;
+    }
 	
 	@Component
 	public static class ServletCustomizer implements EmbeddedServletContainerCustomizer {
