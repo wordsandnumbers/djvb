@@ -55,7 +55,7 @@ public class DigitsAuthenticationProvider implements AuthenticationProvider {
 		} else {
 			// email only
 			String email = apiUrl;
-			String identifier = email + "|" + organization;
+			String identifier = email + organization;
 			User user = userRepository.findByIdentifier(identifier);
 			if(user == null) {
 				user = userRepository.save(new User(identifier, null, email));
