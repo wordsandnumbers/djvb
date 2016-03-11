@@ -35,91 +35,52 @@ define(['angular', 'digits'], function (angular, Digits) {
 		};
 	})
 	.controller('LoginCtrl', function ($rootScope, $log, $http, $httpParamSerializer, $location, $ionicPopup, $ionicLoading, UserSvc) {
-            var vm = this;
-            vm.digitsLogin = digitsLogin;
-            vm.emailLogin = emailLogin;
+        var vm = this;
+        vm.digitsLogin = digitsLogin;
+        vm.emailLogin = emailLogin;
+    
+        function digitsLogin(event) {
+            Digits.logIn({
+            	callbackURL: $location.protocol() + '://' + $location.host() + ':'
+            	+ $location.port() + '/resources/index.html#digitscallback'
+            });
+        }
+                
+        function emailLogin() {
+        	$ionicLoading.show();
 
-            function digitsLogin(event) {
-            	$ionicLoading.show();
-
-                Digits.logIn()
-                .done(onLogin) /*handle the response*/
-                .fail(onLoginFailure);
-            }
-
-            function onLogin(loginResponse){
-                // Send headers to your server and validate user by calling Digits’ API
-                var oAuthHeaders = loginResponse.oauth_echo_headers;
-                var verifyData = {
-                    'authHeader': oAuthHeaders['X-Verify-Credentials-Authorization'],
-                    'apiUrl': oAuthHeaders['X-Auth-Service-Provider']
-                };
-
-				$http({
-					method : 'POST',
-					url : '/login/login',
-					headers : {
-						'Content-Type' : 'application/x-www-form-urlencoded'
-					},
-					data : $httpParamSerializer(verifyData)
-				}).then(function(response) {
-                    $rootScope.authenticated = true;
-					checkUser();
-				}, function(response) {
-                    $rootScope.authenticated = false;
-                    $ionicLoading.hide();
-					$ionicPopup.alert({
-						title: "Error",
-						template: JSON.stringify(response.data)
-					});
-				});
-			}
-
-            function onLoginFailure() {
-                $rootScope.authenticated = false;
+			$http({
+				method : 'POST',
+				url : '/login/login',
+				headers : {
+					'Content-Type' : 'application/x-www-form-urlencoded'
+				},
+				data : $httpParamSerializer({'apiUrl':vm.email})
+			}).then(function(response) {
+				checkUser();
+			}, function(response) {
                 $ionicLoading.hide();
 				$ionicPopup.alert({
 					title: "Error",
-					template: "Couldn't do Digits login."
+					template: JSON.stringify(response.data)
 				});
-            }
-            
-            function emailLogin() {
-            	$ionicLoading.show();
-
-				$http({
-					method : 'POST',
-					url : '/login/login',
-					headers : {
-						'Content-Type' : 'application/x-www-form-urlencoded'
-					},
-					data : $httpParamSerializer({'apiUrl':vm.email})
-				}).then(function(response) {
-					checkUser();
-				}, function(response) {
-	                $ionicLoading.hide();
-					$ionicPopup.alert({
-						title: "Error",
-						template: JSON.stringify(response.data)
-					});
+			});
+        }
+        
+        function checkUser() {
+    		UserSvc.getUser().then(function(user) {
+                $ionicLoading.hide();
+    			if (_.isEmpty(user.screenName) || _.isEmpty(user.email)) {
+	    			UserSvc.showSettingsModal();
+    			}
+    			$location.url('/home');
+    		}, function(response) {
+                $ionicLoading.hide();
+				$ionicPopup.alert({
+					title: "Error",
+					template: JSON.stringify(response.data)
 				});
-            }
-            
-            function checkUser() {
-	    		UserSvc.getUser().then(function(user) {
-	                $ionicLoading.hide();
-	    			if (_.isEmpty(user.screenName) || _.isEmpty(user.email)) {
-		    			UserSvc.showSettingsModal();
-	    			}
-	    			$location.url('/home');
-	    		}, function(response) {
-	                $ionicLoading.hide();
-					$ionicPopup.alert({
-						title: "Error",
-						template: JSON.stringify(response.data)
-					});
-	    		});
-            }
-
-		});
+    		});
+        }
+	});
 });

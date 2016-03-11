@@ -29,7 +29,7 @@ define(['angular'], function (angular) {
 			getPlayHistory: getPlayHistory, 
 			getPlayHistoryList: getPlayHistoryList, 
 			nextPage: nextPage
-		}
+		};
 
 		function getPlaylists() {
 			return $q(function(resolve, reject) {
@@ -150,8 +150,8 @@ define(['angular'], function (angular) {
 				var params = {
 					'per_page': (pagedCollection.per_page || 20),
 					'page': (pagedCollection.page || 0) + 1
-				}
-				if (pagedCollection.plays !== null) {
+				};
+				if (pagedCollection.playHistory === true) {
 					getPlayHistory(params).then(function(response) {
 						resolve(response);
 					});

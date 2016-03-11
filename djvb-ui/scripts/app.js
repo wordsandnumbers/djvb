@@ -1,6 +1,6 @@
 /*jshint unused: vars */
-define(['angular', 'controllers/about', 'controllers/search', 'controllers/login', 'controllers/home', 'services/user', 'controllers/usersetup', 'services/queue', 'controllers/queue', 'services/playlists', 'controllers/playlists', 'controllers/playlist', 'controllers/playhistory', 'controllers/favorites', 'services/actionsheet']/*deps*/,
-function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, UserSetupCtrl, QueueService, QueueCtrl, PlaylistsService, PlaylistsCtrl, PlaylistCtrl, PlayHistoryCtrl, FavoritesCtrl, ActionSheetService)/*invoke*/{
+define(['angular', 'controllers/about', 'controllers/search', 'controllers/login', 'controllers/home', 'services/user', 'controllers/usersetup', 'services/queue', 'controllers/queue', 'services/playlists', 'controllers/playlists', 'controllers/playlist', 'controllers/playhistory', 'controllers/favorites', 'controllers/digitscallback', 'services/actionsheet']/*deps*/,
+function (angular)/*invoke*/{
     'use strict';
 
     /**
@@ -26,23 +26,24 @@ function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, User
 			'djvbApp.controllers.PlaylistCtrl',
 			'djvbApp.controllers.PlayHistoryCtrl',
 			'djvbApp.controllers.FavoritesCtrl',
+			'djvbApp.controllers.DigitsCallbackCtrl',
 			'djvbApp.services.ActionSheetSvc',
-/*angJSDeps*/
+			/*angJSDeps*/
             'ngSanitize',
             'ngAnimate',
             'ionic',
             'ui.router'
         ])
-        .run(function ($rootScope, $ionicPlatform, $location, UserSvc) {
+        .run(function ($rootScope, $ionicPlatform, $location, UserSvc, $state) {
 
             $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
             	UserSvc.getUser().then(function() {
                     // Don't allow login route if authenticated.
                 	if (toState.url === '/login' && $rootScope.authenticated === true) {
-                        $location.path('/home');
+                        $state.go('home');
                     // Route to login if not authenticated.
                 	} else if (toState.url !== '/login' && $rootScope.authenticated === false) {
-                		$location.path('/login');
+                		$state.go('login', fromParams);
                 	}
             	})
             });
@@ -64,12 +65,13 @@ function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, User
         })
         .config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
     		// Globablly intercept response, redirect to login if not authorized for API
-    		$httpProvider.interceptors.push(function($q, $location, $rootScope) {
+    		$httpProvider.interceptors.push(function($q, $location, $rootScope, $injector, $stateParams) {
     			return {
     				responseError: function(response) {
     					if (response.status === 401) {
     						$rootScope.authenticated = false;
-    						$location.url('/login')
+    						var $state = $injector.get('$state');
+    						$state.go('login', $state.params);
     					}
     					return $q.reject(response);
     				}
@@ -86,6 +88,10 @@ function (angular, AboutCtrl, SearchCtrl, LoginCtrl, HomeCtrl, UserService, User
                 url: '/login',
                 templateUrl: 'views/login.html', 
                 controller: 'LoginCtrl as vm'
+            })
+            .state('digitscallback', {
+                url: '/digitscallback?X-Verify-Credentials-Authorization&X-Auth-Service-Provider',
+                controller: 'DigitsCallbackCtrl as vm'
             })
             .state('tabs.setup', {
                 url: '/setup',

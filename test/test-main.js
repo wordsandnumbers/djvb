@@ -22,11 +22,7 @@ requirejs.config({
     lodash: '../../bower_components/lodash/lodash',
     digits: 'https://cdn.digits.com/1/sdk',
     'angular-aria': '../../bower_components/angular-aria/angular-aria',
-    'angular-cookies': '../../bower_components/angular-cookies/angular-cookies',
-    'angular-mocks': '../../bower_components/angular-mocks/angular-mocks',
-    'angular-resource': '../../bower_components/angular-resource/angular-resource',
-    'angular-route': '../../bower_components/angular-route/angular-route',
-    'angular-touch': '../../bower_components/angular-touch/angular-touch'
+    'angular-mocks': '../../bower_components/angular-mocks/angular-mocks'
   },
 
     shim: {
