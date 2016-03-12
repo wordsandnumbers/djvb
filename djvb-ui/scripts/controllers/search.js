@@ -8,7 +8,7 @@ define(['angular', 'lodash'], function (angular, _) {
    * # SearchCtrl
    * Controller of the djvbApp
    */
-  angular.module('djvbApp.controllers.SearchCtrl', [])
+  angular.module('djvbApp.controllers.SearchCtrl', ['ngStorage'])
   .directive('focusMe', function($timeout) {
 	  return {
 	    scope: { trigger: '=focusMe' },
@@ -43,12 +43,24 @@ define(['angular', 'lodash'], function (angular, _) {
      }
    };
 })
-.controller('SearchCtrl', function ($scope, $log, $http, $ionicScrollDelegate, $ionicLoading, $ionicPopup, ActionSheetSvc) {
+.controller('SearchCtrl', function (
+	$scope, 
+	$log, 
+	$http, 
+	$ionicScrollDelegate, 
+	$ionicLoading, 
+	$ionicPopup, 
+	ActionSheetSvc,
+	$localStorage
+	) {
         var vm = this;
         vm.searchString = '';
         vm.searchResults;
         vm.songGroups = {};
-        vm.recentSearches = [];
+        $localStorage.$default({
+        	recentSearches: []
+        });
+        vm.recentSearches = $localStorage.recentSearches;
         vm.noResults = false;
         vm.searchComplete = false;
         vm.search = search;

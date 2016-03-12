@@ -10,7 +10,8 @@ require.config({
     lodash: '../../bower_components/lodash/lodash',
     digits: 'https://cdn.digits.com/1/sdk',
     'angular-aria': '../../bower_components/angular-aria/angular-aria',
-    'angular-mocks': '../../bower_components/angular-mocks/angular-mocks'
+    'angular-mocks': '../../bower_components/angular-mocks/angular-mocks',
+    ngstorage: '../../bower_components/ngstorage/ngStorage'
   },
   shim: {
     angular: {
@@ -34,7 +35,10 @@ require.config({
     ],
     'angular-ui-router': [
       'angular'
-    ]
+    ],
+    'ngstorage': [
+      'angular'
+    ]             
   },
   priority: [
     'angular'
@@ -56,8 +60,9 @@ require([
   'ionic-angular', 
   'angular-ui-router', 
   'lodash', 
-  'digits'
-], function(angular, app, ngSanitize, ngAnimate, ionic, ngIonic, ngRouter, _, Digits) {
+  'digits',
+  'ngstorage'
+], function(angular, app, ngSanitize, ngAnimate, ionic, ngIonic, ngRouter, _, Digits, ngStorage) {
   'use strict';
   /* jshint ignore:start */
     

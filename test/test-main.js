@@ -22,7 +22,8 @@ requirejs.config({
     lodash: '../../bower_components/lodash/lodash',
     digits: 'https://cdn.digits.com/1/sdk',
     'angular-aria': '../../bower_components/angular-aria/angular-aria',
-    'angular-mocks': '../../bower_components/angular-mocks/angular-mocks'
+    'angular-mocks': '../../bower_components/angular-mocks/angular-mocks',
+    ngstorage: '../../bower_components/ngstorage/ngStorage'
   },
 
     shim: {
