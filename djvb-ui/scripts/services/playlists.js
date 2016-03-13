@@ -135,7 +135,7 @@ define(['angular'], function (angular) {
 					if (favorites === undefined) {
 						favorites = response.data;
 					} else {
-						Array.prototype.splice.apply(favorites.songs, [favorites.songs.length-1].concat(response.data.songs));
+						Array.prototype.splice.apply(favorites.songs, [favorites.songs.length, 0].concat(response.data.songs));
 					}
 					angular.extend(favorites, params);
 					resolve(favorites);
@@ -186,7 +186,7 @@ define(['angular'], function (angular) {
 					if (playHistory === undefined) {
 						playHistory = response.data;
 					} else {
-						Array.prototype.splice.apply(playHistory.plays, [playHistory.plays.length-1].concat(response.data.plays));
+						Array.prototype.splice.apply(playHistory.plays, [playHistory.plays.length, 0].concat(response.data.plays));
 					}
 					angular.extend(playHistory, params);
 					resolve(playHistory);
