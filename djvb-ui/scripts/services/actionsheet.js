@@ -9,7 +9,15 @@ define(['angular'], function (angular) {
    * Service in the djvbApp.
    */
   angular.module('djvbApp.services.ActionSheetSvc', [])
-	.service('ActionSheetSvc', function ($rootScope, $ionicPopup, $ionicActionSheet, UserSvc, PlaylistsSvc, QueueSvc, $timeout) {
+	.service('ActionSheetSvc', function (
+		$rootScope, 
+		$ionicPopup, 
+		$ionicActionSheet, 
+		UserSvc, 
+		PlaylistsSvc, 
+		QueueSvc, 
+		$timeout
+	) {
 		var user,
 			modalScope = $rootScope.$new(), 
 			playlists = [], 
@@ -29,7 +37,8 @@ define(['angular'], function (angular) {
     		playlistSongActions: playlistSongActions, 
     		favoriteSongActions: favoriteSongActions, 
     		playHistoryActions: playHistoryActions, 
-    		searchSongActions: playHistoryActions
+    		searchSongActions: playHistoryActions, 
+    		browseSongActions: browseSongActions
 		};
 		
 		function playlistSongActions(playlist, song) {
@@ -114,7 +123,42 @@ define(['angular'], function (angular) {
 		function searchSongActions(song) {
 			
 		}
-	
+
+		function browseSongActions() {
+			$ionicActionSheet.show({
+				titleText : play.title + ' - ' + play.artist, 
+				buttons: [
+					{text: '<strong>Sing Now!</strong>'}, 
+					{text: 'Browse Artist'}, 
+					{text: 'Add to Playlist'}
+				], 
+				buttonClicked : function(index) {
+					switch (index) {
+						case 0:
+							if (queues.length > 0) {
+								// Add song to queue
+								addSongToQueue(play);
+							} else {
+								// Join a room
+								var callback = function() {
+									addSongToQueue(play);
+								};
+							    roomCodePopup(callback);
+							}
+							break;
+						case 1:
+							playlistsAction(play);
+							break;
+						case 2:
+							playlistsAction(play);
+							break;
+					}
+					return true;
+				}, 
+				cancelText : 'Cancel'
+			});
+		}
+		
 		function playlistsAction(song) {
 			$ionicActionSheet.show({
 				buttons : _.sortBy(_.map(playlists, function(playlist) {

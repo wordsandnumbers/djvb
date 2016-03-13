@@ -74,7 +74,7 @@ define(['angular', 'lodash'], function (angular, _) {
                     $ionicScrollDelegate.scrollTop();
                 	vm.searchResults = response.data;
             	} else {
-					Array.prototype.splice.apply(vm.searchResults.songs, [vm.searchResults.songs.length].concat(response.data.songs));
+					Array.prototype.splice.apply(vm.searchResults.songs, [vm.searchResults.songs.length, 0].concat(response.data.songs));
             	}
             	angular.extend(vm.searchResults, params);
                 vm.songGroups = _.groupBy(vm.searchResults.songs, 'artist');

@@ -5,19 +5,35 @@
     </ion-nav-buttons>-->
     <ion-content class="has-header">
         <ion-list ng-if="vm.searchResults.songs && vm.searchResults.by==='popularity'">
-	        <ion-item class="item-icon-left item-icon-right" ng-repeat="song in vm.searchResults.songs" ng-click="vm.selectSong(song)">
-	        	<i class="icon">{{$index + 1}}</i>
-	        	<h2>{{song.title}}</h2>
+	        <ion-item class="item-button-right" ng-repeat="song in vm.searchResults.songs" ng-click="vm.selectSong(song)">
+	        	<h2><strong>{{$index + 1}}</strong> {{song.title}}</h2>
 	        	<p>{{song.artist}}</p>
-	        	<button class="button button-clear button-stable button-icon icon ion-more"></button>
+               	<p ng-if="song.tags">
+               		<span class="icon" ng-class="{'ion-pricetags':song.tags.length>1,'ion-pricetag':song.tags.length===1}"></span>
+               		<span ng-repeat="tag in song.tags">{{tag}}{{$last ? '' : ', '}}</span>
+              	</p>
+				<div class="buttons">
+					<button class="button button-clear button-stable button-icon icon ion-more"></button>
+				</div>
 	        </ion-item>
         </ion-list>
         <ion-list ng-if="vm.searchResults.songs && vm.searchResults.by==='recently_added'">
-	        <ion-item class="item-icon-right" ng-repeat="song in vm.searchResults.songs" ng-click="vm.selectSong(song)">
-	        	<h2>{{song.title}}</h2>
-	        	<p>{{song.artist}}</p><p>{{song.added_on | date:'MM/dd/yyyy'}}</p>
-	        	<button class="button button-clear button-stable button-icon icon ion-more"></button>
-	        </ion-item>
+             <div ng-repeat="(date, songs) in vm.songGroups | orderBy:'-date'">
+                <ion-item class="item item-divider">
+                    {{date | date:'MMMM d yyyy'}}
+                </ion-item>
+                <ion-item class="item-button-right" ng-repeat="song in songs" ng-click="vm.selectSong(song)">
+		        	<h2>{{song.title}}</h2>
+		        	<p>{{song.artist}}</p>
+                	<p ng-if="song.tags">
+                		<span class="icon" ng-class="{'ion-pricetags':song.tags.length>1,'ion-pricetag':song.tags.length===1}"></span>
+                		<span ng-repeat="tag in song.tags">{{tag}}{{$last ? '' : ', '}}</span>
+               		</p>
+					<div class="buttons">
+						<button class="button button-clear button-stable button-icon icon ion-more"></button>
+					</div>
+                </ion-item>
+            </div>
         </ion-list>
         <ion-list ng-if="!vm.hasSongGroups()">
 			<ion-item ng-if="vm.noResults">No results</ion-item>

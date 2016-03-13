@@ -62,9 +62,12 @@ define(['angular', 'lodash'], function (angular, _) {
                     $ionicScrollDelegate.scrollTop();
                 	vm.searchResults = response.data;
             	} else {
-					Array.prototype.splice.apply(vm.searchResults.songs, [vm.searchResults.songs.length].concat(response.data.songs));
+					Array.prototype.splice.apply(vm.searchResults.songs, [vm.searchResults.songs.length, 0].concat(response.data.songs));
             	}
-            	angular.extend(vm.searchResults, params);
+                vm.songGroups = _.groupBy(vm.searchResults.songs, function (song) {
+                	return song.added_on;
+                });
+                angular.extend(vm.searchResults, params);
                 $ionicLoading.hide();
             }, function(response) {
 				$ionicPopup.alert({

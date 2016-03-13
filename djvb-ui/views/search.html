@@ -23,9 +23,15 @@
                 <ion-item class="item item-divider" ng-click="vm.exactSearch(artist)" title="View all songs for {{artist}}">
                     {{artist}}
                 </ion-item>
-                <ion-item class="item-icon-right" ng-repeat="song in songs | orderBy:'title'" ng-click="vm.selectSong(song)">
-                	{{song.title}}
-                	<button class="button button-clear button-stable button-icon icon ion-more"></button>
+                <ion-item class="item-button-right" ng-repeat="song in songs | orderBy:'title'" ng-click="vm.selectSong(song)">
+                	<h2>{{song.title}}</h2>
+                	<p ng-if="song.tags">
+                		<span class="icon" ng-class="{'ion-pricetags':song.tags.length>1,'ion-pricetag':song.tags.length===1}"></span>
+                		<em><span ng-repeat="tag in song.tags">{{tag}}{{$last ? '' : ', '}}</span></em>
+               		</p>
+					<div class="buttons">
+						<button class="button button-clear button-stable button-icon icon ion-more"></button>
+					</div>
                 </ion-item>
             </div>
         </ion-list>
