@@ -23,7 +23,7 @@ define(['angular', 'digits'], function (angular, Digits) {
     			$location.url('/login');
             }
             
-            function onLogin(loginResponse){
+            function onLogin() {
             	$ionicLoading.show();
             	
 				var verifyData = {
@@ -38,7 +38,7 @@ define(['angular', 'digits'], function (angular, Digits) {
 						'Content-Type' : 'application/x-www-form-urlencoded'
 					},
 					data : $httpParamSerializer(verifyData)
-				}).then(function(response) {
+				}).then(function() {
                     $rootScope.authenticated = true;
 					checkUser();
 	    			$location.url('/home');

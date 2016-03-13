@@ -1,0 +1,28 @@
+<ion-view>
+	<ion-nav-title>{{vm.title}}</ion-nav-title>
+    <!--<ion-nav-buttons side="right">
+        <button class="button button-clear" ng-click="vm.filterSearch()"><i class="icon ion-ios-list"></i></button>
+    </ion-nav-buttons>-->
+    <ion-content class="has-header">
+        <ion-list ng-if="vm.searchResults.songs && vm.searchResults.by==='popularity'">
+	        <ion-item class="item-icon-left item-icon-right" ng-repeat="song in vm.searchResults.songs" ng-click="vm.selectSong(song)">
+	        	<i class="icon">{{$index + 1}}</i>
+	        	<h2>{{song.title}}</h2>
+	        	<p>{{song.artist}}</p>
+	        	<button class="button button-clear button-stable button-icon icon ion-more"></button>
+	        </ion-item>
+        </ion-list>
+        <ion-list ng-if="vm.searchResults.songs && vm.searchResults.by==='recently_added'">
+	        <ion-item class="item-icon-right" ng-repeat="song in vm.searchResults.songs" ng-click="vm.selectSong(song)">
+	        	<h2>{{song.title}}</h2>
+	        	<p>{{song.artist}}</p><p>{{song.added_on | date:'MM/dd/yyyy'}}</p>
+	        	<button class="button button-clear button-stable button-icon icon ion-more"></button>
+	        </ion-item>
+        </ion-list>
+        <ion-list ng-if="!vm.hasSongGroups()">
+			<ion-item ng-if="vm.noResults">No results</ion-item>
+        </ion-list>
+		<ion-infinite-scroll on-infinite="vm.nextPage()" distance="1%" ng-if="vm.hasMoreData()">
+		</ion-infinite-scroll>
+    </ion-content>
+</ion-view>

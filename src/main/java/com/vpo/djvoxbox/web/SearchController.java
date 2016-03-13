@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.vpo.djvoxbox.domain.User;
 import com.vpo.djvoxbox.domain.UserRepository;
 import com.vpo.djvoxbox.util.SessionUtils;
-import com.vpo.vbclient.model.Session;
 import com.vpo.vbclient.song.Search;
 import com.vpo.vbclient.song.SongClient;
 
@@ -44,6 +43,7 @@ public class SearchController {
 	public @ResponseBody Search browseSongs(@RequestParam Map<String,String> params, Principal principal) {
 		User user = userRepository.findById(principal.getName());
 		Search search = createSearch(params);
+		search.setBrowse(true);
 		search.setSession(SessionUtils.makeSession(user));
 		return songClient.findSongs(search);
 		
@@ -79,6 +79,7 @@ public class SearchController {
 		search.setPage((params.get("page") == null) ? null : Integer.valueOf(params.get("page")));
 		search.setPerPage((params.get("per_page") == null) ? null : Integer.valueOf(params.get("per_page")));
 		search.setTag(params.get("tag"));
+		search.setBy(params.get("by"));
 		return search;
 	}
 	

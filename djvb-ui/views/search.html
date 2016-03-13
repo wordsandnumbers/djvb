@@ -34,7 +34,7 @@
             <ion-item class="item-icon-right" ng-repeat="recentSearch in vm.recentSearches track by $index" ng-click="vm.search(recentSearch)" title="Search for '{{recentSearch}}' again">
 				<a href="" class="subdued">{{recentSearch}} <i class="icon ion-ios-undo-outline"></i></a>
             </ion-item>
-			<div class="item item-icon-right" ng-click="vm.recentSearches=[]" ng-if="vm.recentSearches.length>0">
+			<div class="item item-icon-right" ng-click="vm.clearHistory()" ng-if="vm.recentSearches.length>0">
 				Clear Recent Searches <i class="icon ion-ios-close-empty"></i>
 			</div>
         </ion-list>

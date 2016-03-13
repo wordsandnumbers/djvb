@@ -36,9 +36,9 @@ require.config({
     'angular-ui-router': [
       'angular'
     ],
-    'ngstorage': [
+    ngstorage: [
       'angular'
-    ]             
+    ]
   },
   priority: [
     'angular'

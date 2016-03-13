@@ -9,40 +9,6 @@ define(['angular', 'lodash'], function (angular, _) {
    * Controller of the djvbApp
    */
   angular.module('djvbApp.controllers.SearchCtrl', ['ngStorage'])
-  .directive('focusMe', function($timeout) {
-	  return {
-	    scope: { trigger: '=focusMe' },
-	    link: function(scope, element) {
-	      scope.$watch('trigger', function(value) {
-	        if(value === true) { 
-	          //console.log('trigger',value);
-	          $timeout(function() {
-	            element[0].focus();
-	            scope.trigger = false;
-	          });
-	        }
-	      });
-	    }
-	  };
-  })
-.directive('capitalize', function() {
-   return {
-     require: 'ngModel',
-     link: function(scope, element, attrs, modelCtrl) {
-        var capitalize = function(inputValue) {
-           if(inputValue == undefined) inputValue = '';
-           var capitalized = inputValue.toUpperCase();
-           if(capitalized !== inputValue) {
-              modelCtrl.$setViewValue(capitalized);
-              modelCtrl.$render();
-            }         
-            return capitalized;
-         }
-         modelCtrl.$parsers.push(capitalize);
-         capitalize(scope[attrs.ngModel]);  // capitalize initial value
-     }
-   };
-})
 .controller('SearchCtrl', function (
 	$scope, 
 	$log, 
@@ -70,16 +36,22 @@ define(['angular', 'lodash'], function (angular, _) {
         vm.selectSong = selectSong;
 		vm.hasMoreData = hasMoreData;
 		vm.nextPage = nextPage;
+		vm.clearHistory = clearHistory;
 
         function exactSearch(searchString) {
             search('"' + searchString + '"');
         }
-      
+        
         function search(searchString) {
         	vm.searchString = searchString;
         	
         	if ((vm.searchResults || {}).query !== searchString) {
                 if (!_.isEmpty(searchString)) { 
+                	$ionicLoading.show({
+                        delay: 500, 
+                        noBackdrop: true
+                    });
+
                 	query({
                         query: searchString,
                         per_page: 50,
@@ -87,7 +59,7 @@ define(['angular', 'lodash'], function (angular, _) {
                         by: 'title'
                     });
                 }
-
+				
                 if (!_.isEmpty(vm.searchResults)) {
             		delete vm.searchResults;
         		}
@@ -96,19 +68,13 @@ define(['angular', 'lodash'], function (angular, _) {
         
         function query(params) {
 
-        	$ionicLoading.show({
-                delay: 500, 
-                noBackdrop: true, 
-                template: 'Loading...'
-            });
-
             $http.get('/api/v1/songs/query', {params: params}).then(function(response) {
                 $scope.$broadcast('scroll.infiniteScrollComplete');
             	if (vm.searchResults === undefined) {
                     $ionicScrollDelegate.scrollTop();
                 	vm.searchResults = response.data;
             	} else {
-					Array.prototype.splice.apply(vm.searchResults.songs, [vm.searchResults.songs.length-1].concat(response.data.songs));
+					Array.prototype.splice.apply(vm.searchResults.songs, [vm.searchResults.songs.length].concat(response.data.songs));
             	}
             	angular.extend(vm.searchResults, params);
                 vm.songGroups = _.groupBy(vm.searchResults.songs, 'artist');
@@ -159,6 +125,10 @@ define(['angular', 'lodash'], function (angular, _) {
         
 		function hasMoreData() {
 			return (vm.searchResults || {}).page < (vm.searchResults || {}).total_pages;
+		}
+		
+		function clearHistory() {
+			vm.recentSearches.splice(0, vm.recentSearches.length);
 		}
     });
 });

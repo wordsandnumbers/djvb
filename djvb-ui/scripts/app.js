@@ -1,5 +1,5 @@
 /*jshint unused: vars */
-define(['angular', 'controllers/about', 'controllers/search', 'controllers/login', 'controllers/home', 'services/user', 'controllers/usersetup', 'services/queue', 'controllers/queue', 'services/playlists', 'controllers/playlists', 'controllers/playlist', 'controllers/playhistory', 'controllers/favorites', 'controllers/digitscallback', 'services/actionsheet']/*deps*/,
+define(['angular', 'controllers/about', 'controllers/browse', 'controllers/search', 'controllers/tabs', 'controllers/login', 'controllers/home', 'services/user', 'controllers/usersetup', 'services/queue', 'controllers/queue', 'services/playlists', 'controllers/playlists', 'controllers/playlist', 'controllers/playhistory', 'controllers/favorites', 'controllers/digitscallback', 'services/actionsheet', 'directives/focusme', 'directives/capitalize']/*deps*/,
 function (angular)/*invoke*/{
     'use strict';
 
@@ -14,24 +14,28 @@ function (angular)/*invoke*/{
     return angular
         .module('djvbApp', [
             'djvbApp.controllers.AboutCtrl',
-            'djvbApp.controllers.SearchCtrl',
-            'djvbApp.controllers.LoginCtrl',
-			'djvbApp.services.UserSvc',
+            'djvbApp.controllers.BrowseCtrl',
+			'djvbApp.controllers.DigitsCallbackCtrl',
+			'djvbApp.controllers.FavoritesCtrl',
 			'djvbApp.controllers.HomeCtrl',
-			'djvbApp.controllers.UserSetupCtrl',
-			'djvbApp.services.QueueSvc',
-			'djvbApp.controllers.QueueCtrl',
-			'djvbApp.services.PlaylistsSvc',
+            'djvbApp.controllers.LoginCtrl',
 			'djvbApp.controllers.PlaylistsCtrl',
 			'djvbApp.controllers.PlaylistCtrl',
 			'djvbApp.controllers.PlayHistoryCtrl',
-			'djvbApp.controllers.FavoritesCtrl',
-			'djvbApp.controllers.DigitsCallbackCtrl',
+			'djvbApp.controllers.QueueCtrl',
+            'djvbApp.controllers.SearchCtrl',
+            'djvbApp.controllers.TabsCtrl',
+			'djvbApp.controllers.UserSetupCtrl',
+			'djvbApp.directives.Capitalize', 
+			'djvbApp.directives.FocusMe',
 			'djvbApp.services.ActionSheetSvc',
+			'djvbApp.services.PlaylistsSvc',
+			'djvbApp.services.QueueSvc',
+			'djvbApp.services.UserSvc',
 			/*angJSDeps*/
+            'ionic',
             'ngSanitize',
             'ngAnimate',
-            'ionic',
             'ui.router'
         ])
         .run(function ($rootScope, $ionicPlatform, $location, UserSvc, $state) {
@@ -155,9 +159,18 @@ function (angular)/*invoke*/{
             .state('tabs.search', {
                 url: '/search',
                 views: {
-                	'tab-search': {
+                	'tab-songs': {
                         templateUrl: 'views/search.html', 
                         controller: 'SearchCtrl as vm'
+                	}
+                }
+            })
+            .state('tabs.browse', {
+                url: '/browse/{by}',
+                views: {
+                	'tab-songs': {
+                        templateUrl: 'views/browse.html', 
+                        controller: 'BrowseCtrl as vm'
                 	}
                 }
             })
