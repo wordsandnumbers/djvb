@@ -7,7 +7,7 @@
     "angular-sanitize": "^1.4.0",
     "requirejs": "^2.1.0",
     "angular-aria": "~1.4.0",
-    "ionic": "~1.1.1",
+    "ionic": "~1.2.4",
     "angular-ui-router": "~0.2.15",
     "lodash": "~3.10.1",
     "ngstorage": "~0.3.10"
