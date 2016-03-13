@@ -1,5 +1,5 @@
 /*jshint unused: vars */
-define(['angular', 'controllers/about', 'controllers/browse', 'controllers/search', 'controllers/tabs', 'controllers/login', 'controllers/home', 'services/user', 'controllers/usersetup', 'services/queue', 'controllers/queue', 'services/playlists', 'controllers/playlists', 'controllers/playlist', 'controllers/playhistory', 'controllers/favorites', 'controllers/digitscallback', 'services/actionsheet', 'directives/focusme', 'directives/capitalize']/*deps*/,
+define(['angular', 'controllers/browse', 'controllers/search', 'controllers/tabs', 'controllers/login', 'controllers/home', 'services/user', 'controllers/usersetup', 'services/queue', 'controllers/queue', 'services/playlists', 'controllers/playlists', 'controllers/playlist', 'controllers/playhistory', 'controllers/favorites', 'controllers/digitscallback', 'services/actionsheet', 'directives/focusme', 'directives/capitalize']/*deps*/,
 function (angular)/*invoke*/{
     'use strict';
 
@@ -13,7 +13,6 @@ function (angular)/*invoke*/{
      */
     return angular
         .module('djvbApp', [
-            'djvbApp.controllers.AboutCtrl',
             'djvbApp.controllers.BrowseCtrl',
 			'djvbApp.controllers.DigitsCallbackCtrl',
 			'djvbApp.controllers.FavoritesCtrl',
