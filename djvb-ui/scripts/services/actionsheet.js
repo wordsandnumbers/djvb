@@ -177,6 +177,24 @@ define(['angular'], function (angular) {
 			});
 		}
 		
+		function tagsAction(song) {
+			$ionicActionSheet.show({
+				buttons : _.sortBy(_.map(playlists, function(playlist) {
+					return {text: playlist.name, playlist: playlist};
+				}), 'text'),
+				titleText : song.artist + ' - ' + song.title + '<br>Add to Playlist:',
+				cancelText : 'Cancel',
+				buttonClicked : function(index, button) {
+					PlaylistsSvc.addSongToPlaylist(button.playlist, song).then(function(response) {
+						// Success
+					}, function(response) {
+						// Error
+					});
+					return true;
+				}
+			});
+		}
+		
 		function roomCodePopup(callback) {
             var $scope = $rootScope.$new();
             $scope.data = {};

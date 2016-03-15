@@ -173,6 +173,15 @@ function (angular)/*invoke*/{
                 	}
                 }
             })
+            .state('tabs.tag', {
+                url: '/{by}/{tag}',
+                views: {
+                	'tab-songs': {
+                        templateUrl: 'views/browse.html', 
+                        controller: 'BrowseCtrl as vm'
+                	}
+                }
+            })
             .state('tabs.sing', {
                 url: '/sing',
                 views: {

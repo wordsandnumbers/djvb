@@ -22,10 +22,10 @@ define(['angular', 'lodash'], function (angular, _) {
         var vm = this;
         var titles = {
     		popularity: 'Top Songs',
-    		recently_added: 'Recently Added'
+    		recently_added: 'New Songs',
+    		tag: $stateParams.tag
         }
         
-        vm.searchString = '';
         vm.searchResults;
         vm.songGroups = {};
         vm.noResults = false;
@@ -35,24 +35,36 @@ define(['angular', 'lodash'], function (angular, _) {
 		vm.hasMoreData = hasMoreData;
 		vm.nextPage = nextPage;
 		vm.title = titles[$stateParams.by];
+		var queries = {
+			popularity: {
+	            per_page: 50,
+	            by: $stateParams.by
+	        },
+			recently_added: {
+	            per_page: 50,
+	            by: $stateParams.by
+	        },
+			tag: {
+				tag: $stateParams.tag,
+	            per_page: 50,
+	            by: 'popularity'
+	        }
+		};
+	      
 		browse();
 		
 /*		ARTIST("artist"),
 		TITLE("title"),
 		POPULAR("popularity"),
 		RECENT("recently_added");*/
-      
+		
         function browse() {        	
         	$ionicLoading.show({
                 delay: 500, 
                 noBackdrop: true
             });
 
-        	query({
-                per_page: 50,
-                page: 1, 
-                by: $stateParams.by
-            });
+        	query(queries[$stateParams.by]);
         }
         
         function query(params) {
@@ -84,8 +96,9 @@ define(['angular', 'lodash'], function (angular, _) {
 				query: vm.searchResults.query, 
 				page: vm.searchResults.page + 1, 
 				per_page: vm.searchResults.per_page,
-				by: $stateParams.by
 			}
+			
+			angular.extend(params, queries[$stateParams.by]);
 			
 			query(params);
 		}

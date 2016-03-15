@@ -15,6 +15,13 @@ define(['angular'], function (angular) {
     	vm.playlists;
     	vm.favorites;
     	vm.playHistory;
+    	vm.tags = {
+    		'Genres': ['Christian', 'Country', 'Disco', 'Musicals', 'Pop', 'Rap', 'Soundtracks'],
+    		'Decades': ['00s','90s','80s','70s','60s','50s'],
+    		'Themes': ['Bachelorette','Break Up Tunes','Boy Bands','Comedy','Covers','Duets','Divas','Fan Videos','Number One Hits','One Hit Wonders','TV Theme'],
+    		'Age': ['Kids','Teens'],
+    		'Celebration': ['New','Years','Christmas','Halloween']
+    	};
     	
     	UserSvc.getUser().then(function(user) {
     		vm.user = user;
