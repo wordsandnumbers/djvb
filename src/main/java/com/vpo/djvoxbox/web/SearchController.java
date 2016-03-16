@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.vpo.djvoxbox.domain.User;
 import com.vpo.djvoxbox.domain.UserRepository;
 import com.vpo.djvoxbox.util.SessionUtils;
+import com.vpo.vbclient.song.LanguageList;
 import com.vpo.vbclient.song.Search;
 import com.vpo.vbclient.song.SongClient;
+import com.vpo.vbclient.song.TagList;
 
 @RestController
 @RequestMapping("/api/v1/songs")
@@ -68,6 +70,16 @@ public class SearchController {
 		search.setPlayHistory(true);
 		return songClient.findSongs(search);
 		
+	}
+	
+	@RequestMapping("/tags")
+	public @ResponseBody TagList getTags() {
+		return songClient.tags();
+	}
+	
+	@RequestMapping("/languages")
+	public @ResponseBody LanguageList getLanguages() {
+		return songClient.languages();
 	}
 
 	
