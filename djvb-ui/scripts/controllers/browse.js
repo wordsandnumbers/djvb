@@ -60,7 +60,6 @@ define(['angular', 'lodash'], function (angular, _) {
 		
         function browse() {        	
         	$ionicLoading.show({
-                delay: 500, 
                 noBackdrop: true
             });
 
@@ -104,7 +103,7 @@ define(['angular', 'lodash'], function (angular, _) {
 		}
 		
         function selectSong(song) {
-        	ActionSheetSvc.searchSongActions(song);
+        	ActionSheetSvc.browseSongActions(song);
         }
         
 		function hasMoreData() {

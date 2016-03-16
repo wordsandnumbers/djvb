@@ -1,4 +1,4 @@
-define(['angular'], function (angular) {
+define(['angular', 'lodash'], function (angular, _) {
   'use strict';
 
   /**
@@ -16,7 +16,8 @@ define(['angular'], function (angular) {
 		UserSvc, 
 		PlaylistsSvc, 
 		QueueSvc, 
-		$timeout
+		$timeout,
+		$state
 	) {
 		var user,
 			modalScope = $rootScope.$new(), 
@@ -36,8 +37,8 @@ define(['angular'], function (angular) {
 		return {
     		playlistSongActions: playlistSongActions, 
     		favoriteSongActions: favoriteSongActions, 
-    		playHistoryActions: playHistoryActions, 
-    		searchSongActions: playHistoryActions, 
+    		playHistoryActions: browseSongActions, 
+    		searchSongActions: browseSongActions, 
     		browseSongActions: browseSongActions
 		};
 		
@@ -124,39 +125,45 @@ define(['angular'], function (angular) {
 			
 		}
 
-		function browseSongActions() {
+		function browseSongActions(song) {
 			$ionicActionSheet.show({
-				titleText : play.title + ' - ' + play.artist, 
-				buttons: [
-					{text: '<strong>Sing Now!</strong>'}, 
-					{text: 'Browse Artist'}, 
-					{text: 'Add to Playlist'}
-				], 
+				titleText : song.title + ' - ' + song.artist, 
+				buttons: getButtons(song), 
 				buttonClicked : function(index) {
 					switch (index) {
 						case 0:
 							if (queues.length > 0) {
 								// Add song to queue
-								addSongToQueue(play);
+								addSongToQueue(song);
 							} else {
 								// Join a room
 								var callback = function() {
-									addSongToQueue(play);
+									addSongToQueue(song);
 								};
 							    roomCodePopup(callback);
 							}
 							break;
 						case 1:
-							playlistsAction(play);
+							playlistsAction(song);
 							break;
 						case 2:
-							playlistsAction(play);
+							tagsAction(song);
 							break;
 					}
 					return true;
 				}, 
 				cancelText : 'Cancel'
 			});
+		}
+		
+		function getButtons(song) {
+			var buttons = [
+               {text: '<strong>Sing Now!</strong>'}, 
+               {text: 'Add to Playlist'}];
+				if (song.tags!==null) {
+					buttons.push({text: 'Tags'});
+				}
+			return buttons;
 		}
 		
 		function playlistsAction(song) {
@@ -179,17 +186,13 @@ define(['angular'], function (angular) {
 		
 		function tagsAction(song) {
 			$ionicActionSheet.show({
-				buttons : _.sortBy(_.map(playlists, function(playlist) {
-					return {text: playlist.name, playlist: playlist};
-				}), 'text'),
-				titleText : song.artist + ' - ' + song.title + '<br>Add to Playlist:',
+				buttons : _.map(_.sortBy(song.tags), function(tag) {
+					return {text: tag};
+				}),
+				titleText : 'Browse Tags:',
 				cancelText : 'Cancel',
 				buttonClicked : function(index, button) {
-					PlaylistsSvc.addSongToPlaylist(button.playlist, song).then(function(response) {
-						// Success
-					}, function(response) {
-						// Error
-					});
+                    $state.go('tabs.tag', {by: 'tag', tag: song.tags[index]});
 					return true;
 				}
 			});
