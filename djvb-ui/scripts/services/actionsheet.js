@@ -185,14 +185,15 @@ define(['angular', 'lodash'], function (angular, _) {
 		}
 		
 		function tagsAction(song) {
+			var sortedTags = _.sortBy(song.tags);
 			$ionicActionSheet.show({
-				buttons : _.map(_.sortBy(song.tags), function(tag) {
+				buttons : _.map(sortedTags, function(tag) {
 					return {text: tag};
 				}),
 				titleText : 'Browse Tags:',
 				cancelText : 'Cancel',
 				buttonClicked : function(index, button) {
-                    $state.go('tabs.tag', {by: 'tag', tag: song.tags[index]});
+                    $state.go('tabs.tag', {by: 'tag', tag: sortedTags[index]});
 					return true;
 				}
 			});
