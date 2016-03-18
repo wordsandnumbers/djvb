@@ -160,7 +160,7 @@ define(['angular', 'lodash'], function (angular, _) {
 			var buttons = [
                {text: '<strong>Sing Now!</strong>'}, 
                {text: 'Add to Playlist'}];
-				if (song.tags!==null) {
+				if (!_.isEmpty(song.tags)) {
 					buttons.push({text: 'Tags'});
 				}
 			return buttons;
