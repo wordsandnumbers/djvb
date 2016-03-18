@@ -20,12 +20,15 @@ define(['angular', 'lodash'], function (angular, _) {
 	$stateParams
 	) {
         var vm = this;
+        
         var titles = {
     		popularity: 'Top Songs',
     		recently_added: 'New Songs',
-    		tag: $stateParams.tag
+    		tag: $stateParams.query,
+    		artist: $stateParams.query
         }
         
+        vm.mode = $stateParams.mode;
         vm.searchResults;
         vm.songGroups = {};
         vm.noResults = false;
@@ -34,40 +37,40 @@ define(['angular', 'lodash'], function (angular, _) {
         vm.selectSong = selectSong;
 		vm.hasMoreData = hasMoreData;
 		vm.nextPage = nextPage;
-		vm.title = titles[$stateParams.by];
+		vm.title = titles[$stateParams.mode];
 		var queries = {
 			popularity: {
 	            per_page: 50,
-	            by: $stateParams.by
+	            by: $stateParams.mode
 	        },
 			recently_added: {
 	            per_page: 50,
-	            by: $stateParams.by
+	            by: $stateParams.mode
 	        },
 			tag: {
-				tag: $stateParams.tag,
+				tag: $stateParams.query,
 	            per_page: 50,
 	            by: 'popularity'
+	        },
+	        artist: {
+	        	query: '"' + $stateParams.query + '"',
+	        	per_page: 50,
+	        	by: 'title'
 	        }
 		};
 	      
 		browse();
-		
-/*		ARTIST("artist"),
-		TITLE("title"),
-		POPULAR("popularity"),
-		RECENT("recently_added");*/
 		
         function browse() {        	
         	$ionicLoading.show({
                 noBackdrop: true
             });
 
-        	query(queries[$stateParams.by]);
+        	query(queries[$stateParams.mode]);
         }
         
         function query(params) {
-            $http.get('/api/v1/songs/browse', {params: params}).then(function(response) {
+            $http.get('/api/v1/songs/' + ($stateParams.mode === 'artist' ? 'query' : 'browse'), {params: params}).then(function(response) {
                 $scope.$broadcast('scroll.infiniteScrollComplete');
             	if (vm.searchResults === undefined) {
                     $ionicScrollDelegate.scrollTop();
@@ -97,7 +100,7 @@ define(['angular', 'lodash'], function (angular, _) {
 				per_page: vm.searchResults.per_page,
 			}
 			
-			angular.extend(params, queries[$stateParams.by]);
+			angular.extend(params, queries[$stateParams.mode]);
 			
 			query(params);
 		}

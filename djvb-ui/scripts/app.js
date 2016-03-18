@@ -43,7 +43,7 @@ function (angular)/*invoke*/{
             	UserSvc.getUser().then(function() {
                     // Don't allow login route if authenticated.
                 	if (toState.url === '/login' && $rootScope.authenticated === true) {
-                        $state.go('home');
+                        $state.go('tabs.home');
                     // Route to login if not authenticated.
                 	} else if (toState.url !== '/login' && $rootScope.authenticated === false) {
                 		$state.go('login', fromParams);
@@ -165,7 +165,7 @@ function (angular)/*invoke*/{
                 }
             })
             .state('tabs.browse', {
-                url: '/browse/{by}',
+                url: '/browse/{mode}',
                 views: {
                 	'tab-songs': {
                         templateUrl: 'views/browse.html', 
@@ -173,8 +173,8 @@ function (angular)/*invoke*/{
                 	}
                 }
             })
-            .state('tabs.tag', {
-                url: '/{by}/{tag}',
+            .state('tabs.browsequery', {
+                url: '/{mode}/{query}',
                 views: {
                 	'tab-songs': {
                         templateUrl: 'views/browse.html', 

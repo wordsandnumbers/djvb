@@ -17,7 +17,8 @@ define(['angular', 'lodash'], function (angular, _) {
 	$ionicLoading, 
 	$ionicPopup, 
 	ActionSheetSvc,
-	$localStorage
+	$localStorage,
+	$state
 	) {
         var vm = this;
         vm.searchString = '';
@@ -39,7 +40,8 @@ define(['angular', 'lodash'], function (angular, _) {
 		vm.clearHistory = clearHistory;
 
         function exactSearch(searchString) {
-            search('"' + searchString + '"');
+        	$state.go('tabs.browsequery', {mode: 'artist', query: searchString});
+            //search('"' + searchString + '"');
         }
         
         function search(searchString) {
@@ -67,7 +69,6 @@ define(['angular', 'lodash'], function (angular, _) {
         }
         
         function query(params) {
-
             $http.get('/api/v1/songs/query', {params: params}).then(function(response) {
                 $scope.$broadcast('scroll.infiniteScrollComplete');
             	if (vm.searchResults === undefined) {

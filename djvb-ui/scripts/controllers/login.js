@@ -34,7 +34,17 @@ define(['angular', 'digits'], function (angular, Digits) {
 			}
 		};
 	})
-	.controller('LoginCtrl', function ($rootScope, $log, $http, $httpParamSerializer, $location, $ionicPopup, $ionicLoading, UserSvc) {
+	.controller('LoginCtrl', function (
+		$rootScope, 
+		$log, 
+		$http, 
+		$httpParamSerializer, 
+		$location, 
+		$ionicPopup, 
+		$ionicLoading, 
+		$state,
+		UserSvc
+	) {
         var vm = this;
         vm.digitsLogin = digitsLogin;
         vm.emailLogin = emailLogin;
@@ -73,7 +83,7 @@ define(['angular', 'digits'], function (angular, Digits) {
     			if (_.isEmpty(user.screenName) || _.isEmpty(user.email)) {
 	    			UserSvc.showSettingsModal();
     			}
-    			$location.url('/home');
+    			$state.go('tabs.home');
     		}, function(response) {
                 $ionicLoading.hide();
 				$ionicPopup.alert({

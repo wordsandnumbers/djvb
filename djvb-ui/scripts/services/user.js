@@ -52,6 +52,7 @@ define(['angular'], function (angular) {
 			return $q(function (resolve, reject) {
 				$http.get('/logout').then(function(response) {
 					$rootScope.authenticated = false;
+					user = undefined;
 					resolve(response);
 				}, function(response) {
 					reject(response);

@@ -4,7 +4,7 @@
         <button class="button button-clear" ng-click="vm.filterSearch()"><i class="icon ion-ios-list"></i></button>
     </ion-nav-buttons>-->
     <ion-content class="has-header">
-        <ion-list ng-if="vm.searchResults.songs && vm.searchResults.by==='popularity'">
+        <ion-list ng-if="vm.searchResults.songs && (vm.mode==='popularity' || vm.mode==='tag')">
 	        <ion-item class="item-button-right" ng-repeat="song in vm.searchResults.songs" ng-click="vm.selectSong(song)">
 	        	<h2><strong>{{$index + 1}}</strong> {{song.title}}</h2>
 	        	<p>{{song.artist}}</p>
@@ -17,7 +17,20 @@
 				</div>
 	        </ion-item>
         </ion-list>
-        <ion-list ng-if="vm.searchResults.songs && vm.searchResults.by==='recently_added'">
+        <ion-list ng-if="vm.searchResults.songs && vm.mode==='artist'">
+	        <ion-item class="item-button-right" ng-repeat="song in vm.searchResults.songs | orderBy:'title'" ng-click="vm.selectSong(song)">
+	        	<h2>{{song.title}}</h2>
+	        	<p>{{song.artist}}</p>
+               	<p ng-if="song.tags">
+               		<span class="icon" ng-class="{'ion-pricetags':song.tags.length>1,'ion-pricetag':song.tags.length===1}"></span>
+               		<span ng-repeat="tag in song.tags | orderBy:'toString()'">{{tag}}{{$last ? '' : ', '}}</span>
+              	</p>
+				<div class="buttons">
+					<button class="button button-clear button-stable button-icon icon ion-more"></button>
+				</div>
+	        </ion-item>
+        </ion-list>
+        <ion-list ng-if="vm.searchResults.songs && vm.mode==='recently_added'">
              <div ng-repeat="(date, songs) in vm.songGroups | orderBy:'-date'">
                 <ion-item class="item item-divider">
                     {{date | date:'MMMM d yyyy'}}
