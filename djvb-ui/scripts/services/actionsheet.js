@@ -193,7 +193,7 @@ define(['angular', 'lodash'], function (angular, _) {
 				titleText : 'Browse Tags:',
 				cancelText : 'Cancel',
 				buttonClicked : function(index, button) {
-                    $state.go('tabs.tag', {by: 'tag', tag: sortedTags[index]});
+                    $state.go('tabs.browsequery', {mode: 'tag', query: sortedTags[index]});
 					return true;
 				}
 			});
