@@ -30,6 +30,7 @@
                 		<em><span ng-repeat="tag in song.tags | orderBy:'toString()'">{{tag}}{{$last ? '' : ', '}}</span></em>
                		</p>
 					<div class="buttons">
+						<button ng-show="vm.songInQueue(song)" class="animated bounceIn button button-clear button-balanced button-icon icon ion-mic-c"></button>
 						<button class="button button-clear button-stable button-icon icon ion-more"></button>
 					</div>
                 </ion-item>

@@ -24,7 +24,8 @@ define(['angular'], function (angular) {
 			reorderQueuePlay: reorderQueuePlay, 
 			deleteQueue: deleteQueue, 
 			updateQueued: updateQueued, 
-			setLights: setLights
+			setLights: setLights,
+			songInQueue: songInQueue
 		}
 		
         function pollQueues() {
@@ -174,6 +175,10 @@ define(['angular'], function (angular) {
 					reject(response);
 				});
 			});	
+		}
+		
+		function songInQueue(song) {
+			return _.find((queues[0] || {}).queue, {id: song.id});
 		}
 		
 		function spliceQueue(oldQueue, newQueue) {

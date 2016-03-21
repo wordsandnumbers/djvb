@@ -6,9 +6,18 @@
         <ion-content class="padding">
           	<h4>Lights</h4>
           	<div class="button-bar">
-	          	<button class="button" ng-click="vm.setLights(0)" ng-class="{'active':vm.level===0}"><i class="icon ion-ios-lightbulb"></i> Off</button>
-	          	<button class="button" ng-click="vm.setLights(1)" ng-class="{'active':vm.level===1}"><i class="icon ion-ios-lightbulb-outline"></i> Low</button>
-	          	<button class="button" ng-click="vm.setLights(2)" ng-class="{'active':vm.level===2}"><i class="icon ion-ios-lightbulb-outline"></i><i class="icon ion-ios-lightbulb-outline"></i> High</button>
+	          	<button class="button" ng-click="vm.setLights(2)" ng-class="{'active':vm.level===2}">
+	          		<i class="icon ion-ios-lightbulb-outline"></i>
+          		</button>
+	          	<button class="button" ng-click="vm.setLights(1)" ng-class="{'active':vm.level===1}">
+	          		<i class="icon ion-ios-lightbulb-outline"></i>
+	          		<i class="icon ion-ios-lightbulb-outline"></i>
+          		</button>
+	          	<button class="button" ng-click="vm.setLights(0)" ng-class="{'active':vm.level===0}">
+	          		<i class="icon ion-ios-lightbulb-outline"></i>
+	          		<i class="icon ion-ios-lightbulb-outline"></i>
+	          		<i class="icon ion-ios-lightbulb-outline"></i>
+          		</button>
           	</div>
         </ion-content>
 		<ion-footer-bar class="bar bar-footer">
