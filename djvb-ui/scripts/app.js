@@ -1,5 +1,5 @@
 /*jshint unused: vars */
-define(['angular', 'controllers/browse', 'controllers/search', 'controllers/tabs', 'controllers/login', 'controllers/home', 'services/user', 'controllers/usersetup', 'services/queue', 'controllers/queue', 'services/playlists', 'controllers/playlists', 'controllers/playlist', 'controllers/playhistory', 'controllers/favorites', 'controllers/digitscallback', 'services/actionsheet', 'directives/focusme', 'directives/capitalize']/*deps*/,
+define(['angular', 'controllers/browse', 'controllers/search', 'controllers/tabs', 'controllers/login', 'controllers/home', 'services/user', 'controllers/usersetup', 'services/queue', 'controllers/queue', 'services/playlists', 'controllers/playlists', 'controllers/playlist', 'controllers/playhistory', 'controllers/favorites', 'controllers/digitscallback', 'services/actionsheet', 'directives/focusme', 'directives/capitalize', 'templates']/*deps*/,
 function (angular)/*invoke*/{
     'use strict';
 
@@ -31,6 +31,7 @@ function (angular)/*invoke*/{
 			'djvbApp.services.PlaylistsSvc',
 			'djvbApp.services.QueueSvc',
 			'djvbApp.services.UserSvc',
+			'djvbApp.templates',
 			/*angJSDeps*/
             'ionic',
             'ngSanitize',

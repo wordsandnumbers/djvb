@@ -14,6 +14,8 @@ module.exports = function (grunt) {
 
   // Time how long tasks take. Can help when optimizing build times
   require('time-grunt')(grunt);
+  
+  grunt.loadNpmTasks('grunt-angular-templates');
 
   // Configurable paths for the application
   var appConfig = {
@@ -293,7 +295,6 @@ module.exports = function (grunt) {
             '*.{ico,png,txt}',
             '.htaccess',
             '*.html',
-            'views/{,*/}*.html',
             'images/{,*/}*.{webp}',
             'styles/fonts/{,*/}*.*', 
             'fonts/{,*/}*.*'
@@ -404,6 +405,21 @@ module.exports = function (grunt) {
         }
       }
     },
+
+	ngtemplates:  {
+		dist:        {
+			cwd: '<%= yeoman.app %>',
+			src: 'views/**/*.html',
+			dest: '.tmp/<%= yeoman.app %>/scripts/templates.js',
+			options: {
+				module: 'djvbApp.templates', 
+				bootstrap: function(module, script) {
+					return "define(['angular'], function (angular) { angular.module('" + module + "', []).run(['$templateCache', function ($templateCache) {" + script + "}]);});";
+				}
+			}
+		}
+	},    
+    
   sync: {
 	java: {
 		files: [
@@ -475,6 +491,7 @@ module.exports = function (grunt) {
     // 'uglify',
     'filerev',
     'usemin',
+    'ngtemplates:dist',
     'requirejs:dist',
     'htmlmin'
   ]);
