@@ -65,6 +65,8 @@ function (angular)/*invoke*/{
                     // org.apache.cordova.statusbar required
                     StatusBar.styleDefault();
                 }
+                
+                angular.element(document.getElementById('apploading')).remove();
             });
         })
         .config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
