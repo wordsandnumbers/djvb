@@ -1,5 +1,5 @@
 /*jshint unused: vars */
-define(['angular', 'controllers/browse', 'controllers/search', 'controllers/tabs', 'controllers/login', 'controllers/home', 'services/user', 'controllers/usersetup', 'services/queue', 'controllers/queue', 'services/playlists', 'controllers/playlists', 'controllers/playlist', 'controllers/playhistory', 'controllers/favorites', 'controllers/digitscallback', 'services/actionsheet', 'directives/focusme', 'directives/capitalize', 'templates']/*deps*/,
+define(['angular', 'controllers/browse', 'controllers/search', 'controllers/tabs', 'controllers/login', 'controllers/home', 'services/user', 'controllers/usersetup', 'services/queue', 'controllers/queue', 'services/playlists', 'controllers/playlists', 'controllers/playlist', 'controllers/playhistory', 'controllers/favorites', 'controllers/digitscallback', 'services/actionsheet', 'directives/focusme', 'directives/capitalize', 'templates', 'services/constants']/*deps*/,
 function (angular)/*invoke*/{
     'use strict';
 
@@ -28,6 +28,7 @@ function (angular)/*invoke*/{
 			'djvbApp.directives.Capitalize', 
 			'djvbApp.directives.FocusMe',
 			'djvbApp.services.ActionSheetSvc',
+			'djvbApp.services.Constants',
 			'djvbApp.services.PlaylistsSvc',
 			'djvbApp.services.QueueSvc',
 			'djvbApp.services.UserSvc',
@@ -69,7 +70,7 @@ function (angular)/*invoke*/{
                 angular.element(document.getElementById('apploading')).remove();
             });
         })
-        .config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
+        .config(function ($stateProvider, $urlRouterProvider, $httpProvider, constants) {
     		// Globablly intercept response, redirect to login if not authorized for API
     		$httpProvider.interceptors.push(function($q, $location, $rootScope, $injector, $stateParams) {
     			return {
@@ -88,11 +89,11 @@ function (angular)/*invoke*/{
 			.state('tabs', {
 				url: "",
 				abstract: true,
-				templateUrl: "views/tabs.html"
+				templateUrl: constants.resourcesBaseUrl + '/views/tabs.html'
 			})
             .state('login', {
                 url: '/login',
-                templateUrl: 'views/login.html', 
+                templateUrl: constants.resourcesBaseUrl + '/views/login.html', 
                 controller: 'LoginCtrl as vm'
             })
             .state('digitscallback', {
@@ -103,7 +104,7 @@ function (angular)/*invoke*/{
                 url: '/setup',
                 views: {
                 	'tab-home': {
-                        templateUrl: 'views/setup.html', 
+                        templateUrl: constants.resourcesBaseUrl + '/views/setup.html', 
                         controller: 'UserSetupCtrl as vm', 
                         resolve: {
                         	user: function(UserSvc){
@@ -117,7 +118,7 @@ function (angular)/*invoke*/{
                 url: '/home',
                 views: {
                 	'tab-home': {
-                        templateUrl: 'views/home.html', 
+                        templateUrl: constants.resourcesBaseUrl + '/views/home.html', 
                         controller: 'HomeCtrl as vm'                		
                 	}
                 }
@@ -126,7 +127,7 @@ function (angular)/*invoke*/{
                 url: '/playlists',
                 views: {
                 	'tab-home': {
-                        templateUrl: 'views/playlists.html', 
+                        templateUrl: constants.resourcesBaseUrl + '/views/playlists.html', 
                         controller: 'PlaylistsCtrl as vm'
                 	}
                 }
@@ -135,7 +136,7 @@ function (angular)/*invoke*/{
                 url: '/playlists/:playlistId',
                 views: {
                 	'tab-home': {
-                        templateUrl: 'views/playlist.html', 
+                        templateUrl: constants.resourcesBaseUrl + '/views/playlist.html', 
                         controller: 'PlaylistCtrl as vm'
                 	}
                 }
@@ -144,7 +145,7 @@ function (angular)/*invoke*/{
                 url: '/playhistory',
                 views: {
                 	'tab-home': {
-                        templateUrl: 'views/playhistory.html', 
+                        templateUrl: constants.resourcesBaseUrl + '/views/playhistory.html', 
                         controller: 'PlayHistoryCtrl as vm'
                 	}
                 }
@@ -153,7 +154,7 @@ function (angular)/*invoke*/{
                 url: '/favorites',
                 views: {
                 	'tab-home': {
-                        templateUrl: 'views/favorites.html', 
+                        templateUrl: constants.resourcesBaseUrl + '/views/favorites.html', 
                         controller: 'FavoritesCtrl as vm'
                 	}
                 }
@@ -162,7 +163,7 @@ function (angular)/*invoke*/{
                 url: '/search',
                 views: {
                 	'tab-songs': {
-                        templateUrl: 'views/search.html', 
+                        templateUrl: constants.resourcesBaseUrl + '/views/search.html', 
                         controller: 'SearchCtrl as vm'
                 	}
                 }
@@ -171,7 +172,7 @@ function (angular)/*invoke*/{
                 url: '/browse/{mode}',
                 views: {
                 	'tab-songs': {
-                        templateUrl: 'views/browse.html', 
+                        templateUrl: constants.resourcesBaseUrl + '/views/browse.html', 
                         controller: 'BrowseCtrl as vm'
                 	}
                 }
@@ -180,7 +181,7 @@ function (angular)/*invoke*/{
                 url: '/{mode}/{query}',
                 views: {
                 	'tab-songs': {
-                        templateUrl: 'views/browse.html', 
+                        templateUrl: constants.resourcesBaseUrl + '/views/browse.html', 
                         controller: 'BrowseCtrl as vm'
                 	}
                 }
@@ -189,13 +190,13 @@ function (angular)/*invoke*/{
                 url: '/sing',
                 views: {
                 	'tab-sing': {
-                        templateUrl: 'views/sing.html', 
+                        templateUrl: constants.resourcesBaseUrl + '/views/sing.html', 
                         controller: 'QueueCtrl as vm'
                 	}
                 }
             });
             
             // if none of the above states are matched, use this as the fallback
-            $urlRouterProvider.otherwise('/home');
+            $urlRouterProvider.otherwise('/login');
         });
 });

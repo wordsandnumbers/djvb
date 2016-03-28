@@ -9,7 +9,7 @@ define(['angular'], function (angular) {
    * Service in the djvbApp.
    */
   angular.module('djvbApp.services.UserSvc', [])
-	.service('UserSvc', function ($rootScope, $http, $q, $ionicModal, $location) {
+	.service('UserSvc', function ($rootScope, $http, $q, $ionicModal, $location, constants) {
 		
 		var user,
 			modalScope = $rootScope.$new();
@@ -69,7 +69,7 @@ define(['angular'], function (angular) {
 		}
 		
 		function createModal() {
-			$ionicModal.fromTemplateUrl('views/usersettingsmodal.html', {
+			$ionicModal.fromTemplateUrl(constants.resourcesBaseUrl + '/views/usersettingsmodal.html', {
 				scope: modalScope,
 				animation: 'slide-in-up'
 			}).then(function(modal) {

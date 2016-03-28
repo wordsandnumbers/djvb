@@ -161,10 +161,27 @@ module.exports = function (grunt) {
 
     // Automatically inject Bower components into the app
     wiredep: {
-      app: {
-        src: ['<%= yeoman.app %>/index.html'],
-        ignorePath:  /\.\.\//
-      }
+	    app: {
+	        src: ['<%= yeoman.app %>/styles/main.css'],
+	        includeSelf: true,
+	        bowerJson: require('./bower.json'),        // default: require('./bower.json')
+	        ignorePath:  /\.\.\//,
+	        exclude: [
+	          "components-font-awesome"
+	        ],
+	        fileTypes: {
+	            // Custom config to output all css deps into a main css file using import statements
+	            css: {
+	                block: /(([ \t]*)\/\*\s*bower:*(\S*)\s*\*\/)(\n|\r|.)*?(\/\*\s*endbower\s*\*\/)/gi,
+	                detect: {
+	                    css: /@import.*url\(['"]([^'"]+)/gi
+	                },
+	                replace: {
+	                    css: '@import url("{{filePath}}");'
+	                }
+	            }
+	        }
+	      }
     },
 
     // Renames files for browser caching purposes
@@ -206,30 +223,23 @@ module.exports = function (grunt) {
     // minification. These next options are pre-configured if you do not wish
     // to use the Usemin blocks.
      cssmin: {
-       options: {
-    	 advanced: false
-       },
+         dist: {
+           files: {
+             '<%= yeoman.dist %>/styles/main.css': [
+               '.tmp/styles/{,*/}*.css'
+             ]
+           }
+         }
+     },
+     uglify: {
        dist: {
          files: {
-           '<%= yeoman.dist %>/styles/main.css': [
-             '.tmp/styles/{,*/}*.css',
-             '<%= yeoman.app %>/styles/{,*/}*.css'
+           '<%= yeoman.dist %>/bower_components/requirejs/require.js': [
+             '<%= yeoman.dist %>/bower_components/requirejs/require.js'
            ]
          }
        }
      },
-    // uglify: {
-    //   dist: {
-    //     files: {
-    //       '<%= yeoman.dist %>/scripts/scripts.js': [
-    //         '<%= yeoman.dist %>/scripts/scripts.js'
-    //       ]
-    //     }
-    //   }
-    // },
-    // concat: {
-    //   dist: {}
-    // },
 
     // The following *-min tasks produce minified files in the dist folder
     imagemin: {
@@ -412,6 +422,7 @@ module.exports = function (grunt) {
 			src: 'views/**/*.html',
 			dest: '.tmp/<%= yeoman.app %>/scripts/templates.js',
 			options: {
+				prefix: '/resources/',
 				module: 'djvbApp.templates', 
 				bootstrap: function(module, script) {
 					return "define(['angular'], function (angular) { angular.module('" + module + "', []).run(['$templateCache', function ($templateCache) {" + script + "}]);});";
@@ -481,16 +492,17 @@ module.exports = function (grunt) {
     'wiredep',
     'bowerRequirejs:app',
     'replace:test',
-    'useminPrepare',
+    //'replace:preuseminprepare',
+    //'useminPrepare',
     'concurrent:dist',
-    'concat',
+    //'concat',
     'ngAnnotate',
+    //'replace:postusemin',
     'copy:dist',
     'cssmin',
-    // Below task commented out as r.js (via grunt-contrib-requirejs) will take care of this
-    // 'uglify',
-    'filerev',
-    'usemin',
+    'uglify',
+    // 'filerev',
+    //'usemin',
     'ngtemplates:dist',
     'requirejs:dist',
     'htmlmin'

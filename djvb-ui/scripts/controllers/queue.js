@@ -9,7 +9,7 @@ define([ 'angular' ], function(angular) {
 	 * Controller of the djvbApp
 	 */
 	angular.module('djvbApp.controllers.QueueCtrl', ['ionic'])
-	.controller('QueueCtrl', function($scope, $ionicActionSheet, $ionicPopup, $ionicModal, QueueSvc) {
+	.controller('QueueCtrl', function($scope, $ionicActionSheet, $ionicPopup, $ionicModal, QueueSvc, constants) {
 		var vm = this;
 		vm.queues = [];
 		vm.showReorder = false;
@@ -24,7 +24,7 @@ define([ 'angular' ], function(angular) {
 			vm.queues = queues;
 		});
 
-		$ionicModal.fromTemplateUrl('views/queuesettingsmodal.html', {
+		$ionicModal.fromTemplateUrl(constants.resourcesBaseUrl + '/views/queuesettingsmodal.html', {
 			scope: $scope,
 			animation: 'slide-in-up'
 		}).then(function(modal) {

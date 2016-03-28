@@ -52,7 +52,7 @@ define(['angular', 'digits'], function (angular, Digits) {
         function digitsLogin(event) {
             Digits.logIn({
             	callbackURL: $location.protocol() + '://' + $location.host() + ':'
-            	+ $location.port() + '/resources/index.html#digitscallback'
+            	+ $location.port() + '/#digitscallback'
             });
         }
                 
