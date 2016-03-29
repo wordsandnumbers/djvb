@@ -18,8 +18,7 @@ define(['angular', 'lodash'], function (angular, _) {
 	$ionicPopup, 
 	ActionSheetSvc,
 	$localStorage,
-	$state,
-	QueueSvc
+	$state
 	) {
         var vm = this;
         vm.searchString = '';
@@ -39,7 +38,6 @@ define(['angular', 'lodash'], function (angular, _) {
 		vm.hasMoreData = hasMoreData;
 		vm.nextPage = nextPage;
 		vm.clearHistory = clearHistory;
-		vm.songInQueue = QueueSvc.songInQueue;
 
         function exactSearch(searchString) {
         	$state.go('tabs.browsequery', {mode: 'artist', query: searchString});

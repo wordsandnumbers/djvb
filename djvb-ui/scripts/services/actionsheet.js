@@ -11,6 +11,7 @@ define(['angular', 'lodash'], function (angular, _) {
   angular.module('djvbApp.services.ActionSheetSvc', [])
 	.service('ActionSheetSvc', function (
 		$rootScope, 
+		$ionicLoading, 
 		$ionicPopup, 
 		$ionicActionSheet, 
 		UserSvc, 
@@ -241,6 +242,11 @@ define(['angular', 'lodash'], function (angular, _) {
         function addSongToQueue(song) {
 			QueueSvc.addSongToQueue(queues[0], song).then(function(response) {
 				// Success
+			    $ionicLoading.show({
+			        template: '<p>Song Added!</p><i class="icon ion-checkmark-round message-icon"></i>',
+			        noBackdrop: true,
+			        duration: 1500
+			    });
 			}, function(response) {
 				// Error
 				$ionicPopup.alert({
