@@ -1,5 +1,7 @@
 package com.vpo.djvoxbox.config;
 
+import javax.servlet.Filter;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.ConfigurableEmbeddedServletContainer;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
@@ -12,6 +14,7 @@ import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.filter.ShallowEtagHeaderFilter;
 
 import com.vpo.djvoxbox.security.web.authentication.SpringSessionRememberMeServices;
 import com.vpo.vbclient.queue.QueueClient;
@@ -76,6 +79,11 @@ public class VoxBoxConfig {
             serializer.setCookieMaxAge(31557600);; 
             return serializer;
     }
+	
+	@Bean
+	public Filter shallowEtagHeaderFilter() {
+		return new ShallowEtagHeaderFilter();
+	}
 	
 	@Component
 	public static class ServletCustomizer implements EmbeddedServletContainerCustomizer {
