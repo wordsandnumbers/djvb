@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.filter.ShallowEtagHeaderFilter;
 
+import com.vpo.djvoxbox.domain.UserQueueListener;
 import com.vpo.djvoxbox.security.web.authentication.SpringSessionRememberMeServices;
 import com.vpo.vbclient.queue.QueueClient;
 import com.vpo.vbclient.session.SessionClient;
@@ -83,6 +84,11 @@ public class VoxBoxConfig {
 	@Bean
 	public Filter shallowEtagHeaderFilter() {
 		return new ShallowEtagHeaderFilter();
+	}
+	
+	@Bean
+	public UserQueueListener afterSaveListener() {
+		return new UserQueueListener();
 	}
 	
 	@Component

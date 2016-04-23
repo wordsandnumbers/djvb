@@ -23,7 +23,9 @@ requirejs.config({
     digits: 'https://cdn.digits.com/1/sdk',
     'angular-aria': '../../bower_components/angular-aria/angular-aria',
     'angular-mocks': '../../bower_components/angular-mocks/angular-mocks',
-    ngstorage: '../../bower_components/ngstorage/ngStorage'
+    ngstorage: '../../bower_components/ngstorage/ngStorage',
+    'sockjs-client': '../../bower_components/sockjs-client/dist/sockjs',
+    'stomp-websocket': '../../bower_components/stomp-websocket/lib/stomp'
   },
 
     shim: {

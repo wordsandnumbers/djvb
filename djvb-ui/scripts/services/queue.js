@@ -1,4 +1,4 @@
-define(['angular'], function (angular) {
+define(['angular', 'sockjs-client', 'stomp-websocket'], function (angular, SockJS, Stomp) {
   'use strict';
 
   /**
@@ -9,11 +9,41 @@ define(['angular'], function (angular) {
    * Service in the djvbApp.
    */
   angular.module('djvbApp.services.QueueSvc', [])
-	.service('QueueSvc', function ($http, $q, $timeout) {
+	.service('QueueSvc', function ($http, $log, $q, $timeout, $window) {
 
 		var queues;
 		
-		pollQueues();
+        var socket = {};
+        var stompClient = {};
+        initSocket();
+
+        function initSocket() {
+        	socket = new SockJS('/queue');
+        	stompClient = Stomp.over(socket);
+            stompClient.connect({}, stompSuccess, stompError);
+        }
+        
+        function stompSuccess(frame) {
+            stompClient.subscribe('/topic/queue/77d43608-568e-48e4-95e2-c7ec67a80508', function(message){
+            	//angular.copy(JSON.parse(message.body), queues[0]);
+            	spliceQueue(queues[0], JSON.parse(message.body));
+            	$log.info(JSON.parse(message.body));
+            });
+            /*stompClient.subscribe('/user/topic/queue', function(message){
+            	angular.copy(JSON.parse(message.body), queues[0]);
+            	$log.info(JSON.parse(message.body));
+            });*/
+        }
+        
+        function stompError(message) {
+        	$timeout(initSocket, 10000);
+        }
+        
+        /*$timeout(function() {
+        	stompClient.send("/ws/queue", {}, JSON.stringify('Stuff and things'));
+        }, 2000);*/
+        
+		//pollQueues();
 		
 		return {
 			join: join, 
