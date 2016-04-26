@@ -1,4 +1,7 @@
-define(['angular', 'sockjs-client', 'stomp-websocket'], function (angular, SockJS, Stomp) {
+define([
+    'angular', 
+    'AngularStompDK'
+], function (angular) {
   'use strict';
 
   /**
@@ -8,39 +11,13 @@ define(['angular', 'sockjs-client', 'stomp-websocket'], function (angular, SockJ
    * # Queue
    * Service in the djvbApp.
    */
-  angular.module('djvbApp.services.QueueSvc', [])
-	.service('QueueSvc', function ($http, $log, $q, $timeout, $window) {
+  angular.module('djvbApp.services.QueueSvc', ['AngularStompDK'])
+	.service('QueueSvc', function ($http, $log, $q, $timeout, $window, ngstomp) {
 
-		var queues;
+		var queues = [];
 		
-        var socket = {};
-        var stompClient = {};
-        initSocket();
-
-        function initSocket() {
-        	socket = new SockJS('/queue');
-        	stompClient = Stomp.over(socket);
-            stompClient.connect({}, stompSuccess, stompError);
-        }
-        
-        function stompSuccess(frame) {
-            stompClient.subscribe('/topic/queue/77d43608-568e-48e4-95e2-c7ec67a80508', function(message){
-            	//angular.copy(JSON.parse(message.body), queues[0]);
-            	spliceQueue(queues[0], JSON.parse(message.body));
-            	$log.info(JSON.parse(message.body));
-            });
-            /*stompClient.subscribe('/user/topic/queue', function(message){
-            	angular.copy(JSON.parse(message.body), queues[0]);
-            	$log.info(JSON.parse(message.body));
-            });*/
-        }
-        
-        function stompError(message) {
-        	$timeout(initSocket, 10000);
-        }
-        
         /*$timeout(function() {
-        	stompClient.send("/ws/queue", {}, JSON.stringify('Stuff and things'));
+        	ngstomp.send('/ws/queue', 'Stuff and things');
         }, 2000);*/
         
 		//pollQueues();
@@ -78,19 +55,22 @@ define(['angular', 'sockjs-client', 'stomp-websocket'], function (angular, SockJ
 		function getQueues() {
 			return $q(function(resolve, reject) {
 				$http.get('/api/v1/queue/queues').then(function(response){
-					if (queues === undefined) {
-						queues = response.data;
-					} else {
-	                    // Use `splice` to replace array members so the original array reference is maintained
-						_.forEach(response.data, function(queue) {
-							var queueIndex = _.findIndex(queues, {'id': queue.id});
-							if (queueIndex > -1) {
-								spliceQueue(queues[queueIndex], queue);
-							} else {
-								queues.push(queue);
-							}
-						})
-					}
+					angular.copy(response.data, queues);
+					_.forEach(queues, function(queue) {
+						ngstomp.subscribeTo('/topic/queue/update/' + queue.id)
+						.callback(function(message){
+							// TODO: lookup queue by id and splice it in.
+							angular.copy(JSON.parse(message.body), queues[0]);
+				        	$log.info('UPDATE: ', JSON.parse(message.body));
+				        })
+				        .and()
+				        .subscribeTo('/topic/queue/delete/'+ queue.id)
+				        .callback(function(message) {
+				        	// TODO: lookup in queue list and delete queue
+				        	$log.info('DELETE: ', JSON.parse(message.body));
+				        })
+				        .connect();
+					})
 					resolve(queues);
 				}, function(error) {
 					reject(error);
@@ -100,7 +80,7 @@ define(['angular', 'sockjs-client', 'stomp-websocket'], function (angular, SockJ
 		
 		function getQueuesList() {
 			return $q(function(resolve, reject) {
-				if (queues === undefined) {
+				if (_.isEmpty(queues)) {
 					getQueues().then(function (response) {
 						resolve(response);
 					}, function(response) {

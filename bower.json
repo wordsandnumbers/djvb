@@ -7,6 +7,7 @@
     "angular-aria": "~1.4.0",
     "angular-sanitize": "^1.4.0",
     "angular-ui-router": "~0.2.15",
+    "AngularStompDK": "~0.8.2",
     "animate.css": "~3.5.1",
     "ionic": "~1.2.4",
     "lodash": "~3.10.1",

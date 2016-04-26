@@ -13,7 +13,8 @@ require.config({
     'angular-mocks': '../../bower_components/angular-mocks/angular-mocks',
     ngstorage: '../../bower_components/ngstorage/ngStorage',
     'sockjs-client': '../../bower_components/sockjs-client/dist/sockjs',
-    'stomp-websocket': '../../bower_components/stomp-websocket/lib/stomp'
+    'stomp-websocket': '../../bower_components/stomp-websocket/lib/stomp.min',
+    AngularStompDK: '../../bower_components/AngularStompDK/dist/angular-stomp'
   },
   shim: {
     angular: {
@@ -27,6 +28,10 @@ require.config({
     ],
     'angular-animate': [
       'angular'
+    ],
+    'AngularStompDK': [
+      'angular',
+      'stomp-websocket'
     ],
     ionic: [
       'angular'

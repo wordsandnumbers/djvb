@@ -1,6 +1,6 @@
 /*jshint unused: vars */
-define(['angular', 'controllers/browse', 'controllers/search', 'controllers/tabs', 'controllers/login', 'controllers/home', 'services/user', 'controllers/usersetup', 'services/queue', 'controllers/queue', 'services/playlists', 'controllers/playlists', 'controllers/playlist', 'controllers/playhistory', 'controllers/favorites', 'controllers/digitscallback', 'services/actionsheet', 'directives/focusme', 'directives/capitalize', 'templates', 'services/constants']/*deps*/,
-function (angular)/*invoke*/{
+define(['angular', 'sockjs-client', 'controllers/browse', 'controllers/search', 'controllers/tabs', 'controllers/login', 'controllers/home', 'services/user', 'controllers/usersetup', 'services/queue', 'controllers/queue', 'services/playlists', 'controllers/playlists', 'controllers/playlist', 'controllers/playhistory', 'controllers/favorites', 'controllers/digitscallback', 'services/actionsheet', 'directives/focusme', 'directives/capitalize', 'templates', 'services/constants']/*deps*/,
+function (angular, SockJS)/*invoke*/{
     'use strict';
 
     /**
@@ -37,7 +37,8 @@ function (angular)/*invoke*/{
             'ionic',
             'ngSanitize',
             'ngAnimate',
-            'ui.router'
+            'ui.router',
+            'AngularStompDK'
         ])
         .run(function ($rootScope, $ionicPlatform, $location, UserSvc, $state) {
 
@@ -70,8 +71,12 @@ function (angular)/*invoke*/{
                 angular.element(document.getElementById('apploading')).remove();
             });
         })
-        .config(function ($stateProvider, $urlRouterProvider, $httpProvider, constants) {
-    		// Globablly intercept response, redirect to login if not authorized for API
+        .config(function ($stateProvider, $urlRouterProvider, $httpProvider, constants, ngstompProvider) {
+            ngstompProvider
+	            .url('/queue')
+	            .class(SockJS);
+        	
+        	// Globablly intercept response, redirect to login if not authorized for API
     		$httpProvider.interceptors.push(function($q, $location, $rootScope, $injector, $stateParams) {
     			return {
     				responseError: function(response) {
