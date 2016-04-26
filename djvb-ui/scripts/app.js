@@ -72,7 +72,8 @@ function (angular, SockJS)/*invoke*/{
             });
         })
         .config(function ($stateProvider, $urlRouterProvider, $httpProvider, constants, ngstompProvider) {
-            ngstompProvider
+            // Configure STOMP to use SockJS
+        	ngstompProvider
 	            .url('/queue')
 	            .class(SockJS);
         	

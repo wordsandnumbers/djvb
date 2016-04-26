@@ -14,7 +14,7 @@ public class UserQueueListener extends AbstractMongoEventListener<UserQueue> {
 	
 	@Override
 	public void onAfterConvert(AfterConvertEvent<UserQueue> event) {
-	    template.convertAndSend("/topic/queue/" + event.getSource().getId(), event.getSource());
+	    template.convertAndSend("/topic/queue/create/" + event.getSource().getId(), event.getSource());
 	}
 
 	@Override
