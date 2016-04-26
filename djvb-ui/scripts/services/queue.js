@@ -14,7 +14,8 @@ define([
   angular.module('djvbApp.services.QueueSvc', ['AngularStompDK'])
 	.service('QueueSvc', function ($http, $log, $q, $timeout, $window, ngstomp) {
 
-		var queues = [];
+		var queues = [],
+			queueSubscription;
 		
         /*$timeout(function() {
         	ngstomp.send('/ws/queue', 'Stuff and things');
@@ -56,8 +57,11 @@ define([
 			return $q(function(resolve, reject) {
 				$http.get('/api/v1/queue/queues').then(function(response){
 					angular.copy(response.data, queues);
+					if (queueSubscription !== undefined) {
+						queueSubscription.unSubscribeAll();
+					}
 					_.forEach(queues, function(queue) {
-						ngstomp.subscribeTo('/topic/queue/update/' + queue.id)
+						queueSubscription = ngstomp.subscribeTo('/topic/queue/update/' + queue.id)
 						.callback(function(message){
 							// TODO: lookup queue by id and splice it in.
 							angular.copy(JSON.parse(message.body), queues[0]);
@@ -131,7 +135,7 @@ define([
 					'from': fromIndex, 
 					'to': toIndex
 				}).then(function(response){
-					spliceQueue(queue, response.data);
+					//spliceQueue(queue, response.data);
 					resolve(queue);
 				}, function(response) {
 					reject(response);
