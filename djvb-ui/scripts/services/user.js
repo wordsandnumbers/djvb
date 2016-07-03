@@ -1,4 +1,4 @@
-define(['angular'], function (angular) {
+define(['angular', 'lodash'], function (angular, _) {
   'use strict';
 
   /**
@@ -12,6 +12,7 @@ define(['angular'], function (angular) {
 	.service('UserSvc', function ($rootScope, $http, $q, $ionicModal, $location, constants) {
 		
 		var user,
+			userPromise,
 			modalScope = $rootScope.$new();
 
 		return {
@@ -22,19 +23,22 @@ define(['angular'], function (angular) {
 		};
 		
 		function getUser() {
-			return $q(function (resolve, reject) {
-				if (user === undefined) {
-					$http.get('/api/v1/user/user').then(function(config) {
-						user = config.data;
-						$rootScope.authenticated = true;
+			if (userPromise === undefined || _.get(userPromise, '$$state.status') === 2) {
+				userPromise = $q(function (resolve, reject) {
+					if (user === undefined) {
+						$http.get('/api/v1/user/user').then(function(config) {
+							user = config.data;
+							$rootScope.authenticated = true;
+							resolve(user);
+						}, function(error) {
+							reject(error);
+						});
+					} else {
 						resolve(user);
-					}, function(error) {
-						reject(error);
-					});
-				} else {
-					resolve(user);
-				}
-			});
+					}
+				});
+			}
+			return userPromise;
 		}
 		
 		function putUser(updatedUser) {
@@ -53,6 +57,7 @@ define(['angular'], function (angular) {
 				$http.get('/logout').then(function(response) {
 					$rootScope.authenticated = false;
 					user = undefined;
+					userPromise = undefined;
 					resolve(response);
 				}, function(response) {
 					reject(response);
