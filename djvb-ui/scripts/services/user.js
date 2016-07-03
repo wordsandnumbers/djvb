@@ -76,7 +76,9 @@ define(['angular', 'lodash'], function (angular, _) {
 		function createModal() {
 			$ionicModal.fromTemplateUrl(constants.resourcesBaseUrl + '/views/usersettingsmodal.html', {
 				scope: modalScope,
-				animation: 'slide-in-up'
+				animation: 'slide-in-up',
+				backdropClickToClose: false,
+				hardwareBackButtonClose: false
 			}).then(function(modal) {
 	            modalScope.modal = modal;
 				modal.show();
