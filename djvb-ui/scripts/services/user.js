@@ -11,7 +11,7 @@ define(['angular', 'lodash'], function (angular, _) {
   angular.module('djvbApp.services.UserSvc', [])
 	.service('UserSvc', function ($rootScope, $http, $q, $ionicModal, $location, constants) {
 		
-		var user,
+		var user = {},
 			userPromise,
 			modalScope = $rootScope.$new();
 
@@ -25,17 +25,14 @@ define(['angular', 'lodash'], function (angular, _) {
 		function getUser() {
 			if (userPromise === undefined || _.get(userPromise, '$$state.status') === 2) {
 				userPromise = $q(function (resolve, reject) {
-					if (user === undefined) {
-						$http.get('/api/v1/user/user').then(function(config) {
-							user = config.data;
-							$rootScope.authenticated = true;
-							resolve(user);
-						}, function(error) {
-							reject(error);
-						});
-					} else {
+					$http.get('/api/v1/user/user').then(function(response) {
+						angular.copy(response.data, user);
+						checkUser();
+						$rootScope.authenticated = true;
 						resolve(user);
-					}
+					}, function(errorResponse) {
+						reject(errorResponse);
+					});
 				});
 			}
 			return userPromise;
@@ -43,11 +40,11 @@ define(['angular', 'lodash'], function (angular, _) {
 		
 		function putUser(updatedUser) {
 			return $q(function (resolve, reject) {
-				$http.put('/api/v1/user', updatedUser).then(function(config) {
-					user = config.data;
+				$http.put('/api/v1/user', updatedUser).then(function(response) {
+					angular.copy(response.data, user);
 					resolve(user);
-				}, function(error) {
-					reject(error);
+				}, function(response) {
+					reject(response);
 				});
 			});
 		}
@@ -56,7 +53,7 @@ define(['angular', 'lodash'], function (angular, _) {
 			return $q(function (resolve, reject) {
 				$http.get('/logout').then(function(response) {
 					$rootScope.authenticated = false;
-					user = undefined;
+					user = {};
 					userPromise = undefined;
 					resolve(response);
 				}, function(response) {
@@ -64,10 +61,16 @@ define(['angular', 'lodash'], function (angular, _) {
 				})			
 			})
 		}
-		
+
+		function checkUser() {
+			if (_.isEmpty(user.screenName) || _.isEmpty(user.email)) {
+				showSettingsModal();
+			}
+		}
+
 		function showSettingsModal() {
-			getUser().then(function(user) {
-	            modalScope.user = user;
+			getUser().then(function(response) {
+	            modalScope.user = response;
 	            modalScope.userCopy = angular.copy(user);
 	            createModal();
 	        })

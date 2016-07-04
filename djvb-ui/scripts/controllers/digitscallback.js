@@ -40,34 +40,17 @@ define(['angular', 'digits'], function (angular, Digits) {
 					data : $httpParamSerializer(verifyData)
 				}).then(function() {
                     $rootScope.authenticated = true;
-					checkUser();
 	    			$location.url('/home');
 				}, function(response) {
                     $rootScope.authenticated = false;
-                    $ionicLoading.hide();
 					$ionicPopup.alert({
 						title: "Error",
 						template: JSON.stringify(response.data)
 					});
 	    			$location.url('/login');
+				}).finally(function () {
+					$ionicLoading.hide();
 				});
 			}
-
-            function checkUser() {
-	    		UserSvc.getUser().then(function(user) {
-	                $ionicLoading.hide();
-	    			if (_.isEmpty(user.screenName) || _.isEmpty(user.email)) {
-		    			UserSvc.showSettingsModal();
-	    			}
-	    			$location.url('/home');
-	    		}, function(response) {
-	                $ionicLoading.hide();
-					$ionicPopup.alert({
-						title: "Error",
-						template: JSON.stringify(response.data)
-					});
-	    		});
-            }
-
 		});
 });

@@ -53,9 +53,6 @@ function (angular)/*invoke*/{
             	})
             });
             
-        	// Get user immediately on app load.
-        	UserSvc.getUser();
-        	
             $ionicPlatform.ready(function () {
                 // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
                 // for form inputs)
