@@ -9,11 +9,13 @@ define([ 'angular' ], function(angular) {
 	 * Controller of the djvbApp
 	 */
 	angular.module('djvbApp.controllers.QueueCtrl', ['ionic'])
-	.controller('QueueCtrl', function($scope, $ionicActionSheet, $ionicPopup, $ionicModal, QueueSvc, constants) {
+	.controller('QueueCtrl', function($scope, $ionicActionSheet, $ionicLoading, $ionicPopup, $ionicModal, QueueSvc, constants) {
 		var vm = this;
 		vm.queues = [];
 		vm.showReorder = false;
 		vm.level = null;
+		vm.popupModal = popupModal;
+		vm.createPopup = createPopup;
 		vm.selectPlay = selectPlay;
 		vm.showSettings = showSettings;
 		vm.deleteQueue = deleteQueue;
@@ -30,6 +32,34 @@ define([ 'angular' ], function(angular) {
 		}).then(function(modal) {
 			vm.queueSettingsModal = modal;
 		});
+
+		$ionicModal.fromTemplateUrl(constants.resourcesBaseUrl + '/views/createpopupmodal.html', {
+			scope: $scope,
+			animation: 'slide-in-up'
+		}).then(function(modal) {
+			vm.createPopupModal = modal;
+		});
+
+		function createPopup() {
+			QueueSvc.createPopup(vm.message).then(function () {
+				$ionicLoading.show({
+					template: '<p>Message sent!</p><i class="icon ion-checkmark-round message-icon"></i>',
+					noBackdrop: true,
+					duration: 1500
+				});
+				vm.message = "";
+			}, function(response) {
+				// Error
+				$ionicPopup.alert({
+					title: "Error",
+					template: JSON.stringify(response.data)
+				});
+			});
+		}
+		
+		function popupModal() {
+			vm.createPopupModal.show();
+		}
 		
         function selectPlay(play) {
 			var hideSheet = $ionicActionSheet.show({

@@ -1,0 +1,12 @@
+      <ion-modal-view>
+        <ion-header-bar class="bar bar-header bar-stable">
+          <h1 class="title">Popups</h1>
+          <button class="button button-clear button-primary" ng-click="vm.createPopupModal.hide()">Close</button>
+        </ion-header-bar>
+        <ion-content class="padding">
+			<label class="item item-input">
+				<textarea ng-model="vm.message" placeholder="Enter a message to show on the screen"></textarea>
+			</label>
+			<button class="button button-block button-positive" ng-disabled="!vm.message" ng-click="vm.createPopup(vm.message)">Pop it!</button>
+		</ion-content>
+      </ion-modal-view>

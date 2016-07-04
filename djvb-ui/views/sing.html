@@ -1,8 +1,12 @@
 <ion-view title="Sing">
-    <ion-nav-buttons side="secondary">
-	    <a class="button button-stable button-icon icon ion-ios-gear-outline" title="Settings"
-	       ng-click="vm.showSettings()" ng-if="vm.queues.length>0"></a>
-    </ion-nav-buttons>
+	<ion-nav-buttons side="primary">
+		<a class="button button-stable button-icon icon ion-ios-chatboxes-outline" title="Popup Message"
+		   ng-click="vm.popupModal()" ng-if="vm.queues.length>0"></a>
+	</ion-nav-buttons>
+	<ion-nav-buttons side="secondary">
+		<a class="button button-stable button-icon icon ion-ios-gear-outline" title="Settings"
+		   ng-click="vm.showSettings()" ng-if="vm.queues.length>0"></a>
+	</ion-nav-buttons>
 	<ion-content ng-class="{'vertical-center':vm.queues.length===0}" class="has-header">
 		<div ng-if="vm.queues.length===0">
 			<h4 class="text-center">You're not singing yet!</h4>

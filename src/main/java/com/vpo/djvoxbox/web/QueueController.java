@@ -54,7 +54,7 @@ public class QueueController {
 		sessionClient.controlLights(code, level);
 	}
 	
-	@RequestMapping(value="/popup/{roomcode}/", method=RequestMethod.POST)
+	@RequestMapping(value="/popup/{roomCode}", method=RequestMethod.POST)
 	public void popup(Principal principal, @PathVariable("roomCode") String roomCode, @RequestBody String message) {
 		User user = userRepository.findById(principal.getName());
 		sessionClient.postPopup(SessionUtils.makeSession(user), roomCode, message);

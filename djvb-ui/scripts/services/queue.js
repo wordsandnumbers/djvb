@@ -16,6 +16,7 @@ define(['angular'], function (angular) {
 		pollQueues();
 		
 		return {
+			createPopup: createPopup,
 			join: join, 
 			getQueues: getQueues, 
 			getQueuesList: getQueuesList, 
@@ -27,7 +28,17 @@ define(['angular'], function (angular) {
 			setLights: setLights,
 			songInQueue: songInQueue
 		}
-		
+
+		function createPopup(message) {
+			return $q(function (resolve, reject) {
+				$http.post('/api/v1/queue/popup/' + queues[0].roomCode, message).then(function(response) {
+					resolve(response.data);
+				}, function(errorResponse) {
+					reject(errorResponse);
+				});
+			});
+		}
+
         function pollQueues() {
         	getQueues();
             // Get queues every 15 seconds
