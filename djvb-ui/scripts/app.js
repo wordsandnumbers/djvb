@@ -1,5 +1,5 @@
 /*jshint unused: vars */
-define(['angular', 'controllers/browse', 'controllers/search', 'controllers/tabs', 'controllers/login', 'controllers/home', 'services/user', 'controllers/usersetup', 'services/queue', 'controllers/queue', 'services/playlists', 'controllers/playlists', 'controllers/playlist', 'controllers/playhistory', 'controllers/favorites', 'controllers/digitscallback', 'services/actionsheet', 'directives/focusme', 'directives/capitalize', 'templates', 'services/constants']/*deps*/,
+define(['angular', 'controllers/browse', 'controllers/search', 'controllers/tabs', 'controllers/login', 'controllers/home', 'services/user', 'controllers/usersetup', 'services/queue', 'controllers/queue', 'services/playlists', 'controllers/playlists', 'controllers/playlist', 'controllers/playhistory', 'controllers/favorites', 'controllers/digitscallback', 'services/actionsheet', 'services/tags', 'directives/focusme', 'directives/capitalize', 'templates', 'services/constants']/*deps*/,
 function (angular)/*invoke*/{
     'use strict';
 
@@ -31,6 +31,7 @@ function (angular)/*invoke*/{
 			'djvbApp.services.Constants',
 			'djvbApp.services.PlaylistsSvc',
 			'djvbApp.services.QueueSvc',
+			'djvbApp.services.TagsSvc',
 			'djvbApp.services.UserSvc',
 			'djvbApp.templates',
 			/*angJSDeps*/

@@ -24,12 +24,12 @@
 				New Songs
 			</ion-item>
         </ion-list>
-		<div class="card" ng-repeat="(group, tags) in vm.tags">
+		<div class="card" ng-repeat="category in vm.categories">
 			<div class="item item-divider">
-				{{group}}
+				{{category.category_name}}
 			</div>	
 			<div class="item item-text-wrap text-center">
-				<a ng-repeat="tag in tags" class="button button-light" href="#tag/{{tag}}">{{tag}}</a>
+				<a ng-repeat="tag in category.tags" class="button button-light" href="#tag/{{tag.name}}">{{tag.name}}</a>
 			</div>
 		</div>
         
