@@ -9,11 +9,12 @@ define(['angular', 'lodash'], function (angular, _) {
    * Service in the djvbApp.
    */
   angular.module('djvbApp.services.UserSvc', [])
-	.service('UserSvc', function ($rootScope, $http, $q, $ionicModal, $location, constants) {
+	.service('UserSvc', function ($rootScope, $http, $q, $ionicModal, $ionicPopover, $location, constants) {
 		
 		var user = {},
 			userPromise,
-			modalScope = $rootScope.$new();
+			modalScope = $rootScope.$new(),
+			userColors = ['#72C2FF', '#6798E6', '#CEA1E1', '#FFADED', '#FC809B', '#FFC787', '#FFF074', '#A6FC81', '#09E6AE', '#18C4C7']
 
 		return {
 			getUser: getUser, 
@@ -83,7 +84,25 @@ define(['angular', 'lodash'], function (angular, _) {
 				backdropClickToClose: false,
 				hardwareBackButtonClose: false
 			}).then(function(modal) {
-	            modalScope.modal = modal;
+				
+				$ionicPopover.fromTemplateUrl(constants.resourcesBaseUrl + '/views/colorpickerpopover.html', {
+					scope: modalScope
+				}).then(function(popover) {
+					modalScope.popover = popover;
+				});
+
+				modalScope.userColors = userColors;
+
+				modalScope.setColor = function (color) {
+					modalScope.userCopy.color = color;
+					modalScope.popover.hide();
+				};
+				
+				modalScope.pickColor = function ($event) {
+					modalScope.popover.show($event);
+				};
+
+				modalScope.modal = modal;
 				modal.show();
 
 	            modalScope.closeModal = function () {

@@ -23,9 +23,13 @@
 					<span class="input-label">Email</span>
 					<input ng-model="userCopy.email" type="email" required="required" overwrite-email>
 				</label>
+				<label class="item item-input">
+					<span class="input-label">Color</span>
+					<button class="button button-small button-light" title="Change user color" ng-style="{'background-color': userCopy.color}" ng-click="pickColor($event)">Change</button>
+				</label>
 			</div>
-	<!-- 		<pre>{{userForm | json}}</pre>
-			<pre>{{user | json}}</pre> -->
+	 		<!--<pre>{{userForm | json}}</pre>
+			<pre>{{user | json}}</pre>--> 
 		</ion-content>
 		<ion-footer-bar class="bar bar-footer">
 			<button class="button icon-left ion-log-out button-assertive" ng-click="logout()">Log out</button>
