@@ -13,8 +13,7 @@ define(['angular', 'lodash'], function (angular, _) {
 		
 		var user = {},
 			userPromise,
-			modalScope = $rootScope.$new(),
-			userColors = ['#72C2FF', '#6798E6', '#CEA1E1', '#FFADED', '#FC809B', '#FFC787', '#FFF074', '#A6FC81', '#09E6AE', '#18C4C7']
+			modalScope = $rootScope.$new();
 
 		return {
 			getUser: getUser, 
@@ -40,7 +39,7 @@ define(['angular', 'lodash'], function (angular, _) {
 		}
 		
 		function putUser(updatedUser) {
-			return $q(function (resolve, reject) {
+			userPromise = $q(function (resolve, reject) {
 				$http.put('/api/v1/user', updatedUser).then(function(response) {
 					angular.copy(response.data, user);
 					resolve(user);
@@ -48,6 +47,7 @@ define(['angular', 'lodash'], function (angular, _) {
 					reject(response);
 				});
 			});
+			return userPromise;
 		}
 
 		function logout() {
@@ -71,8 +71,6 @@ define(['angular', 'lodash'], function (angular, _) {
 
 		function showSettingsModal() {
 			getUser().then(function(response) {
-	            modalScope.user = response;
-	            modalScope.userCopy = angular.copy(user);
 	            createModal();
 	        })
 		}
@@ -85,22 +83,8 @@ define(['angular', 'lodash'], function (angular, _) {
 				hardwareBackButtonClose: false
 			}).then(function(modal) {
 				
-				$ionicPopover.fromTemplateUrl(constants.resourcesBaseUrl + '/views/colorpickerpopover.html', {
-					scope: modalScope
-				}).then(function(popover) {
-					modalScope.popover = popover;
-				});
-
-				modalScope.userColors = userColors;
-
-				modalScope.setColor = function (color) {
-					modalScope.userCopy.color = color;
-					modalScope.popover.hide();
-				};
-				
-				modalScope.pickColor = function ($event) {
-					modalScope.popover.show($event);
-				};
+				modalScope.user = angular.copy(user);
+				modalScope.userCopy = angular.copy(user);
 
 				modalScope.modal = modal;
 				modal.show();

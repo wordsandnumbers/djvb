@@ -1,5 +1,5 @@
 /*jshint unused: vars */
-define(['angular', 'controllers/browse', 'controllers/search', 'controllers/tabs', 'controllers/login', 'controllers/home', 'services/user', 'controllers/usersetup', 'services/queue', 'controllers/queue', 'services/playlists', 'controllers/playlists', 'controllers/playlist', 'controllers/playhistory', 'controllers/favorites', 'controllers/digitscallback', 'services/actionsheet', 'services/tags', 'directives/focusme', 'directives/capitalize', 'templates', 'services/constants']/*deps*/,
+define(['angular', 'controllers/browse', 'controllers/search', 'controllers/tabs', 'controllers/login', 'controllers/home', 'services/user', 'controllers/usersetup', 'services/queue', 'controllers/queue', 'services/playlists', 'controllers/playlists', 'controllers/playlist', 'controllers/playhistory', 'controllers/favorites', 'controllers/digitscallback', 'services/actionsheet', 'services/tags', 'directives/focusme', 'directives/capitalize', 'directives/colorinput', 'templates', 'services/constants']/*deps*/,
 function (angular)/*invoke*/{
     'use strict';
 
@@ -25,7 +25,8 @@ function (angular)/*invoke*/{
             'djvbApp.controllers.SearchCtrl',
             'djvbApp.controllers.TabsCtrl',
 			'djvbApp.controllers.UserSetupCtrl',
-			'djvbApp.directives.Capitalize', 
+			'djvbApp.directives.Capitalize',
+			'djvbApp.directives.ColorInput',
 			'djvbApp.directives.FocusMe',
 			'djvbApp.services.ActionSheetSvc',
 			'djvbApp.services.Constants',

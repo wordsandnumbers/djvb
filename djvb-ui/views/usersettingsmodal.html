@@ -13,23 +13,24 @@
 			<div class="list">
 				<label class="item item-input">
 					<span class="input-label">Name</span>
-					<input ng-model="userCopy.name" type="text" placeholder="Your actual name">
+					<input ng-model="userCopy.name" name="name" type="text" placeholder="Your actual name">
 				</label>
 				<label class="item item-input">
 					<span class="input-label">Screen Name</span>
-					<input ng-model="userCopy.screenName" type="text" required="required" placeholder="This shows on the screen">
+					<input ng-model="userCopy.screenName" name="screenName" type="text" required="required" placeholder="This shows on the screen">
 				</label>
 				<label class="item item-input">
 					<span class="input-label">Email</span>
-					<input ng-model="userCopy.email" type="email" required="required" overwrite-email>
+					<input ng-model="userCopy.email" name="email" type="email" required="required" overwrite-email>
 				</label>
 				<label class="item item-input">
 					<span class="input-label">Color</span>
-					<button class="button button-small button-light" title="Change user color" ng-style="{'background-color': userCopy.color}" ng-click="pickColor($event)">Change</button>
+					<color-input ng-model="userCopy.color" name="color"></color-input>
 				</label>
 			</div>
 	 		<!--<pre>{{userForm | json}}</pre>
-			<pre>{{user | json}}</pre>--> 
+			<pre>{{user | json}}</pre>
+			<pre>{{userCopy | json}}</pre>-->
 		</ion-content>
 		<ion-footer-bar class="bar bar-footer">
 			<button class="button icon-left ion-log-out button-assertive" ng-click="logout()">Log out</button>
