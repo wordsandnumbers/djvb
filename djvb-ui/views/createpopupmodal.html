@@ -5,7 +5,7 @@
         </ion-header-bar>
         <ion-content class="padding">
 			<label class="item item-input">
-				<textarea ng-model="vm.message" placeholder="Enter a message to show on the screen"></textarea>
+				<textarea ng-style="{'color': vm.queues[0].session.color}" ng-model="vm.message" placeholder="Enter a message to show on the screen" rows="5"></textarea>
 			</label>
 			<button class="button button-block button-positive" ng-disabled="!vm.message" ng-click="vm.createPopup(vm.message)">Pop it!</button>
 		</ion-content>
