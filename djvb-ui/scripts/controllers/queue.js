@@ -19,6 +19,7 @@ define([ 'angular' ], function(angular) {
 		vm.selectPlay = selectPlay;
 		vm.showSettings = showSettings;
 		vm.deleteQueue = deleteQueue;
+		vm.refresh = refresh;
 		vm.reorderPlay = reorderPlay;
 		vm.setLights = setLights;
 		
@@ -118,8 +119,14 @@ define([ 'angular' ], function(angular) {
 				});        		
         	})
         }
-        
-        function reorderPlay(play, fromIndex, toIndex) {
+
+		function refresh() {
+			QueueSvc.getQueues().finally(function () {
+				$scope.$broadcast('scroll.refreshComplete');
+			})
+		}
+
+		function reorderPlay(play, fromIndex, toIndex) {
         	QueueSvc.reorderQueuePlay(vm.queues[0], play, fromIndex, toIndex).then(function(response) {
         		// Success
         		// TODO: highlight moved item?

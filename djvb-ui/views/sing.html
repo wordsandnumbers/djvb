@@ -8,6 +8,9 @@
 		   ng-click="vm.showSettings()" ng-if="vm.queues.length>0"></a>
 	</ion-nav-buttons>
 	<ion-content ng-class="{'vertical-center':vm.queues.length===0}" class="has-header">
+		<ion-refresher 
+			on-refresh="vm.refresh()">
+		</ion-refresher>
 		<div ng-if="vm.queues.length===0">
 			<h4 class="text-center">You're not singing yet!</h4>
 			<p class="text-center">
