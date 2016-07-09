@@ -14,6 +14,7 @@ define(['angular', 'lodash'], function (angular, _) {
 		$ionicLoading, 
 		$ionicPopup, 
 		$ionicActionSheet, 
+		constants, 
 		UserSvc, 
 		PlaylistsSvc, 
 		QueueSvc, 
@@ -202,41 +203,31 @@ define(['angular', 'lodash'], function (angular, _) {
 		
 		function roomCodePopup(callback) {
             var $scope = $rootScope.$new();
-            $scope.data = {};
 	        var popup = $ionicPopup.show({
-				template : '<label class="item item-input">' +
-		        	'<input ng-model="data.roomCode" type="text" class="text-center" maxlength="4" placeholder="Room Code" capitalize>' +
-		        	'</label>',
+				templateUrl : constants.resourcesBaseUrl + '/views/roomcodepopup.html',
 				title : 'Enter Room Code',
 				subTitle : "It's on the screen in your room.",
-				scope : $scope,
-				buttons : [ 
-					{
-						text : 'Cancel'
-					}, {
-						text : '<b>OK</b>',
-						type : 'button-positive',
-						onTap : function(e) {
-							if (!$scope.data.roomCode) {
-								e.preventDefault();
-							} else {
-					        	QueueSvc.join($scope.data.roomCode).then(function() {
-					        		if (callback != undefined) {
-					        			callback();
-					        		}
-					        		return $scope.data.roomCode;
-					        	}, function() {
-									$ionicPopup.alert({
-										title: "Error",
-										template: 'Invalid Room Code'
-									});
-					        	});
-							}
-						}
-					} 
-				]
+				scope : $scope
 			});
-	        return popup;
+			$scope.popup = popup;
+			$scope.data = {};
+			$scope.joinRoom = function () {
+				QueueSvc.join($scope.data.roomCode).then(function() {
+					if (callback != undefined) {
+						callback();
+					}
+					return $scope.data.roomCode;
+				}, function() {
+					$ionicPopup.alert({
+						title: "Error",
+						template: 'Invalid Room Code'
+					});
+				}).finally(function () {
+					$scope.popup.close();
+				});
+			}
+			
+			return popup;
         }
 		
         function addSongToQueue(song) {

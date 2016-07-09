@@ -1,0 +1,13 @@
+<form name="codeForm" ng-submit="joinRoom(vm.roomCode)">
+<label class="item item-input">
+    <input ng-model="data.roomCode" type="text" class="text-center" required="required" ng-minlength="4" ng-maxlength="4" maxlength="4" placeholder="Room Code" capitalize>
+</label>
+<div class="row">
+    <div class="col">
+        <button class="button button-full button-light" ng-click="popup.close()">Cancel</button>
+    </div>
+    <div class="col">
+        <button class="button button-full button-positive" type="submit" ng-disabled="codeForm.$invalid">OK</button>
+    </div>
+</div>
+</form>
