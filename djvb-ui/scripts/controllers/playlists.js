@@ -12,8 +12,9 @@ define(['angular'], function (angular) {
     .controller('PlaylistsCtrl', function ($scope, PlaylistsSvc, $ionicPopup) {
     	var vm = this;
     	vm.playlists;
-    	vm.newPlaylistPopup = newPlaylistPopup;	
-    		
+    	vm.newPlaylistPopup = newPlaylistPopup;
+		vm.refresh = refresh;
+		
     	function newPlaylistPopup() {
 	        var popup = $ionicPopup.show({
 				template : '<label class="item item-input">' +
@@ -51,5 +52,11 @@ define(['angular'], function (angular) {
     	PlaylistsSvc.getPlaylistsList().then(function(playlists) {
         	vm.playlists = playlists;
         })
-    });
+
+		function refresh() {
+			PlaylistsSvc.getPlaylists().finally(function () {
+				$scope.$broadcast('scroll.refreshComplete');
+			})
+		}
+	});
 });

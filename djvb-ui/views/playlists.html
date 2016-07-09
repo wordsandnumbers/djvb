@@ -4,6 +4,9 @@
 	      ng-click="vm.newPlaylistPopup()"></button>
     </ion-nav-buttons>
 	<ion-content class="has-header">
+		<ion-refresher
+				on-refresh="vm.refresh()">
+		</ion-refresher>
 		<div class="card" ng-if="vm.playlists.length === 0">
 			<div class="item item-text-wrap text-center">
 				You don't have any playlists.
