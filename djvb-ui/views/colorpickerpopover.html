@@ -2,7 +2,7 @@
 	<ion-header-bar>
 		<h1 class="title">Pick a color</h1>
 	</ion-header-bar>
-	<ion-content class="text-center padding">
+	<ion-content class="text-center padding" scroll="false">
 		<button ng-repeat="colorOption in colorOptions" class="button button-small" title="{{(isSelected(colorOption) ? 'Selected ' : 'Select ') + 'color ' + colorOption.toLowerCase()}}" ng-style="{'background-color': colorOption}" ng-click="setColor(colorOption)">
 			<i class="icon ion-checkmark" ng-if="color.toLowerCase() === colorOption.toLowerCase()"></i>
 		</button>

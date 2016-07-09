@@ -41,6 +41,7 @@
 .popover ion-content {
     top: 0;
     position: relative;
+    display: inline-block;
 }
 .popover-inner-content {
     width: 100%;
