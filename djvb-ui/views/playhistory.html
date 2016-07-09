@@ -6,15 +6,18 @@
 			</div>
 		</div>
 		<ion-list>
-			<ion-item class="item-icon-right" collection-repeat="play in vm.history.plays track by $index" ng-click="vm.selectPlay(play)">
-				{{play.title}}
-				<p>{{play.artist}}</p>
-				<button class="button button-clear button-stable button-icon icon ion-more"></button>
-			    <ion-delete-button class="ion-minus-circled" ng-click="">
-			    </ion-delete-button>
-			    <ion-reorder-button class="ion-navicon" on-reorder="">
-			    </ion-reorder-button>
-			</ion-item>
+			<div ng-repeat="(date, plays) in vm.playGroups | orderBy:'-date'">
+				<ion-item class="item item-divider">
+					{{date | date:'MMMM d yyyy'}}
+				</ion-item>
+				<ion-item class="item-button-right" ng-repeat="play in plays" ng-click="vm.selectPlay(play)">
+					<h2>{{play.title}}</h2>
+					<p>{{play.artist}}</p>
+					<div class="buttons">
+						<button class="button button-clear button-stable button-icon icon ion-more"></button>
+					</div>
+				</ion-item>
+			</div>
 		</ion-list>
 		<ion-infinite-scroll on-infinite="vm.nextPage()" distance="5%" ng-if="vm.hasMoreData()">
 		</ion-infinite-scroll>

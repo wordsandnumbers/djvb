@@ -15,11 +15,13 @@ define([ 'angular' ], function(angular) {
 		vm.hasMoreData = hasMoreData;
 		vm.selectPlay = selectPlay;
 		vm.nextPage = nextPage;
-		vm.moreDataCanBeLoaded = moreDataCanBeLoaded;
 
 		PlaylistsSvc.getPlayHistoryList().then(function(history) {
 			vm.history = history;
-		})
+			vm.playGroups = _.groupBy(vm.history.plays, function (play) {
+				return play.business_date;
+			});
+		});
 
 		function selectPlay(play) {
 			ActionSheetSvc.playHistoryActions(play);
@@ -28,12 +30,11 @@ define([ 'angular' ], function(angular) {
 		function nextPage() {
 			PlaylistsSvc.nextPage(vm.history).then(function (response) {
 				vm.history = response;
+				vm.playGroups = _.groupBy(vm.history.plays, function (play) {
+					return play.business_date;
+				});
 				$scope.$broadcast('scroll.infiniteScrollComplete');
 			});
-		}
-		
-		function moreDataCanBeLoaded() {
-			return false;
 		}
 		
 		function hasMoreData() {
