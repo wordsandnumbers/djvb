@@ -1,4 +1,8 @@
-<ion-view title="Sing">
+<ion-view>
+	<ion-nav-title>
+		<button class="button button-clear icon-right ion-shuffle" title="Change Room"
+		   ng-click="vm.roomSwitcher($event)" ng-if="vm.queues.length>1" ng-bind="vm.queues[vm.currentQueueIndex].roomCode"></button> 
+		{{vm.queues.length > 1 ? '' : 'Sing'}}</ion-nav-title>
 	<ion-nav-buttons side="primary">
 		<a class="button button-stable button-icon icon ion-ios-chatboxes-outline" title="Popup Message"
 		   ng-click="vm.popupModal()" ng-if="vm.queues.length>0"></a>
@@ -17,30 +21,30 @@
 				<a href="#search" class="button button-stable icon-left ion-search">Search Songs</a>
 			</p>
 		</div>
-		<ion-list ng-if="vm.queues[0].queued.length">
+		<ion-list ng-if="vm.queues[vm.currentQueueIndex].queued.length">
 			<div class="item item-divider">
 				Singing Next
 			</div>
-			<ion-item class="" ng-repeat="play in vm.queues[0].queued">
-				<span class="item-note">{{play.estimatedPlayTime | date:'h:mm'}}</span>
+			<ion-item class="" ng-repeat="play in vm.queues[vm.currentQueueIndex].queued">
+				<span class="item-note">{{play.estimatedPlayTime | date:'h:mm a | lowercase'}}</span>
 				{{play.title}}
 				<p>{{play.artist}}</p>
 			</ion-item>
 		</ion-list>
 		<div class="item item-divider item-button-right" ng-if="vm.queues.length">
 			Your Song Queue
-		    <button class="button button-small button-icon icon ion-navicon" title="Reorder" ng-disabled="vm.queues[0].queue.length<2"
+		    <button class="button button-small button-icon icon ion-navicon" title="Reorder" ng-disabled="vm.queues[vm.currentQueueIndex].queue.length<2"
 		      ng-click="vm.showReorder = !vm.showReorder"></button>
 		</div>
 		<ion-list ng-if="vm.queues.length" show-reorder="vm.showReorder">
-			<ion-item class="item-icon-right" ng-repeat="play in vm.queues[0].queue" ng-click="vm.selectPlay(play)">
+			<ion-item class="item-icon-right" ng-repeat="play in vm.queues[vm.currentQueueIndex].queue" ng-click="vm.selectPlay(play)">
 				{{play.title}}
 				<p>{{play.artist}}</p>
 				<button class="button button-clear button-stable button-icon icon ion-more"></button>
 			    <ion-reorder-button class="ion-navicon" on-reorder="vm.reorderPlay(play, $fromIndex, $toIndex)">
 			    </ion-reorder-button>
 			</ion-item>
-			<ion-item class="item-icon-right" ng-if="vm.queues[0].queue.length === 0">
+			<ion-item class="item-icon-right" ng-if="vm.queues[vm.currentQueueIndex].queue.length === 0">
 				<p class="text-center">
 					No songs in your queue! 
 				</p>

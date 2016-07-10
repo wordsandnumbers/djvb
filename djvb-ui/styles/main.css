@@ -32,18 +32,30 @@
 	font-size: 3em;
 }
 
-.popover {
+.popover.fit {
     height: auto !important;
 }
-.popover ion-header-bar {
+.popover.fit ion-header-bar {
     position: relative;
 }
-.popover ion-content {
+.popover.fit ion-content {
     top: 0;
     position: relative;
     display: inline-block;
 }
-.popover-inner-content {
+.fit.popover-inner-content {
     width: 100%;
     padding: 5px 20px;
+}
+
+/* Nav title button on sing view */
+
+.nav-bar-title .button {
+    font-weight: inherit !important;
+    vertical-align: baseline;
+}
+
+.nav-bar-title .icon-right:before {
+    font-size: 25px !important;
+    margin-left: 5px;
 }

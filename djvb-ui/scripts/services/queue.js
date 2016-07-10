@@ -11,7 +11,153 @@ define(['angular'], function (angular) {
   angular.module('djvbApp.services.QueueSvc', [])
 	.service('QueueSvc', function ($http, $q, $timeout) {
 
-		var queues;
+		var queues, testq = [{
+			"id": "5782623977c82ff56fc00126",
+			"ownerId": "2927907626|00000000000000000000000000000000",
+			"roomCode": "WWWF",
+			"queued": [{
+				"index": -1,
+				"title": "Summerboy",
+				"artist": "Lady Gaga",
+				"duration": null,
+				"position": null,
+				"estimatedPlayTime": null,
+				"paused": false,
+				"message": null,
+				"locaton": null,
+				"favorite": null,
+				"id": 69001,
+				"song_id": 69001,
+				"play_id": "G-Test-f23c9167b37b-1468162624379-8",
+				"message_color": null,
+				"business_date": null,
+				"enqueue_date": null,
+				"start_date": null,
+				"end_date": null
+			}],
+			"queue": [{
+				"index": null,
+				"title": "Start It Up",
+				"artist": "Banks, Lloyd ft. Kanye West, Swizz Beatz, Ryan Leslie & Fabolous",
+				"duration": null,
+				"position": null,
+				"estimatedPlayTime": null,
+				"paused": false,
+				"message": null,
+				"locaton": null,
+				"favorite": null,
+				"id": 67519,
+				"song_id": 67519,
+				"play_id": "ace3d594-2177-43c8-9225-a6b19f7987c7",
+				"message_color": null,
+				"business_date": null,
+				"enqueue_date": null,
+				"start_date": null,
+				"end_date": null
+			}, {
+				"index": null,
+				"title": "That's What I Like About You",
+				"artist": "Yearwood, Trisha",
+				"duration": null,
+				"position": null,
+				"estimatedPlayTime": null,
+				"paused": false,
+				"message": null,
+				"locaton": null,
+				"favorite": null,
+				"id": 1,
+				"song_id": 1,
+				"play_id": "ec906d54-5b48-4cab-9650-be6dd03cadf6",
+				"message_color": null,
+				"business_date": null,
+				"enqueue_date": null,
+				"start_date": null,
+				"end_date": null
+			}],
+			"active": true,
+			"session": {
+				"session": "60502743-d0f1-4571-a1a5-874b6964b216",
+				"email": "wordsandnumbers@gmail.com",
+				"handle": "Duder",
+				"color": "#ADACB5",
+				"hide_handle_in_queue": false
+			},
+			"organization": "00000000000000000000000000000000",
+			"mode": null,
+			"queueInterval": null
+		}, {
+			"id": "5781dc9277c8c2ff1301ec87",
+			"ownerId": "2927907626|00000000000000000000000000000000",
+			"roomCode": "HSCL",
+			"queued": [{
+				"index": -1,
+				"title": "Just Dropped In (To See What Condition My Condition Was In)",
+				"artist": "Rogers, Kenny & The First Edition",
+				"duration": null,
+				"position": null,
+				"estimatedPlayTime": null,
+				"paused": false,
+				"message": null,
+				"locaton": null,
+				"favorite": null,
+				"id": 63530,
+				"song_id": 63530,
+				"play_id": "G-Test-f23c9167b37b-1468128404007-7",
+				"message_color": null,
+				"business_date": null,
+				"enqueue_date": null,
+				"start_date": null,
+				"end_date": null
+			}],
+			"queue": [],
+			"active": true,
+			"session": {
+				"session": "60502743-d0f1-4571-a1a5-874b6964b216",
+				"email": "wordsandnumbers@gmail.com",
+				"handle": "Duder",
+				"color": "#ADACB5",
+				"hide_handle_in_queue": false
+			},
+			"organization": "00000000000000000000000000000000",
+			"mode": null,
+			"queueInterval": null
+		}, {
+			"id": "5781dc9277c8c2ff1301ec87",
+			"ownerId": "2927907626|00000000000000000000000000000000",
+			"roomCode": "FFFF",
+			"queued": [{
+				"index": -1,
+				"title": "Just Dropped In (To See What Condition My Condition Was In)",
+				"artist": "Rogers, Kenny & The First Edition",
+				"duration": null,
+				"position": null,
+				"estimatedPlayTime": null,
+				"paused": false,
+				"message": null,
+				"locaton": null,
+				"favorite": null,
+				"id": 63530,
+				"song_id": 63530,
+				"play_id": "G-Test-f23c9167b37b-1468128404007-7",
+				"message_color": null,
+				"business_date": null,
+				"enqueue_date": null,
+				"start_date": null,
+				"end_date": null
+			}],
+			"queue": [],
+			"active": true,
+			"session": {
+				"session": "60502743-d0f1-4571-a1a5-874b6964b216",
+				"email": "wordsandnumbers@gmail.com",
+				"handle": "Duder",
+				"color": "#ADACB5",
+				"hide_handle_in_queue": false
+			},
+			"organization": "00000000000000000000000000000000",
+			"mode": null,
+			"queueInterval": null
+		}];
 		
 		pollQueues();
 		
@@ -29,9 +175,9 @@ define(['angular'], function (angular) {
 			songInQueue: songInQueue
 		}
 
-		function createPopup(message) {
+		function createPopup(roomCode, message) {
 			return $q(function (resolve, reject) {
-				$http.post('/api/v1/queue/popup/' + queues[0].roomCode, message).then(function(response) {
+				$http.post('/api/v1/queue/popup/' + roomCode, message).then(function(response) {
 					resolve(response.data);
 				}, function(errorResponse) {
 					reject(errorResponse);

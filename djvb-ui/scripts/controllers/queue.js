@@ -9,9 +9,10 @@ define([ 'angular' ], function(angular) {
 	 * Controller of the djvbApp
 	 */
 	angular.module('djvbApp.controllers.QueueCtrl', ['ionic'])
-	.controller('QueueCtrl', function($scope, $ionicActionSheet, $ionicLoading, $ionicPopup, $ionicModal, QueueSvc, constants) {
+	.controller('QueueCtrl', function($scope, $ionicActionSheet, $ionicLoading, $ionicPopup, $ionicPopover, $ionicModal, QueueSvc, constants) {
 		var vm = this;
 		vm.queues = [];
+		vm.currentQueueIndex = 0;
 		vm.showReorder = false;
 		vm.level = null;
 		vm.popupModal = popupModal;
@@ -21,7 +22,15 @@ define([ 'angular' ], function(angular) {
 		vm.deleteQueue = deleteQueue;
 		vm.refresh = refresh;
 		vm.reorderPlay = reorderPlay;
+		vm.roomSwitcher = roomSwitcher;
+		vm.setCurrentQueueIndex = setCurrentQueueIndex;
 		vm.setLights = setLights;
+		
+		$ionicPopover.fromTemplateUrl(constants.resourcesBaseUrl + '/views/roomswitcherpopover.html', {
+			scope: $scope
+		}).then(function(popover) {
+			vm.roomSwitcherPopover = popover;
+		});
 		
 		QueueSvc.getQueuesList().then(function(queues) {
 			vm.queues = queues;
@@ -42,7 +51,7 @@ define([ 'angular' ], function(angular) {
 		});
 
 		function createPopup() {
-			QueueSvc.createPopup(vm.message).then(function () {
+			QueueSvc.createPopup(vm.queues[vm.currentQueueIndex].roomCode, vm.message).then(function () {
 				$ionicLoading.show({
 					template: '<p>Message sent!</p><i class="icon ion-checkmark-round message-icon"></i>',
 					noBackdrop: true,
@@ -137,6 +146,14 @@ define([ 'angular' ], function(angular) {
 				});        		
         	})
         }
+		
+		function roomSwitcher($event) {
+			vm.roomSwitcherPopover.show($event);
+		}
+		
+		function setCurrentQueueIndex(index) {
+			vm.currentQueueIndex = index;
+		}
         
         function setLights(level) {
     		vm.level = level;
