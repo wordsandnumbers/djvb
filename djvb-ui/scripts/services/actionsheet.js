@@ -39,7 +39,7 @@ define(['angular', 'lodash'], function (angular, _) {
 		return {
     		playlistSongActions: playlistSongActions, 
     		favoriteSongActions: favoriteSongActions, 
-    		playHistoryActions: browseSongActions, 
+    		playHistoryActions: playHistoryActions, 
     		searchSongActions: browseSongActions, 
     		browseSongActions: browseSongActions
 		};
@@ -49,24 +49,19 @@ define(['angular', 'lodash'], function (angular, _) {
 				titleText : song.title + ' - ' + song.artist, 
 				buttons: [
 					{text: '<strong>Sing Now!</strong>'}, 
-					{text: 'Add to Playlist'}
+					{text: 'Add to Playlist'},
+					{text: 'Browse Artist'}
 				], 
 				buttonClicked : function(index) {
 					switch (index) {
 						case 0:
-							if (queues.length > 0) {
-								// Add song to queue
-								addSongToQueue(song);
-							} else {
-								// Join a room
-								var callback = function() {
-									addSongToQueue(song);
-								};
-							    roomCodePopup(callback);
-							}
+							queueAction(song);
 							break;
 						case 1:
 							playlistsAction(song);
+							break;
+						case 2:
+							$state.go('tabs.browsequery', {mode: 'artist', query: song.artist});
 							break;
 					}
 					return true;
@@ -93,24 +88,19 @@ define(['angular', 'lodash'], function (angular, _) {
 				titleText : play.title + ' - ' + play.artist, 
 				buttons: [
 					{text: '<strong>Sing Now!</strong>'}, 
-					{text: 'Add to Playlist'}
+					{text: 'Add to Playlist'},
+					{text: 'Browse Artist'}
 				], 
 				buttonClicked : function(index) {
 					switch (index) {
 						case 0:
-							if (queues.length > 0) {
-								// Add song to queue
-								addSongToQueue(play);
-							} else {
-								// Join a room
-								var callback = function() {
-									addSongToQueue(play);
-								};
-							    roomCodePopup(callback);
-							}
+							queueAction(play);
 							break;
 						case 1:
 							playlistsAction(play);
+							break;
+						case 2:
+							$state.go('tabs.browsequery', {mode: 'artist', query: play.artist});
 							break;
 					}
 					return true;
@@ -134,16 +124,7 @@ define(['angular', 'lodash'], function (angular, _) {
 				buttonClicked : function(index) {
 					switch (index) {
 						case 0:
-							if (queues.length > 0) {
-								// Add song to queue
-								addSongToQueue(song);
-							} else {
-								// Join a room
-								var callback = function() {
-									addSongToQueue(song);
-								};
-							    roomCodePopup(callback);
-							}
+							queueAction(song);
 							break;
 						case 1:
 							playlistsAction(song);
@@ -161,10 +142,11 @@ define(['angular', 'lodash'], function (angular, _) {
 		function getButtons(song) {
 			var buttons = [
                {text: '<strong>Sing Now!</strong>'}, 
-               {text: 'Add to Playlist'}];
-				if (!_.isEmpty(song.tags)) {
-					buttons.push({text: 'Browse Tags'});
-				}
+               {text: 'Add to Playlist'}
+			];
+			if (!_.isEmpty(song.tags)) {
+				buttons.push({text: 'Browse Tags'});
+			}
 			return buttons;
 		}
 		
@@ -184,6 +166,19 @@ define(['angular', 'lodash'], function (angular, _) {
 					return true;
 				}
 			});
+		}
+		
+		function queueAction(song) {
+			if (queues.length > 0) {
+				// Add song to queue
+				addSongToQueue(song);
+			} else {
+				// Join a room
+				var callback = function() {
+					addSongToQueue(song);
+				};
+				roomCodePopup(callback);
+			}
 		}
 		
 		function tagsAction(song) {
