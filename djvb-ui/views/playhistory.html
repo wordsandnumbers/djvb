@@ -7,12 +7,11 @@
 		</div>
 		<ion-list>
 			<div ng-repeat="(date, plays) in vm.playGroups | orderBy:'-date'">
-				<ion-item class="item item-divider">
-					{{date | date:'MMMM d yyyy'}}
-				</ion-item>
+				<ion-item class="item item-divider" ng-bind="date | date:'MMMM d yyyy'"></ion-item>
 				<ion-item class="item-button-right" ng-repeat="play in plays" ng-click="vm.selectPlay(play)">
-					<h2>{{play.title}}</h2>
-					<p>{{play.artist}}</p>
+					<p ng-bind="play.start_date | date:'h:mm a' | lowercase"></p>
+					<h2 ng-bind="play.title"></h2>
+					<p ng-bind="play.artist"></p>
 					<div class="buttons">
 						<button class="button button-clear button-stable button-icon icon ion-more"></button>
 					</div>
