@@ -26,7 +26,7 @@
 				Singing Next
 			</div>
 			<ion-item class="" ng-repeat="play in vm.queues[vm.currentQueueIndex].queued">
-				<span class="item-note">{{play.estimatedPlayTime | date:'h:mm a | lowercase'}}</span>
+				<span class="item-note">{{play.estimatedPlayTime | date:'h:mm a' | lowercase}}</span>
 				{{play.title}}
 				<p>{{play.artist}}</p>
 			</ion-item>

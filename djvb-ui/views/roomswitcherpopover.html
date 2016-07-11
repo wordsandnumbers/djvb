@@ -3,6 +3,12 @@
 		<h1 class="title">Switch rooms</h1>
 	</ion-header-bar>
 	<ion-content class="padding" scroll="false">
-		<button ng-repeat="queue in vm.queues" class="button button-full button-stable" ng-click="vm.setCurrentQueueIndex($index);vm.roomSwitcherPopover.hide();" ng-bind="queue.roomCode"></button>
+		<button ng-disabled="vm.queues[vm.currentQueueIndex].roomCode === queue.roomCode" 
+				ng-class="{'ion-checkmark': vm.queues[vm.currentQueueIndex].roomCode === queue.roomCode}"
+				ng-repeat="queue in vm.queues" 
+				class="button button-full button-stable" 
+				ng-click="vm.setCurrentQueueIndex($index);vm.roomSwitcherPopover.hide();">
+			{{queue.roomCode}}
+		</button>
 	</ion-content>
 </ion-popover-view>
