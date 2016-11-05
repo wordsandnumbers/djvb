@@ -40,6 +40,7 @@ define(['angular', 'lodash'], function (angular, _) {
     		playlistSongActions: playlistSongActions, 
     		favoriteSongActions: favoriteSongActions, 
     		playHistoryActions: playHistoryActions, 
+			roomCodePopup: roomCodePopup,
     		searchSongActions: browseSongActions, 
     		browseSongActions: browseSongActions
 		};
