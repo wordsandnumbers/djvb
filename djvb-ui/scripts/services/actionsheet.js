@@ -159,7 +159,13 @@ define(['angular', 'lodash'], function (angular, _) {
 				cancelText : 'Cancel',
 				buttonClicked : function(index, button) {
 					PlaylistsSvc.addSongToPlaylist(button.playlist, song).then(function(response) {
-						// Success
+						// Success			    
+						$ionicLoading.show({
+					        template: '<p>Added to playlist!</p><i class="icon ion-checkmark-round message-icon"></i>',
+					        noBackdrop: true,
+					        duration: 1500
+					    });
+
 					}, function(response) {
 						// Error
 					});
