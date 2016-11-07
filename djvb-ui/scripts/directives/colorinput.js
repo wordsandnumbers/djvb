@@ -9,7 +9,7 @@ define(['angular'], function (angular) {
 	 * Directive of the djvbApp
 	 */
 	angular.module('djvbApp.directives.ColorInput', [])
-		.directive('colorInput', function ($ionicPopover, constants) {
+		.directive('colorInput', function ($ionicBody, $ionicPopover, constants) {
 			return {
 				link: ColorInputLink,
 				require: 'ngModel',
@@ -25,6 +25,11 @@ define(['angular'], function (angular) {
 				scope.colorOptions = ['#72C2FF', '#6798E6', '#CEA1E1', '#FFADED', '#FC809B', '#FFC787', '#FFF074', '#A6FC81', '#09E6AE', '#18C4C7',
 				'#247ba0', '#70c1b3', '#b2dbbf', '#f3ffbd', '#ff1654',
 				'#eae8ff', '#d8d5db', '#adacb5', '#b0d7ff', '#8e443d', '#cb9173'];
+				
+				// This fixes a bug with ionic. Currently if you use a popover in a modal, the ui will become unusable.
+				scope.$on('popover.hidden', function() {
+					$ionicBody.removeClass('popover-open');
+				});
 
 				$ionicPopover.fromTemplateUrl(constants.resourcesBaseUrl + '/views/colorpickerpopover.html', {
 					scope: scope

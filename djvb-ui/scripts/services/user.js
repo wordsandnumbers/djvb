@@ -91,7 +91,7 @@ define(['angular', 'lodash'], function (angular, _) {
 
 	            modalScope.closeModal = function () {
 	                modalScope.modal.hide();
-	    			modalScope.modal.remove();
+	    			//modalScope.modal.remove();
 	            }
 	            
 	            modalScope.logout = function() {

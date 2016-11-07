@@ -31,7 +31,7 @@
 	        </ion-item>
         </ion-list>
         <ion-list ng-if="vm.searchResults.songs && vm.mode==='recently_added'">
-             <div ng-repeat="(date, songs) in vm.songGroups | orderBy:'-date'">
+             <div ng-repeat="(date, songs) in vm.songGroups">
                 <ion-item class="item item-divider">
                     {{date | date:'MMMM d yyyy'}}
                 </ion-item>

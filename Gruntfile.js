@@ -156,7 +156,7 @@ module.exports = function (grunt) {
           ]
         }]
       },
-      server: '.tmp'
+      server: 'target/classes/static/**/*'
     },
 
     // Automatically inject Bower components into the app
