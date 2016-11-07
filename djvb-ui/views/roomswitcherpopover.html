@@ -2,7 +2,7 @@
 	<ion-header-bar>
 		<h1 class="title">Switch rooms</h1>
 	</ion-header-bar>
-	<ion-content class="padding" scroll="false">
+	<ion-content class="padding">
 		<button ng-disabled="vm.queues[vm.currentQueueIndex].roomCode === queue.roomCode" 
 				ng-class="{'ion-checkmark': vm.queues[vm.currentQueueIndex].roomCode === queue.roomCode}"
 				ng-repeat="queue in vm.queues" 

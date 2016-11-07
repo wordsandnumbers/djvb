@@ -9,14 +9,15 @@ define([ 'angular' ], function(angular) {
 	 * Controller of the djvbApp
 	 */
 	angular.module('djvbApp.controllers.QueueCtrl', ['ionic'])
-	.controller('QueueCtrl', function($scope, $ionicActionSheet, $ionicLoading, $ionicPopup, $ionicPopover, $ionicModal, QueueSvc, constants) {
+	.controller('QueueCtrl', function($scope, $ionicActionSheet, $ionicLoading, $ionicPopup, $ionicPopover, $ionicModal, ActionSheetSvc, QueueSvc, constants) {
 		var vm = this;
-		vm.queues = [];
+		vm.queues;
 		vm.currentQueueIndex = 0;
 		vm.showReorder = false;
 		vm.level = null;
 		vm.popupModal = popupModal;
 		vm.createPopup = createPopup;
+		vm.joinRoom = joinRoom;
 		vm.selectPlay = selectPlay;
 		vm.showSettings = showSettings;
 		vm.deleteQueue = deleteQueue;
@@ -65,6 +66,10 @@ define([ 'angular' ], function(angular) {
 					template: JSON.stringify(response.data)
 				});
 			});
+		}
+
+		function joinRoom() {
+			ActionSheetSvc.roomCodePopup();
 		}
 		
 		function popupModal() {
@@ -119,7 +124,7 @@ define([ 'angular' ], function(angular) {
         }
         
         function deleteQueue(queue) {
-        	QueueSvc.deleteQueue(vm.queues[0]).then(function(response) {
+        	QueueSvc.deleteQueue(vm.queues[vm.currentQueueIndex]).then(function(response) {
         		vm.queueSettingsModal.hide();
         	}, function(response) {
 				$ionicPopup.alert({

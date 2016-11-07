@@ -355,6 +355,30 @@ module.exports = function (grunt) {
       ]
     },
 
+    // Grunt-sass
+    sass: {
+      dist   : {
+        // Takes every file that ends with .scss from the scss
+        // directory and compile them into the css directory.
+        // Also changes the extension from .scss into .css.
+        // Note: file name that begins with _ are ignored automatically
+        files: [
+          {
+            expand: true,
+            cwd   : 'bower_components/ionic/scss',
+            src   : '{,*/}*.scss',
+            dest  : '<%= yeoman.app %>/styles',
+            ext   : '.css'
+          }
+        ]
+      },
+      options: {
+        sourceMap  : false,
+        outputStyle: 'compressed',
+        imagePath  : "../",
+      }
+    },
+    
     // Test settings
     karma: {
       unit: {
