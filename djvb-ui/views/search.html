@@ -19,7 +19,7 @@
         </label>
         <button type="button" ng-click="vm.search()">Go</button>-->
         <ion-list ng-if="vm.hasSongGroups()">
-            <div ng-repeat="(artist, songs) in vm.songGroups | orderBy:'artist'">
+            <div ng-repeat="(artist, songs) in vm.songGroups">
                 <ion-item class="item item-divider" ng-click="vm.exactSearch(artist)" title="View all songs for {{artist}}">
                     {{artist}}
                 </ion-item>
