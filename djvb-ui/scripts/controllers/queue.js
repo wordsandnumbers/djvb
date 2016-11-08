@@ -162,7 +162,7 @@ define([ 'angular' ], function(angular) {
         
         function setLights(level) {
     		vm.level = level;
-        	QueueSvc.setLights(vm.queues[0], level).then(function() {
+        	QueueSvc.setLights(vm.queues[vm.currentQueueIndex], level).then(function() {
         		vm.queueSettingsModal.hide();
         	}, function(response) {
         		vm.level = null;
