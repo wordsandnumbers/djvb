@@ -1,15 +1,19 @@
 package com.vpo.djvoxbox.web;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.Principal;
 import java.util.Arrays;
+import java.util.Date;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,7 +24,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.vpo.djvoxbox.domain.Avatar;
+import com.vpo.djvoxbox.domain.AvatarRepository;
 import com.vpo.djvoxbox.domain.User;
 import com.vpo.djvoxbox.domain.UserRepository;
 import com.vpo.djvoxbox.util.DigitsResponse;
@@ -30,6 +37,7 @@ import com.vpo.vbclient.session.SessionClient;
 @RestController
 public class UserController {
 
+	@Autowired AvatarRepository avatarRepository;
 	@Autowired UserRepository userRepository;
 	@Autowired RestTemplate restTemplate;
 	@Autowired SessionClient sessionClient;
@@ -136,4 +144,30 @@ public class UserController {
 		return null;
 	}
 	
+    @RequestMapping(value="/api/v1/user/avatar", method=RequestMethod.PUT)
+    public void uploadAvatar(@RequestParam("file") MultipartFile file, Principal principal) throws IOException {
+    	Avatar avatar = new Avatar();
+    	avatar.image = file.getBytes();
+    	avatar.imageType = file.getContentType();
+    	
+    	avatarRepository.save(avatar);
+    }
+
+    @RequestMapping(value="/api/v1/user/avatar", method=RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<byte[]> downloadAvatar(Principal principal) {
+    	
+		Avatar avatar = avatarRepository.findByOwnerId(principal.getName());
+		final HttpHeaders headers = new HttpHeaders();
+
+		if (avatar != null) {
+			headers.setContentType(MediaType.parseMediaType(avatar.getImageType()));
+			headers.setExpires(DateUtils.addDays(new Date(), 30).getTime());
+	    	return new ResponseEntity<byte[]>(avatar.getImage(), headers, HttpStatus.OK);
+		} else {
+			return null;
+		}
+    	
+    }
+
 }
