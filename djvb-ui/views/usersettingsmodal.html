@@ -14,7 +14,7 @@
 				<div class="item item-avatar">
                     <img ng-src="/api/v1/user/avatar/{{user.avatarShortcut}}" ng-if="user.avatarShortcut"/>
 					<input class="inputfile" accept="image/*" file-input="handleFileSelect" style="" id="avatarFile" name="avatarFile" type="file" placeholder="Pick an image">
-                    <label data-tap-disabled="true" for="avatarFile" class="button button-small button-stable">Edit</label>
+                    <label data-tap-disabled="true" for="avatarFile" class="button button-small button-stable" ng-bind="user.avatarShortcut ? 'Edit' : 'Add Photo'"></label>
 				</div>
 				<label class="item item-input">
 					<span class="input-label">Name</span>
