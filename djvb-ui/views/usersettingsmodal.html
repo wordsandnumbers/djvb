@@ -2,7 +2,7 @@
 	<form name="userForm">
 		<ion-header-bar class="bar-stable">
 			<div class="buttons">
-				<button class="button button-clear" ng-click="closeModal()" ng-if="user.screenName && user.email">Cancel</button>
+				<button class="button button-clear" ng-click="closeModal()" ng-if="user.screenName && user.email">Closegi</button>
 			</div>
 			<h1 class="title">User Settings</h1>
 			<div class="buttons">
@@ -11,6 +11,11 @@
 		</ion-header-bar>
 		<ion-content>
 			<div class="list">
+				<div class="item item-avatar">
+                    <img ng-src="/api/v1/user/avatar/{{user.avatarShortcut}}"/>
+					<label for="avatarFile" class="button button-small button-stable">Edit Avatar</label>
+					<input file-input="handleFileSelect" style="" id="avatarFile" name="avatarFile" type="file" placeholder="Pick an image">
+				</div>
 				<label class="item item-input">
 					<span class="input-label">Name</span>
 					<input ng-model="userCopy.name" name="name" type="text" placeholder="Your actual name">
