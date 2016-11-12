@@ -76,6 +76,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
              .permitAll();
     }
 
+	@Order(2)
 	@Configuration
 	public static class ApiWebSecurityConfig extends WebSecurityConfigurerAdapter {
 		private boolean csrfDisabled = true;
@@ -97,6 +98,32 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 					        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");							
 						}
 					});
+		}
+	}
+	
+	@Order(1)
+	@Configuration
+	public static class AvatarWebSecurityConfig extends WebSecurityConfigurerAdapter {
+					  
+		@Override
+		protected void configure(HttpSecurity http) throws Exception {
+			http.antMatcher("/api/v1/user/avatar/**")
+				.authorizeRequests()
+					.anyRequest().authenticated()
+					.and()
+				// Avatar images should be cached by browser. When they are changed, their url changes and a new image is requested.
+				.headers().cacheControl().disable();
+			
+			configureCsrf(http, true)
+			.exceptionHandling()
+				.authenticationEntryPoint(new AuthenticationEntryPoint() {
+					@Override
+					public void commence(HttpServletRequest request, HttpServletResponse response,
+							AuthenticationException ex) throws IOException, ServletException {
+				        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");							
+					}
+				});
+
 		}
 	}
 		

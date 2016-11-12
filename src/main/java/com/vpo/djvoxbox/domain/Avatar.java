@@ -17,12 +17,21 @@ public class Avatar {
 	@NotNull
 	@Indexed
 	private String ownerId;
-	public String getOwnerId() {
-		return ownerId;
-	}
 	public byte[] image;
 	public String imageType;
 
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getOwnerId() {
+		return ownerId;
+	}
+	
 	public void setOwnerId(String ownerId) {
 		this.ownerId = ownerId;
 	}
