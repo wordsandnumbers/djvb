@@ -18,7 +18,7 @@ define(['angular', 'lodash'], function (angular, _) {
 				}
 			};
 		})
-		.service('UserSvc', function ($rootScope, $http, $q, $ionicModal, $ionicPopover, $location, constants, Upload) {
+		.service('UserSvc', function ($rootScope, $http, $q, $ionicModal, $ionicPopover, $ionicPopup, $location, constants, Upload) {
 
 			var user = {},
 				userPromise;
@@ -190,6 +190,11 @@ define(['angular', 'lodash'], function (angular, _) {
 						}).then(function (response) {
 							angular.copy(response.data, user);
 							cropScope.closeModal();
+						}, function () {
+							$ionicPopup.alert({
+								title: "Error",
+								template: "Couldn't upload image."
+							});
 						});
 					}
 				});

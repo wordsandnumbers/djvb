@@ -12,9 +12,9 @@
 		<ion-content>
 			<div class="list">
 				<div class="item item-avatar">
-                    <img ng-src="/api/v1/user/avatar/{{user.avatarShortcut}}"/>
-					<label for="avatarFile" class="button button-small button-stable">Edit Avatar</label>
-					<input file-input="handleFileSelect" style="" id="avatarFile" name="avatarFile" type="file" placeholder="Pick an image">
+                    <img ng-src="/api/v1/user/avatar/{{user.avatarShortcut}}" ng-if="user.avatarShortcut"/>
+					<input class="inputfile" accept="image/*" file-input="handleFileSelect" style="" id="avatarFile" name="avatarFile" type="file" placeholder="Pick an image">
+                    <label data-tap-disabled="true" for="avatarFile" class="button button-small button-stable">Edit</label>
 				</div>
 				<label class="item item-input">
 					<span class="input-label">Name</span>
