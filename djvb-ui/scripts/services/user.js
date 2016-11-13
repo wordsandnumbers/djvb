@@ -128,7 +128,12 @@ define(['angular', 'lodash'], function (angular, _) {
 
 					modalScope.putUser = function () {
 						modalScope.closeModal();
-						putUser(modalScope.userCopy);
+						putUser(modalScope.userCopy).catch(function () {
+							$ionicPopup.alert({
+								title: "Error",
+								template: "Couldn't save user."
+							});
+						});
 					}
 				});
 			}
