@@ -18,7 +18,7 @@ define(['angular', 'lodash'], function (angular, _) {
 				}
 			};
 		})
-		.service('UserSvc', function ($rootScope, $http, $q, $ionicModal, $ionicPopover, $ionicPopup, $location, constants, Upload) {
+		.service('UserSvc', function ($rootScope, $http, $q, $ionicModal, $ionicPopover, $ionicPopup, $location, $window, constants, Upload) {
 
 			var user = {},
 				userPromise;
@@ -179,6 +179,8 @@ define(['angular', 'lodash'], function (angular, _) {
 					animation: 'slide-in-up'
 				}).then(function (modal) {
 
+					cropScope.canvasHeight = $window.innerHeight - 44;
+					
 					cropScope.modal = modal;
 					modal.show();
 
