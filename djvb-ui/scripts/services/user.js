@@ -179,7 +179,7 @@ define(['angular', 'lodash'], function (angular, _) {
 					animation: 'slide-in-up'
 				}).then(function (modal) {
 
-					cropScope.canvasHeight = $window.innerHeight - 44;
+					cropScope.canvasHeight = document.getElementsByClassName('modal active')[0].offsetHeight - 44;
 					
 					cropScope.modal = modal;
 					modal.show();
