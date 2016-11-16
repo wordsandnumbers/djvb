@@ -85,6 +85,11 @@ public class VoxBoxConfig {
 		return new ShallowEtagHeaderFilter();
 	}
 	
+    @Bean
+    public Filter httpsEnforcerFilter(){
+        return new HttpsEnforcer();
+    }
+	
 	@Component
 	public static class ServletCustomizer implements EmbeddedServletContainerCustomizer {
 
