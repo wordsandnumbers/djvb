@@ -15,7 +15,7 @@ public class HttpsEnforcer implements Filter {
 
     private FilterConfig filterConfig;
 
-    public static final String X_FORWARDED_PROTO = "x-forwarded-proto";
+    public static final String X_FORWARDED_PROTO = "X-Forwarded-Proto";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -30,7 +30,7 @@ public class HttpsEnforcer implements Filter {
 
         if (request.getHeader(X_FORWARDED_PROTO) != null) {
             if (request.getHeader(X_FORWARDED_PROTO).indexOf("https") != 0) {
-                response.sendRedirect("https://" + request.getServerName() + request.getPathInfo());
+                response.sendRedirect("https://" + request.getServerName() + request.getServletPath());
                 return;
             }
         }
