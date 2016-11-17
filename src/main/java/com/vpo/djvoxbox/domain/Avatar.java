@@ -19,6 +19,7 @@ public class Avatar {
 	private String ownerId;
 	public byte[] image;
 	public String imageType;
+	public String shortcut;
 
 	public String getId() {
 		return id;
@@ -50,6 +51,14 @@ public class Avatar {
 
 	public void setImageType(String imageType) {
 		this.imageType = imageType;
+	}
+
+	public String getShortcut() {
+		return shortcut;
+	}
+
+	public void setShortcut(String shortcut) {
+		this.shortcut = shortcut;
 	}
 	
 	

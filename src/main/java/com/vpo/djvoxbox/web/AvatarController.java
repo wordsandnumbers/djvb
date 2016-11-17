@@ -3,6 +3,7 @@ package com.vpo.djvoxbox.web;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Date;
+import java.util.UUID;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,26 +35,28 @@ public class AvatarController {
     public User uploadAvatar(@RequestParam("file") MultipartFile file, Principal principal) throws IOException {
 		User user = userRepository.findById(principal.getName());
 		Avatar avatar = avatarRepository.findByOwnerId(principal.getName());
+    	// We use this to for browser image cache reasons. Really just need a unique number.
+		String shortcut = UUID.randomUUID().toString();
 		
 		if (avatar == null) {
 			avatar = new Avatar();	
 		}
     	avatar.setOwnerId(principal.getName());
-    	avatar.image = file.getBytes();
-    	avatar.imageType = file.getContentType();
+    	avatar.setImage(file.getBytes());
+    	avatar.setImageType(file.getContentType());
+    	avatar.setShortcut(shortcut);
     	avatarRepository.save(avatar);
     	
-    	// We use this to for browser image cache reasons. Really just need a unique-ish number.
-    	user.setAvatarShortcut(String.valueOf(System.currentTimeMillis()));
+    	user.setAvatarShortcut(shortcut);
     	userRepository.save(user);
 
     	return user;
     }
 
-    @RequestMapping(value="/api/v1/user/avatar/{id}", method=RequestMethod.GET)
+    @RequestMapping(value="/api/v1/user/avatar/{shortcut}", method=RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<byte[]> downloadAvatar(@PathVariable("id") String id, Principal principal) {
-		Avatar avatar = avatarRepository.findByOwnerId(principal.getName());
+    public ResponseEntity<byte[]> downloadAvatar(@PathVariable("shortcut") String shortcut, Principal principal) {
+		Avatar avatar = avatarRepository.findByShortcut(shortcut);
 		final HttpHeaders headers = new HttpHeaders();
 
 		if (avatar != null) {
