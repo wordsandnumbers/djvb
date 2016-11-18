@@ -3,9 +3,9 @@ package com.vpo.djvoxbox.web;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Date;
-import java.util.UUID;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -36,8 +36,7 @@ public class AvatarController {
 		User user = userRepository.findById(principal.getName());
 		Avatar avatar = avatarRepository.findByOwnerId(principal.getName());
     	// We use this to for browser image cache reasons. Really just need a unique number.
-		String shortcut = UUID.randomUUID().toString();
-		
+		String shortcut = new ObjectId().toString();		
 		if (avatar == null) {
 			avatar = new Avatar();	
 		}
