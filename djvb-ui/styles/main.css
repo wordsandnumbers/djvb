@@ -1,6 +1,7 @@
 /* bower:css */
 @import url("../bower_components/animate.css/animate.css");
 @import url("../bower_components/ionic/release/css/ionic.css");
+@import url("../bower_components/ng-img-crop/compile/minified/ng-img-crop.css");
 /* endbower */
 
 .browsehappy {
@@ -58,4 +59,24 @@
 .nav-bar-title .icon-right:before {
     font-size: 25px !important;
     margin-left: 5px;
+}
+
+.cropArea {
+    background: #E4E4E4;
+    overflow: hidden;
+    width: 100%;
+    text-align: center;
+}
+
+.inputfile {
+    border: 0;
+    clip: rect(0 0 0 0);
+    -webkit-clip-path: polygon(0 0);
+    clip-path: polygon(0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px
 }

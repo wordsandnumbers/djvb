@@ -11,7 +11,7 @@ define(['angular'], function (angular) {
   angular.module('djvbApp.controllers.HomeCtrl', [])
     .controller('HomeCtrl', function (UserSvc, PlaylistsSvc, TagsSvc) {
     	var vm = this;
-    	vm.user = {};
+    	vm.user;
     	vm.playlists;
     	vm.favorites;
     	vm.playHistory;

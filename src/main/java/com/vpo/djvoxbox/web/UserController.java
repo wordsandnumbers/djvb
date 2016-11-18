@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import com.vpo.djvoxbox.domain.AvatarRepository;
 import com.vpo.djvoxbox.domain.User;
 import com.vpo.djvoxbox.domain.UserRepository;
 import com.vpo.djvoxbox.util.DigitsResponse;
@@ -135,5 +136,5 @@ public class UserController {
 		}
 		return null;
 	}
-	
+
 }

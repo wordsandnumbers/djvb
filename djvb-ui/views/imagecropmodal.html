@@ -1,0 +1,21 @@
+<ion-modal-view>
+	<form name="userForm">
+		<ion-header-bar class="bar-stable">
+			<div class="buttons">
+				<button class="button button-clear" ng-click="closeModal()">Cancel</button>
+			</div>
+			<h1 class="title"></h1>
+			<div class="buttons">
+				<button class="button button-clear" ng-click="postAvatar()">Save</button>
+			</div>
+		</ion-header-bar>
+		<ion-content>
+			<div class="cropArea" ng-style="{'height': canvasHeight + 'px'}">
+				<img-crop image="avatar.avatarImage" result-image="avatar.croppedAvatarImage" result-image-size="120" result-image-format="image/jpeg" result-image-quality="0.9"></img-crop>
+			</div>
+			<!--<div class="item item-avatar">
+				<img ng-src="{{avatar.croppedAvatarImage}}" alt="Your updated avatar">
+			</div>-->
+		</ion-content>
+	</form>
+</ion-modal-view>

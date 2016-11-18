@@ -47,7 +47,7 @@ define(['angular'], function (angular) {
 				};
 				
 				scope.isSelected = function (color) {
-					return color.toLowerCase() === scope.color.toLowerCase();
+					return _.isEmpty(color) ? (color.toLowerCase() === scope.color.toLowerCase()) : false;
 				}
 			}
 		});

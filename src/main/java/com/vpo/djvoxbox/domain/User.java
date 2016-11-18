@@ -26,6 +26,7 @@ public class User {
 	private String savedListsId;
 	private String sessionId;
 	private String color;
+	private String avatarShortcut;
 	
 	
 	public User() {
@@ -120,6 +121,14 @@ public class User {
 
 	public void setColor(String color) {
 		this.color = color;
+	}
+
+	public String getAvatarShortcut() {
+		return avatarShortcut;
+	}
+
+	public void setAvatarShortcut(String avatarShortcut) {
+		this.avatarShortcut = avatarShortcut;
 	}
 	
 	

@@ -1,7 +1,10 @@
 <ion-view hide-back-button="true" title="Home">
     <ion-nav-buttons side="secondary">
-	    <a class="button button-stable button-icon icon ion-ios-settings" title="User Settings"
-	       ng-click="vm.showUserSettingsModal()"></a>
+	    <button class="button button-stable button-icon icon" ng-class="{'ion-person': !vm.user.avatarShortcut}" title="User Settings"
+	       ng-click="vm.showUserSettingsModal()">
+			<img ng-src="/api/v1/user/avatar/{{vm.user.avatarShortcut}}" ng-if="vm.user.avatarShortcut" style="max-height: 32px; border-radius: 50%;">
+		</button>
+        <button class="button button-clear button-stable button-small ion-chevron-down"  ng-click="vm.showUserSettingsModal()"></button>
     </ion-nav-buttons>
     <ion-content padding="true" class="has-header">
         <ion-list>
