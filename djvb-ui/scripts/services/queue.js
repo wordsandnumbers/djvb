@@ -178,7 +178,7 @@ define(['angular'], function (angular) {
 			"queueInterval": null
 		}];
 		
-		pollQueues();
+		var pollPromise;
 		
 		return {
 			createPopup: createPopup,
@@ -205,15 +205,21 @@ define(['angular'], function (angular) {
 		}
 
         function pollQueues() {
-        	getQueues();
+        	if (pollPromise) {
+        		$timeout.cancel(pollPromise);
+        	}
             // Get queues every 15 seconds
-            $timeout(pollQueues, 15000);
+            pollPromise = $timeout(function() {
+            	getQueues();
+            	pollQueues();
+            }, 15000);
         }
 
         function join(roomCode) {
 			return $q(function(resolve, reject) {
 				$http.post('/api/v1/queue/join', {'roomCode': roomCode}).then(function(response){
 					queues.unshift(response.data);
+					pollQueues();
 					resolve(response.data);
 				}, function(error) {
 					reject(error);
@@ -227,6 +233,7 @@ define(['angular'], function (angular) {
 					if (queues === undefined) {
 						queues = response.data;
 					} else {
+						pollQueues();
 	                    // Use `splice` to replace array members so the original array reference is maintained
 						_.forEach(response.data, function(queue) {
 							var queueIndex = _.findIndex(queues, {'id': queue.id});
@@ -291,6 +298,7 @@ define(['angular'], function (angular) {
 		
 		function reorderQueuePlay(queue, play, fromIndex, toIndex) {
 			return $q(function(resolve, reject) {
+				$timeout.cancel(pollPromise);
 				$http.put('/api/v1/queue/queue', {
 					'room_code':queue.roomCode, 
 					'playId':play.play_id,
@@ -301,9 +309,11 @@ define(['angular'], function (angular) {
 					resolve(queue);
 				}, function(response) {
 					reject(response);
+				}).finally(function() {
+					pollQueues();
 				});
 				// Swap out the items before the response comes back.
-				queue.queue[fromIndex] = queue.queue.splice(toIndex, 1, queue.queue[fromIndex])[0];
+				queue.queue.splice(toIndex, 0, queue.queue.splice(fromIndex, 1)[0]);
 			});	
 		}
 		
@@ -334,6 +344,9 @@ define(['angular'], function (angular) {
 					var foundIndex = _.findIndex(queues, {'id': queue.id});
 					if (foundIndex > -1) {
 						queues.splice(foundIndex, 1);
+					}
+					if (queues.length === 0) {
+						$timeout.cancel(pollPromise);
 					}
 					resolve(response);
 				}, function(response) {
