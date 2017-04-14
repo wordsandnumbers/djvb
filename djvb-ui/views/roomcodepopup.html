@@ -7,7 +7,7 @@
         <button class="button button-full button-light" ng-click="popup.close()">Cancel</button>
     </div>
     <div class="col">
-        <button class="button button-full button-positive" type="submit" ng-disabled="codeForm.$invalid">OK</button>
+        <button class="button button-full button-positive" type="submit" ng-disabled="codeForm.$invalid || disabled">OK</button>
     </div>
 </div>
 </form>

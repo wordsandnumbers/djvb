@@ -211,9 +211,11 @@ define(['angular', 'lodash'], function (angular, _) {
 				subTitle : "It's on the screen in your room.",
 				scope : $scope
 			});
+	        $scope.disabled = false;
 			$scope.popup = popup;
 			$scope.data = {};
 			$scope.joinRoom = function () {
+				$scope.disabled = true;
 				QueueSvc.join($scope.data.roomCode).then(function() {
 					if (callback != undefined) {
 						callback();
@@ -226,6 +228,7 @@ define(['angular', 'lodash'], function (angular, _) {
 					});
 				}).finally(function () {
 					$scope.popup.close();
+					$scope.disabled = false;
 				});
 			}
 			
