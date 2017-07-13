@@ -45,7 +45,7 @@
     "time-grunt": "^1.0.0"
   },
   "engines": {
-    "node": "0.12.7"
+    "node": "6.11.1"
   },
   "scripts": {
     "test": "grunt test",
