@@ -1,18 +1,13 @@
 package com.vpo.djvoxbox.security.authentication;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,7 +21,7 @@ import com.vpo.djvoxbox.domain.User;
 import com.vpo.djvoxbox.domain.UserRepository;
 
 @Component
-public class DigitsAuthenticationProvider implements AuthenticationProvider {
+public class FirebaseAuthenticationProvider implements AuthenticationProvider {
 
 	@Autowired UserRepository userRepository;
 	@Autowired RestTemplate restTemplate;
