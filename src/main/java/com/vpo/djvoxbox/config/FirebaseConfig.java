@@ -1,8 +1,8 @@
 package com.vpo.djvoxbox.config;
 
+import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import com.google.firebase.auth.FirebaseCredentials;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -21,7 +21,7 @@ public class FirebaseConfig {
         InputStream serviceAccount = resource.getInputStream();
 
         FirebaseOptions options = new FirebaseOptions.Builder()
-                .setCredential(FirebaseCredentials.fromCertificate(serviceAccount))
+                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                 .setDatabaseUrl("https://djvb-878ca.firebaseio.com")
                 .build();
 
