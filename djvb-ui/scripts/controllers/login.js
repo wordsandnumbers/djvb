@@ -1,4 +1,4 @@
-define(['angular', 'digits'], function (angular, Digits) {
+define(['angular', 'firebase', 'firebaseui', 'digits'], function (angular, firebase, firebaseui, Digits) {
     'use strict';
 
     /**
@@ -46,15 +46,54 @@ define(['angular', 'digits'], function (angular, Digits) {
 		UserSvc
 	) {
         var vm = this;
-        vm.digitsLogin = digitsLogin;
         vm.emailLogin = emailLogin;
-    
-        function digitsLogin(event) {
-            Digits.logIn({
-            	callbackURL: $location.protocol() + '://' + $location.host() + ':'
-            	+ $location.port() + '/#digitscallback'
-            });
-        }
+
+        var uiConfig = {
+            callbacks: {
+                signInSuccess: function(currentUser, credential, redirectUrl) {
+                    $ionicLoading.show();
+
+                    firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
+                        // Send token to your backend via HTTPS
+                        $http({
+                            method : 'POST',
+                            url : '/login/login',
+                            headers : {
+                                'Content-Type' : 'application/x-www-form-urlencoded'
+                            },
+                            data : $httpParamSerializer({'idToken':idToken})
+                        }).then(function() {
+                            $rootScope.authenticated = true;
+                            $location.url('/home');
+                        }, function(response) {
+                            $rootScope.authenticated = false;
+                            $ionicPopup.alert({
+                                title: "Error",
+                                template: JSON.stringify(response.data)
+                            });
+                            $location.url('/login');
+                        }).finally(function () {
+                            $ionicLoading.hide();
+                        });
+                    });
+
+
+                }
+            },
+            signInSuccessUrl: '<url-to-redirect-to-on-success>',
+                signInOptions: [
+                  firebase.auth.EmailAuthProvider.PROVIDER_ID,
+                  firebase.auth.PhoneAuthProvider.PROVIDER_ID
+                ],
+                // Terms of service url.
+                tosUrl: '<your-tos-url>'
+              };
+
+              // Initialize the FirebaseUI Widget using Firebase.
+              var ui = new window.firebaseui.auth.AuthUI(firebase.auth());
+              // The start method will wait until the DOM is loaded.
+              ui.start('#firebaseui-auth-container', uiConfig);
+
                 
         function emailLogin() {
         	$ionicLoading.show();
@@ -65,7 +104,7 @@ define(['angular', 'digits'], function (angular, Digits) {
 				headers : {
 					'Content-Type' : 'application/x-www-form-urlencoded'
 				},
-				data : $httpParamSerializer({'apiUrl':vm.email})
+				data : $httpParamSerializer({'name':vm.email})
 			}).then(function(response) {
 				checkUser();
 			}, function(response) {

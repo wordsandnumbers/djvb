@@ -2,6 +2,7 @@
 @import url("../bower_components/animate.css/animate.css");
 @import url("../bower_components/ionic/release/css/ionic.css");
 @import url("../bower_components/ng-img-crop/compile/minified/ng-img-crop.css");
+@import url("../bower_components/firebaseui/dist/firebaseui.css");
 /* endbower */
 
 .browsehappy {

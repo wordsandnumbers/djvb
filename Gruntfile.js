@@ -67,6 +67,9 @@ module.exports = function (grunt) {
       java: {
     	  files: '<%= yeoman.app %>/**',
     	  tasks: ['sync:java']
+      },
+      sass: {
+          files: '<%= yeoman.app %>'
       }
     },
 

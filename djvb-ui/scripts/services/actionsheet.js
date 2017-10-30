@@ -228,7 +228,6 @@ define(['angular', 'lodash'], function (angular, _) {
 					});
 				}).finally(function () {
 					$scope.popup.close();
-					$scope.disabled = false;
 				});
 			}
 			

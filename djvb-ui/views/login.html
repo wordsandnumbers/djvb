@@ -5,7 +5,14 @@
                 Welcome to DJVB! Please log in using your phone number or email address.
             </div>
         </div>
-        <button class="button button-stable button-block button-royal" ng-click="vm.digitsLogin($event)"><i class="icon ion-ios-telephone-outline"></i> Log in with Phone Number</button>
+        <div id="firebaseui-auth-container"></div>
+        <!--<form name="vm.phoneForm">
+	        <label class="item item-input">
+	            <input class="text-center" type="text" ng-model="vm.phone" placeholder="Your Phone Number" ng-required="true">
+	        </label>
+        <button class="button button-stable button-block button-royal" ng-click="vm.phoneLogin($event)"><i class="icon ion-ios-telephone-outline"></i> Log in with Phone Number</button>
+		</form>-->
+
         <p class="text-center"><em>- or -</em></p>
         <form name="vm.emailForm">
 	        <label class="item item-input">
