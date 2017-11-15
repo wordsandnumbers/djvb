@@ -1,4 +1,4 @@
-define(['angular', 'lodash'], function (angular, _) {
+define(['angular', 'firebase', 'lodash'], function (angular, firebase, _) {
 	'use strict';
 
 	/**
@@ -18,7 +18,7 @@ define(['angular', 'lodash'], function (angular, _) {
 				}
 			};
 		})
-		.service('UserSvc', function ($rootScope, $http, $q, $ionicModal, $ionicPopover, $ionicPopup, $location, $window, constants, Upload) {
+		.service('UserSvc', function ($rootScope, $http, $q, $ionicModal, $ionicPopover, $ionicPopup, $location, $window, $state, constants, Upload) {
 
 			var user = {},
 				userPromise;
@@ -61,6 +61,7 @@ define(['angular', 'lodash'], function (angular, _) {
 			function logout() {
 				return $q(function (resolve, reject) {
 					$http.get('/logout').then(function (response) {
+                        firebase.auth().signOut();
 						$rootScope.authenticated = false;
 						user = {};
 						userPromise = undefined;
@@ -122,7 +123,7 @@ define(['angular', 'lodash'], function (angular, _) {
 					modalScope.logout = function () {
 						logout().then(function () {
 							modalScope.closeModal();
-							$location.path('/login');
+							$state.transitionTo('login', {'reload': true});
 						});
 					}
 

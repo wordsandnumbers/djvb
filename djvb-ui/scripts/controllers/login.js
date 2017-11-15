@@ -76,24 +76,28 @@ define(['angular', 'firebase', 'firebaseui', 'digits'], function (angular, fireb
                             $ionicLoading.hide();
                         });
                     });
-
-
                 }
             },
-            signInSuccessUrl: '<url-to-redirect-to-on-success>',
-                signInOptions: [
-                  firebase.auth.EmailAuthProvider.PROVIDER_ID,
-                  firebase.auth.PhoneAuthProvider.PROVIDER_ID
-                ],
-                // Terms of service url.
-                tosUrl: '<your-tos-url>'
-              };
+			signInOptions: [
+				firebase.auth.EmailAuthProvider.PROVIDER_ID,
+				{
+					provider: firebase.auth.PhoneAuthProvider.PROVIDER_ID,
+					recaptchaParameters: {
+						type: 'image', // 'audio'
+						size: 'normal', // 'invisible' or 'compact'
+						badge: 'bottomleft' //' bottomright' or 'inline' applies to invisible.
+					}
+				}
+			],
+			// Terms of service url.
+			tosUrl: ''
+		};
 
-              // Initialize the FirebaseUI Widget using Firebase.
-              var ui = new window.firebaseui.auth.AuthUI(firebase.auth());
-              // The start method will wait until the DOM is loaded.
-              ui.start('#firebaseui-auth-container', uiConfig);
+		// Initialize the FirebaseUI Widget using Firebase.
+		var ui = new window.firebaseui.auth.AuthUI(firebase.auth());
 
+		// The start method will wait until the DOM is loaded.
+		ui.start('#firebaseui-auth-container', uiConfig);
                 
         function emailLogin() {
         	$ionicLoading.show();
