@@ -1,4 +1,4 @@
-define(['angular', 'digits'], function (angular, Digits) {
+define(['angular'], function (angular) {
     'use strict';
 
     /**
@@ -46,15 +46,7 @@ define(['angular', 'digits'], function (angular, Digits) {
 		UserSvc
 	) {
         var vm = this;
-        vm.digitsLogin = digitsLogin;
         vm.emailLogin = emailLogin;
-    
-        function digitsLogin(event) {
-            Digits.logIn({
-            	callbackURL: $location.protocol() + '://' + $location.host() + ':'
-            	+ $location.port() + '/#digitscallback'
-            });
-        }
                 
         function emailLogin() {
         	$ionicLoading.show();

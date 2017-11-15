@@ -8,7 +8,6 @@ require.config({
 		'ionic-angular': '../../bower_components/ionic/release/js/ionic-angular',
 		'angular-ui-router': '../../bower_components/angular-ui-router/release/angular-ui-router',
 		lodash: '../../bower_components/lodash/lodash',
-		digits: 'https://cdn.digits.com/1/sdk',
 		'angular-aria': '../../bower_components/angular-aria/angular-aria',
 		'angular-mocks': '../../bower_components/angular-mocks/angular-mocks',
 		'ng-file-upload': '../../bower_components/ng-file-upload/ng-file-upload',
@@ -66,15 +65,13 @@ require([
 	'ionic-angular',
 	'angular-ui-router',
 	'lodash',
-	'digits',
 	'ngstorage',
 	'ng-file-upload',
 	'ng-img-crop'
-], function (angular, app, ngSanitize, ngAnimate, ionic, ngIonic, ngRouter, _, Digits, ngStorage) {
+], function (angular, app, ngSanitize, ngAnimate, ionic, ngIonic, ngRouter, _, ngStorage) {
 	'use strict';
 	/* jshint ignore:start */
 
-	Digits.init({consumerKey: 'Z0aFJy5A3kpsgcazoffu2sP1f'});
 	var $html = angular.element(document.getElementsByTagName('html')[0]);
 	/* jshint ignore:end */
 	angular.element().ready(function () {

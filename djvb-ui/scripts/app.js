@@ -1,5 +1,5 @@
 /*jshint unused: vars */
-define(['angular', 'controllers/browse', 'controllers/search', 'controllers/tabs', 'controllers/login', 'controllers/home', 'services/user', 'controllers/usersetup', 'services/queue', 'controllers/queue', 'services/playlists', 'controllers/playlists', 'controllers/playlist', 'controllers/playhistory', 'controllers/favorites', 'controllers/digitscallback', 'services/actionsheet', 'services/tags', 'directives/focusme', 'directives/capitalize', 'directives/colorinput', 'templates', 'services/constants']/*deps*/,
+define(['angular', 'controllers/browse', 'controllers/search', 'controllers/tabs', 'controllers/login', 'controllers/home', 'services/user', 'controllers/usersetup', 'services/queue', 'controllers/queue', 'services/playlists', 'controllers/playlists', 'controllers/playlist', 'controllers/playhistory', 'controllers/favorites', 'services/actionsheet', 'services/tags', 'directives/focusme', 'directives/capitalize', 'directives/colorinput', 'templates', 'services/constants']/*deps*/,
 function (angular)/*invoke*/{
     'use strict';
 
@@ -14,7 +14,6 @@ function (angular)/*invoke*/{
     return angular
         .module('djvbApp', [
             'djvbApp.controllers.BrowseCtrl',
-			'djvbApp.controllers.DigitsCallbackCtrl',
 			'djvbApp.controllers.FavoritesCtrl',
 			'djvbApp.controllers.HomeCtrl',
             'djvbApp.controllers.LoginCtrl',
@@ -94,10 +93,6 @@ function (angular)/*invoke*/{
                 url: '/login',
                 templateUrl: constants.resourcesBaseUrl + '/views/login.html', 
                 controller: 'LoginCtrl as vm'
-            })
-            .state('digitscallback', {
-                url: '/digitscallback?X-Verify-Credentials-Authorization&X-Auth-Service-Provider',
-                controller: 'DigitsCallbackCtrl as vm'
             })
             .state('tabs.setup', {
                 url: '/setup',
