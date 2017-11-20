@@ -20,12 +20,13 @@ requirejs.config({
 		'ionic-angular': '../../bower_components/ionic/release/js/ionic-angular',
 		'angular-ui-router': '../../bower_components/angular-ui-router/release/angular-ui-router',
 		lodash: '../../bower_components/lodash/lodash',
-		digits: 'https://cdn.digits.com/1/sdk',
 		'angular-aria': '../../bower_components/angular-aria/angular-aria',
 		'angular-mocks': '../../bower_components/angular-mocks/angular-mocks',
 		'ng-file-upload': '../../bower_components/ng-file-upload/ng-file-upload',
 		'ng-img-crop': '../../bower_components/ng-img-crop/compile/minified/ng-img-crop',
-		ngstorage: '../../bower_components/ngstorage/ngStorage'
+		ngstorage: '../../bower_components/ngstorage/ngStorage',
+		firebase: 'https://www.gstatic.com/firebasejs/4.5.0/firebase',
+		firebaseui: '../../bower_components/firebaseui/dist/firebaseui'
 	},
 
     shim: {
