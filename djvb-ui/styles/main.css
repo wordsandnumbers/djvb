@@ -81,3 +81,7 @@
     position: absolute;
     width: 1px
 }
+
+.firebaseui-form-actions .firebaseui-id-secondary-link {
+    display: none;
+}

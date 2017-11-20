@@ -90,6 +90,7 @@ function (angular)/*invoke*/{
 				templateUrl: constants.resourcesBaseUrl + '/views/tabs.html'
 			})
             .state('login', {
+                cache: false,
                 url: '/login',
                 templateUrl: constants.resourcesBaseUrl + '/views/login.html', 
                 controller: 'LoginCtrl as vm'
