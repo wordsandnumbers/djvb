@@ -1,4 +1,4 @@
-define(['angular', 'firebase', 'firebaseui', 'digits'], function (angular, firebase, firebaseui, Digits) {
+define(['angular', 'firebase', 'firebaseui'], function (angular, firebase, firebaseui) {
     'use strict';
 
     /**
