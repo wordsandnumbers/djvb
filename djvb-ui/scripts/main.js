@@ -14,7 +14,8 @@ require.config({
 		'ng-img-crop': '../../bower_components/ng-img-crop/compile/minified/ng-img-crop',
 		ngstorage: '../../bower_components/ngstorage/ngStorage',
 		firebase: 'https://www.gstatic.com/firebasejs/4.5.0/firebase',
-		firebaseui: '../../bower_components/firebaseui/dist/firebaseui'
+		firebaseui: '../../bower_components/firebaseui/dist/firebaseui',
+		'dialog-polyfill': '../../bower_components/dialog-polyfill/dialog-polyfill'
 	},
 	shim: {
 		angular: {
@@ -30,6 +31,9 @@ require.config({
 			'angular'
 		],
 		firebase: {
+			deps: [
+				'dialog-polyfill'
+			],
 			exports: 'firebase'
 		},
 		firebaseui: {
@@ -67,6 +71,7 @@ require.config({
 window.name = 'NG_DEFER_BOOTSTRAP!';
 
 require([
+	'dialog-polyfill',
 	'angular',
 	'app',
 	'firebase',
@@ -79,9 +84,11 @@ require([
 	'ngstorage',
 	'ng-file-upload',
 	'ng-img-crop'
-], function (angular, app, firebase, ngSanitize, ngAnimate, ionic, ngIonic, ngRouter, _, ngStorage) {
+], function (dialogPolyfill, angular, app, firebase, ngSanitize, ngAnimate, ionic, ngIonic, ngRouter, _, ngStorage) {
 	'use strict';
 	/* jshint ignore:start */
+
+	window.dialogPolyfill = dialogPolyfill;
 
 	// Initialize Firebase
     var config = {

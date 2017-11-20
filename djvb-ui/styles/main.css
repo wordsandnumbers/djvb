@@ -3,6 +3,7 @@
 @import url("../bower_components/ionic/release/css/ionic.css");
 @import url("../bower_components/ng-img-crop/compile/minified/ng-img-crop.css");
 @import url("../bower_components/firebaseui/dist/firebaseui.css");
+@import url("../bower_components/dialog-polyfill/dialog-polyfill.css");
 /* endbower */
 
 .browsehappy {

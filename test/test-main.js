@@ -26,7 +26,8 @@ requirejs.config({
 		'ng-img-crop': '../../bower_components/ng-img-crop/compile/minified/ng-img-crop',
 		ngstorage: '../../bower_components/ngstorage/ngStorage',
 		firebase: 'https://www.gstatic.com/firebasejs/4.5.0/firebase',
-		firebaseui: '../../bower_components/firebaseui/dist/firebaseui'
+		firebaseui: '../../bower_components/firebaseui/dist/firebaseui',
+		'dialog-polyfill': '../../bower_components/dialog-polyfill/dialog-polyfill'
 	},
 
     shim: {
