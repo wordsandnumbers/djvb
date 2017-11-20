@@ -435,9 +435,6 @@ module.exports = function (grunt) {
           optimize: 'uglify2',
           uglify2: {
             mangle: false
-          }, 
-          paths: {
-              "digits": "empty:"
           }
         }
       }
