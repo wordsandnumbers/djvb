@@ -123,7 +123,7 @@ define(['angular', 'firebase', 'lodash'], function (angular, firebase, _) {
 					modalScope.logout = function () {
 						logout().then(function () {
 							modalScope.closeModal();
-							$state.transitionTo('login', {'reload': true});
+							$state.transitionTo('login');
 						});
 					}
 

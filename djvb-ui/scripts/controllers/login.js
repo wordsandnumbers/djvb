@@ -79,7 +79,7 @@ define(['angular', 'firebase', 'firebaseui'], function (angular, firebase, fireb
                 }
             },
 			signInOptions: [
-				firebase.auth.EmailAuthProvider.PROVIDER_ID,
+				/*firebase.auth.EmailAuthProvider.PROVIDER_ID,*/
 				{
 					provider: firebase.auth.PhoneAuthProvider.PROVIDER_ID,
 					recaptchaParameters: {
@@ -93,8 +93,12 @@ define(['angular', 'firebase', 'firebaseui'], function (angular, firebase, fireb
 			tosUrl: ''
 		};
 
+        var ui = window.firebaseui.auth.AuthUI.getInstance();
+
 		// Initialize the FirebaseUI Widget using Firebase.
-		var ui = new window.firebaseui.auth.AuthUI(firebase.auth());
+		if (ui === null) {
+            ui = new window.firebaseui.auth.AuthUI(firebase.auth());
+        }
 
 		// The start method will wait until the DOM is loaded.
 		ui.start('#firebaseui-auth-container', uiConfig);
@@ -109,7 +113,7 @@ define(['angular', 'firebase', 'firebaseui'], function (angular, firebase, fireb
 					'Content-Type' : 'application/x-www-form-urlencoded'
 				},
 				data : $httpParamSerializer({'name':vm.email})
-			}).then(function(response) {
+			}).then(function() {
 				checkUser();
 			}, function(response) {
 				$ionicPopup.alert({

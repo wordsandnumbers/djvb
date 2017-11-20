@@ -1,24 +1,27 @@
 <ion-view title="DJVB Login">
     <ion-content padding="true">
-        <div class="card">
-            <div class="item item-text-wrap text-center">
-                Welcome to DJVB! Please log in using your phone number or email address.
+        <div ng-if="!vm.phoneLogin">
+            <div class="card">
+                <div class="item item-text-wrap text-center">
+                    Welcome to DJVB! Please log in using your phone number or email address.
+                </div>
             </div>
+            <!--<form name="vm.phoneForm">
+                <label class="item item-input">
+                    <input class="text-center" type="text" ng-model="vm.phone" placeholder="Your Phone Number" ng-required="true">
+                </label>
+            </form>-->
+            <button class="button button-stable button-block button-royal" ng-click="vm.phoneLogin=true"><i class="icon ion-ios-telephone-outline"></i> Log in with Phone Number</button>
+            <p class="text-center"><em>- or -</em></p>
+            <form name="vm.emailForm">
+                <label class="item item-input">
+                    <input class="text-center" type="email" ng-model="vm.email" placeholder="Your Email" ng-required="true" overwrite-email>
+                </label>
+                <button class="button button-stable button-block button-royal" ng-disabled="vm.emailForm.$invalid" ng-click="vm.emailLogin($event)"><i class="icon ion-ios-email-outline"></i> Log in with Email</button>
+            </form>
+            <!-- <pre>{{vm.emailForm | json}}</pre> -->
         </div>
-        <div id="firebaseui-auth-container"></div>
-        <!--<form name="vm.phoneForm">
-	        <label class="item item-input">
-	            <input class="text-center" type="text" ng-model="vm.phone" placeholder="Your Phone Number" ng-required="true">
-	        </label>
-        <button class="button button-stable button-block button-royal" ng-click="vm.phoneLogin($event)"><i class="icon ion-ios-telephone-outline"></i> Log in with Phone Number</button>
-		</form>-->
-        <!--<p class="text-center"><em>- or -</em></p>
-        <form name="vm.emailForm">
-	        <label class="item item-input">
-	            <input class="text-center" type="email" ng-model="vm.email" placeholder="Your Email" ng-required="true" overwrite-email>
-	        </label>
-	        <button class="button button-stable button-block button-royal" ng-disabled="vm.emailForm.$invalid" ng-click="vm.emailLogin($event)"><i class="icon ion-ios-email-outline"></i> Log in with Email</button>
-		</form>-->
-		<!-- <pre>{{vm.emailForm | json}}</pre> -->
+        <div ng-show="vm.phoneLogin" id="firebaseui-auth-container"></div>
+        <button ng-if="vm.phoneLogin" class="button button-stable button-block button-royal" ng-click="vm.phoneLogin=false">Go Back</button>
     </ion-content>
 </ion-view>

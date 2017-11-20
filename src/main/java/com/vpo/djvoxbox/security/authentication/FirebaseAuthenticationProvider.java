@@ -36,7 +36,7 @@ public class FirebaseAuthenticationProvider implements AuthenticationProvider {
 		String name = authenticate.getName();
 		String idToken = authenticate.getCredentials().toString();
 		authenticate = null;
-		if(idToken != null) {
+		if(!idToken.isEmpty()) {
 			User user;
 			try {
 				user = lookupOrCreateFirebaseUser(idToken, organization);
