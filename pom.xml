@@ -24,16 +24,16 @@
 	</properties>
 
 	<repositories>
-    <repository>
-        <id>djvb.local</id>
-        <name>djvb</name>
-        <url>file:${project.basedir}/repo</url>
-        <snapshots>
-            <enabled>true</enabled>
-            <updatePolicy>always</updatePolicy>
-      </snapshots>
-    </repository>
-</repositories>
+		<repository>
+			<id>github-vbclient</id>
+			<name>GitHub Packages — vbclient</name>
+			<url>https://maven.pkg.github.com/wordsandnumbers/vbclient</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</repository>
+	</repositories>
 
 	<dependencies>
 		<dependency>
