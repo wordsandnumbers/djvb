@@ -29,7 +29,7 @@ public class UserService {
 		if(user.getSavedListsId() == null) {
 			lists = createNewSavedLists(user);
 		} else {
-			lists = playlistsRepository.findOne(user.getSavedListsId());
+			lists = playlistsRepository.findById(user.getSavedListsId()).orElse(null);
 			if(lists == null) {
 				lists = createNewSavedLists(user);
 			}

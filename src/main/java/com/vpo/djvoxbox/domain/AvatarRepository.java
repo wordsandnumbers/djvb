@@ -6,8 +6,6 @@ public interface AvatarRepository extends MongoRepository<Avatar, String> {
 
 	Avatar findByOwnerId(String ownerId);
 
-	Avatar findById(String id);
-
 	Avatar findByShortcut(String shortcut);
 
 }

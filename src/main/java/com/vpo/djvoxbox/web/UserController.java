@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import com.vpo.djvoxbox.domain.AvatarRepository;
 import com.vpo.djvoxbox.domain.User;
 import com.vpo.djvoxbox.domain.UserRepository;
 import com.vpo.djvoxbox.util.DigitsResponse;
@@ -67,7 +66,7 @@ public class UserController {
 	
 	@RequestMapping(value ="/api/v1/user/user", method=RequestMethod.GET)
 	public @ResponseBody User getLoggedInUser(Principal principal) {
-		User user = userRepository.findById(principal.getName());
+		User user = userRepository.getById(principal.getName());
 		// check here for a valid session?
 		Session session = confirmAndEnsureSession(user);
 		if(session != null && (user.getSessionId() == null || !user.getSessionId().equals(session.getSession()))) {
@@ -107,7 +106,7 @@ public class UserController {
 
 	@RequestMapping(value = "/api/v1/user", method=RequestMethod.PUT)
 	public @ResponseBody User updateUser(@RequestBody User user, Principal principal) {
-		User lUser = userRepository.findById(principal.getName());
+		User lUser = userRepository.getById(principal.getName());
 		lUser.setEmail(user.getEmail());
 		lUser.setName(user.getName());
 		lUser.setScreenName(user.getScreenName());
