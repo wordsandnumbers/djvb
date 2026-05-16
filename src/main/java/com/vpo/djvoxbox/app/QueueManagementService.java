@@ -1,14 +1,9 @@
 package com.vpo.djvoxbox.app;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,7 +32,7 @@ public class QueueManagementService {
 	
 	// get all the UserQueues
 	private List<UserQueue> getAllQueues() {
-		return userQueueRepository.findAll(new Sort(Sort.Direction.ASC, "roomCode"));
+		return userQueueRepository.findAll(Sort.by(Sort.Direction.ASC, "roomCode"));
 	}
 	// look up the room queue on vb
 	// TODO: move error handling into the client

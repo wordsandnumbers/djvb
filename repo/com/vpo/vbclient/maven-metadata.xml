@@ -3,7 +3,7 @@
   <groupId>com.vpo</groupId>
   <artifactId>vbclient</artifactId>
   <versioning>
-    <release>0.1.6-RELEASE</release>
+    <release>0.2.0-RELEASE</release>
     <versions>
       <version>0.0.1-SNAPSHOT</version>
       <version>0.0.2-SNAPSHOT</version>
@@ -19,7 +19,8 @@
       <version>0.1.4-RELEASE</version>
       <version>0.1.5-RELEASE</version>
       <version>0.1.6-RELEASE</version>
+      <version>0.2.0-RELEASE</version>
     </versions>
-    <lastUpdated>20151107233642</lastUpdated>
+    <lastUpdated>20260515211642</lastUpdated>
   </versioning>
 </metadata>
