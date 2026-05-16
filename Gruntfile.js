@@ -443,18 +443,11 @@ module.exports = function (grunt) {
   sync: {
 	java: {
 		files: [
-			{ cwd: '<%= yeoman.app %>', src: '**', dest: '<%= yeoman.target %>' }
+			{ cwd: '<%= yeoman.app %>', src: '**', dest: '<%= yeoman.target %>' },
+			{ cwd: 'bower_components', src: '**', dest: '<%= yeoman.target %>/bower_components' }
 		]
 	}
-  },
-  bower: {
-	  java: {
-	    dest: '<%= yeoman.target %>/bower_components',
-	    options: {
-	        expand: true
-	    }
-	  }
-	}
+  }
 });
 
   grunt.registerTask('java', [
