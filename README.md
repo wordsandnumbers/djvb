@@ -10,7 +10,7 @@ A web application for managing karaoke song queues, rooms, playlists, and live s
 - Spring Data MongoDB (domain persistence)
 - Spring Session backed by Redis (`@EnableRedisHttpSession` in [DjvbApplication.java](src/main/java/com/vpo/djvoxbox/DjvbApplication.java))
 - Firebase Admin SDK (auth)
-- `com.vpo:vbclient` — internal VoxBox client, resolved from the bundled local Maven repo at [repo/](repo/) (configured in [pom.xml](pom.xml#L26-L36))
+- `com.vpo:vbclient` — internal VoxBox client, resolved from [GitHub Packages](https://github.com/wordsandnumbers/vbclient/packages) (see [Consuming vbclient](#consuming-vbclient) below)
 
 **Frontend** ([djvb-ui/](djvb-ui/))
 - AngularJS + Ionic + RequireJS
@@ -40,7 +40,6 @@ src/main/resources/
   static/                            Frontend bundle served by Spring Boot
 
 djvb-ui/                      AngularJS/Ionic frontend sources (views, scripts, styles, tests)
-repo/                         Local Maven repo hosting com.vpo:vbclient
 docker-compose.yml            Local MongoDB + Redis
 Gruntfile.js                  Frontend build pipeline
 Procfile                      Heroku-style run command
@@ -54,6 +53,33 @@ Procfile                      Heroku-style run command
 - A **Firebase service account** JSON placed at [src/main/resources/firebaseServiceAccountKey.json](src/main/resources/firebaseServiceAccountKey.json)
 
 Grunt and Bower CLIs are pulled in as local dev dependencies — no global install needed. Run them via `./node_modules/.bin/grunt` and `./node_modules/.bin/bower`.
+
+## Consuming vbclient
+
+`com.vpo:vbclient` is published to GitHub Packages at [maven.pkg.github.com/wordsandnumbers/vbclient](https://github.com/wordsandnumbers/vbclient/packages). GitHub Packages requires authentication even for read, so every dev machine needs a one-time setup:
+
+1. Create a GitHub PAT with `read:packages` scope at https://github.com/settings/tokens.
+2. Export it from your shell profile:
+
+   ```sh
+   export GITHUB_PACKAGES_TOKEN=ghp_...
+   ```
+
+3. Add a server entry to `~/.m2/settings.xml` (create the file if it doesn't exist):
+
+   ```xml
+   <settings>
+     <servers>
+       <server>
+         <id>github-vbclient</id>
+         <username>YOUR_GITHUB_USERNAME</username>
+         <password>${env.GITHUB_PACKAGES_TOKEN}</password>
+       </server>
+     </servers>
+   </settings>
+   ```
+
+The `<id>` must match the repository id in [pom.xml](pom.xml#L26-L36). Once configured, `mvn` resolves vbclient transparently.
 
 ## Local setup
 
