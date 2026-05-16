@@ -34,7 +34,7 @@ public class SearchController {
 
 	@RequestMapping("/query")
 	public @ResponseBody Search findSongs(@RequestParam Map<String,String> params, Principal principal) {
-		User user = userRepository.findById(principal.getName());
+		User user = userRepository.getById(principal.getName());
 		Search search = createSearch(params);
 		search.setSession(SessionUtils.makeSession(user));
 		return songClient.findSongs(search);
@@ -43,7 +43,7 @@ public class SearchController {
 
 	@RequestMapping("/browse")
 	public @ResponseBody Search browseSongs(@RequestParam Map<String,String> params, Principal principal) {
-		User user = userRepository.findById(principal.getName());
+		User user = userRepository.getById(principal.getName());
 		Search search = createSearch(params);
 		search.setBrowse(true);
 		search.setSession(SessionUtils.makeSession(user));
@@ -54,7 +54,7 @@ public class SearchController {
 	
 	@RequestMapping("/favorites")
 	public @ResponseBody Search getFavorites(@RequestParam Map<String,String> params, Principal principal) {
-		User user = userRepository.findById(principal.getName());
+		User user = userRepository.getById(principal.getName());
 		Search search = createSearch(params);
 		search.setSession(SessionUtils.makeSession(user));
 		search.setFavorites(true);
@@ -64,7 +64,7 @@ public class SearchController {
 	
 	@RequestMapping("/playHistory")
 	public @ResponseBody Search getHistory(@RequestParam Map<String,String> params, Principal principal) {
-		User user = userRepository.findById(principal.getName());
+		User user = userRepository.getById(principal.getName());
 		Search search = createSearch(params);
 		search.setSession(SessionUtils.makeSession(user));
 		search.setPlayHistory(true);

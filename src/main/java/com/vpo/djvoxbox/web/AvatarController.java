@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.Date;
 
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -33,7 +33,7 @@ public class AvatarController {
     @RequestMapping(value="/api/v1/user/avatar", method=RequestMethod.POST)
     @ResponseBody
     public User uploadAvatar(@RequestParam("file") MultipartFile file, Principal principal) throws IOException {
-		User user = userRepository.findById(principal.getName());
+		User user = userRepository.getById(principal.getName());
 		Avatar avatar = avatarRepository.findByOwnerId(principal.getName());
     	// We use this to for browser image cache reasons. Really just need a unique number.
 		String shortcut = new ObjectId().toString();		
