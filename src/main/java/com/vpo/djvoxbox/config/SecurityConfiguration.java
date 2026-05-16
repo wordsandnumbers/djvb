@@ -2,25 +2,21 @@ package com.vpo.djvoxbox.config;
 
 import java.io.IOException;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
@@ -30,119 +26,76 @@ import org.springframework.web.util.WebUtils;
 import com.vpo.djvoxbox.security.authentication.FirebaseAuthenticationProvider;
 import com.vpo.djvoxbox.security.web.authentication.SpringSessionRememberMeServices;
 
+import static jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+
 @Configuration
-@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+@EnableWebSecurity
+public class SecurityConfiguration {
 
 	@Autowired
 	private FirebaseAuthenticationProvider firebaseAuthenticationProvider;
-	
-	@Autowired private static SpringSessionRememberMeServices springSessionRememberMeServices;
 
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-            auth.authenticationProvider(firebaseAuthenticationProvider);
-    }
+	@Autowired
+	private SpringSessionRememberMeServices springSessionRememberMeServices;
 
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        web
-            .ignoring()
-            .antMatchers("/resources/**");
-    }
-    
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-		http
-        	.sessionManagement()
-        	.sessionFixation().migrateSession()
-        	.and()
-        	.csrf().disable()
-            .authorizeRequests()
-                .anyRequest().authenticated()
-                .and()
-/*                .addFilterAfter(new CsrfHeaderFilter(), CsrfFilter.class)
-                    .csrf().csrfTokenRepository(csrfTokenRepository())
-                .and()*/
-            .formLogin()
-                .loginPage("/")
-                .loginProcessingUrl("/login/login")
-                .usernameParameter("name")
-                .passwordParameter("idToken")
-                .successHandler(new LoginSuccessHandler())
-                .permitAll()
-             .and()
-             .logout()
-             .permitAll();
-    }
-
-	@Order(2)
-	@Configuration
-	public static class ApiWebSecurityConfig extends WebSecurityConfigurerAdapter {
-		private boolean csrfDisabled = true;
-		
-		@Override
-		protected void configure(HttpSecurity http) throws Exception {
-			http.antMatcher("/api/**")
-			.authorizeRequests()
-			.anyRequest().authenticated()
-			.and().rememberMe()
-			.rememberMeServices(springSessionRememberMeServices);
-			
-			configureCsrf(http, csrfDisabled)
-				.exceptionHandling()
-					.authenticationEntryPoint(new AuthenticationEntryPoint() {
-						@Override
-						public void commence(HttpServletRequest request, HttpServletResponse response,
-								AuthenticationException ex) throws IOException, ServletException {
-					        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");							
-						}
-					});
-		}
+	@Autowired
+	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+		auth.authenticationProvider(firebaseAuthenticationProvider);
 	}
-	
+
+	@Bean
+	public WebSecurityCustomizer webSecurityCustomizer() {
+		return (web) -> web.ignoring().requestMatchers("/resources/**");
+	}
+
+	@Bean
 	@Order(1)
-	@Configuration
-	public static class AvatarWebSecurityConfig extends WebSecurityConfigurerAdapter {
-					  
-		@Override
-		protected void configure(HttpSecurity http) throws Exception {
-			http.antMatcher("/api/v1/user/avatar/**")
-				.authorizeRequests()
-					.anyRequest().authenticated()
-					.and()
-				// Avatar images should be cached by browser. When they are changed, their url changes and a new image is requested.
-				.headers().cacheControl().disable();
-			
-			configureCsrf(http, true)
-			.exceptionHandling()
-				.authenticationEntryPoint(new AuthenticationEntryPoint() {
-					@Override
-					public void commence(HttpServletRequest request, HttpServletResponse response,
-							AuthenticationException ex) throws IOException, ServletException {
-				        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");							
-					}
-				});
+	public SecurityFilterChain avatarChain(HttpSecurity http) throws Exception {
+		return http.securityMatcher("/api/v1/user/avatar/**")
+			.authorizeHttpRequests(a -> a.anyRequest().authenticated())
+			.headers(h -> h.cacheControl(c -> c.disable()))
+			.csrf(c -> c.disable())
+			.exceptionHandling(e -> e.authenticationEntryPoint(
+				(req, res, ex) -> {
+					res.setStatus(SC_UNAUTHORIZED);
+					res.setContentType("application/json");
+					res.getWriter().write("{\"error\":\"Unauthorized\"}");
+				}))
+			.build();
+	}
 
-		}
+	@Bean
+	@Order(2)
+	public SecurityFilterChain apiChain(HttpSecurity http) throws Exception {
+		return http.securityMatcher("/api/**")
+			.authorizeHttpRequests(a -> a.anyRequest().authenticated())
+			.rememberMe(r -> r.rememberMeServices(springSessionRememberMeServices))
+			.csrf(c -> c.disable())
+			.exceptionHandling(e -> e.authenticationEntryPoint(
+				(req, res, ex) -> {
+					res.setStatus(SC_UNAUTHORIZED);
+					res.setContentType("application/json");
+					res.getWriter().write("{\"error\":\"Unauthorized\"}");
+				}))
+			.build();
 	}
-		
-	public class LoginSuccessHandler implements AuthenticationSuccessHandler {
-		
-		public void onAuthenticationSuccess(HttpServletRequest request,
-				HttpServletResponse response, Authentication auth)
-				throws IOException, ServletException {
-		}
-	}
-	
-	private static HttpSecurity configureCsrf(HttpSecurity http, boolean disabled) throws Exception {
-		if (disabled) {
-			return http.csrf().disable();
-		} else {
-			http.addFilterAfter(new CsrfHeaderFilter(), CsrfFilter.class)
-				.csrf().csrfTokenRepository(csrfTokenRepository());
-			return http;
-		}
+
+	@Bean
+	@Order(3)
+	public SecurityFilterChain mainChain(HttpSecurity http) throws Exception {
+		return http
+			.sessionManagement(s -> s.sessionFixation().migrateSession())
+			.csrf(c -> c.disable())
+			.authorizeHttpRequests(a -> a.anyRequest().authenticated())
+			.formLogin(f -> f
+				.loginPage("/")
+				.loginProcessingUrl("/login/login")
+				.usernameParameter("name")
+				.passwordParameter("idToken")
+				.successHandler((req, res, auth) -> {})
+				.permitAll())
+			.logout(l -> l.permitAll())
+			.build();
 	}
 
 	public static class CsrfHeaderFilter extends OncePerRequestFilter {
@@ -150,13 +103,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		protected void doFilterInternal(HttpServletRequest request,
 				HttpServletResponse response, FilterChain filterChain)
 				throws ServletException, IOException {
-			CsrfToken csrf = (CsrfToken) request.getAttribute(CsrfToken.class
-					.getName());
+			CsrfToken csrf = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
 			if (csrf != null) {
 				Cookie cookie = WebUtils.getCookie(request, "XSRF-TOKEN");
 				String token = csrf.getToken();
-				if (cookie == null || token != null
-						&& !token.equals(cookie.getValue())) {
+				if (cookie == null || token != null && !token.equals(cookie.getValue())) {
 					cookie = new Cookie("XSRF-TOKEN", token);
 					cookie.setPath("/");
 					response.addCookie(cookie);
@@ -171,4 +122,4 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		repository.setHeaderName("X-XSRF-TOKEN");
 		return repository;
 	}
-}	
+}

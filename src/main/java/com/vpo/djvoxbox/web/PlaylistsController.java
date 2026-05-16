@@ -26,31 +26,31 @@ public class PlaylistsController {
 	
 	@RequestMapping(value="/", method=RequestMethod.GET)
 	public @ResponseBody Playlists getPlaylists(Principal principal) {
-	   User user = userRepository.findById(principal.getName());
+	   User user = userRepository.getById(principal.getName());
 	   return userService.getPlaylists(user);	 
 	}
 
 	@RequestMapping(value="/{id}", method=RequestMethod.GET)
 	public @ResponseBody Playlist getPlaylist(Principal principal, @PathVariable("id") String id) {
-	   User user = userRepository.findById(principal.getName());
+	   User user = userRepository.getById(principal.getName());
 	   return userService.getPlaylist(user, id);	 
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.POST)
 	public @ResponseBody Playlist addPlaylist(Principal principal, @RequestBody Playlist list) {
-	   User user = userRepository.findById(principal.getName());
+	   User user = userRepository.getById(principal.getName());
 	   return userService.addPlaylist(user, list);	 
 	}
 	
 	@RequestMapping(value="/", method=RequestMethod.DELETE)
 	public void deletePlaylist(Principal principal, @RequestBody Playlist list) {
-	   User user = userRepository.findById(principal.getName());
+	   User user = userRepository.getById(principal.getName());
 	   userService.removePlaylist(user, list);	 
 	}
 
 	@RequestMapping(value="/", method=RequestMethod.PUT)
 	public @ResponseBody Playlist updatePlaylist(Principal principal, @RequestBody Playlist list) {
-	   User user = userRepository.findById(principal.getName());
+	   User user = userRepository.getById(principal.getName());
 	   return userService.updatePlaylist(user, list);	 
 	}
 }

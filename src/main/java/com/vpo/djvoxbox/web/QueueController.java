@@ -56,14 +56,14 @@ public class QueueController {
 	
 	@RequestMapping(value="/popup/{roomCode}", method=RequestMethod.POST)
 	public void popup(Principal principal, @PathVariable("roomCode") String roomCode, @RequestBody String message) {
-		User user = userRepository.findById(principal.getName());
+		User user = userRepository.getById(principal.getName());
 		sessionClient.postPopup(SessionUtils.makeSession(user), roomCode, message);
 	}
 	
 	
 	@RequestMapping(value="/join", method=RequestMethod.POST)
 	public @ResponseBody UserQueue createUserQueue(@RequestBody QueueRequest request, Principal principal) {
-		User user = userRepository.findById(principal.getName());
+		User user = userRepository.getById(principal.getName());
 		Queue q = queueClient.getQueue(request.roomCode);
 		UserQueue uq = null;
 		
@@ -84,8 +84,8 @@ public class QueueController {
 	
 	@RequestMapping(value="/uq/{userQueueId}", method=RequestMethod.DELETE)
 	public void deleteUserQueue(@PathVariable("userQueueId") String userQueueId, Principal principal) {
-		User user = userRepository.findById(principal.getName());
-		UserQueue uq = userQueueRepository.findOne(userQueueId);
+		User user = userRepository.getById(principal.getName());
+		UserQueue uq = userQueueRepository.findById(userQueueId).get();
 		if(uq.getOwnerId().equals(user.getIdentifier())) {
 			userQueueRepository.delete(uq);
 		}
@@ -93,7 +93,7 @@ public class QueueController {
 	
 	@RequestMapping(value="/queues", method=RequestMethod.GET)
 	public @ResponseBody List<UserQueue> getQueues(Principal principal) {
-		User user = userRepository.findById(principal.getName());
+		User user = userRepository.getById(principal.getName());
 		return userQueueRepository.findByOwnerId(user.getIdentifier());
 	}
 	
@@ -120,7 +120,7 @@ public class QueueController {
 		// if it's a new song, then just post the replacement and delete out of the queue
 		List<Play> queued = uq.getQueued();
 		Play newPlay = null;
-		User user = userRepository.findById(principal.getName());
+		User user = userRepository.getById(principal.getName());
 		Session s = sessionClient.getSessionById(user.getSessionId());
 		Play[] queuedArray = queued.toArray(new Play[queued.size()]);
 		Play oldPlay = null;
