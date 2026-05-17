@@ -146,12 +146,60 @@ Key properties (set in [application.properties](src/main/resources/application.p
 - Backend jar: `mvn package -DskipTests` produces `target/djvb-0.0.1-SNAPSHOT.jar`
 - Frontend production build (`grunt` default task) and `grunt test` (Karma + Jasmine) are currently **not wired up for modern Node** — they relied on `node-sass` and `phantomjs`, which were dropped during the Node 24 / Spring Boot 3 upgrade. The dev loop (`grunt java`) is the supported workflow.
 
-## Deployment
+## Containers
 
-Heroku-style deploy via [Procfile](Procfile):
+The whole stack runs as containers — server (Spring Boot) and UI (Caddy + static SPA) — alongside MongoDB and Redis. Local end-to-end mirrors what runs on ECS.
 
+```sh
+# server build needs a GitHub PAT with read:packages to fetch vbclient
+export GITHUB_PACKAGES_TOKEN=ghp_...
+
+DOCKER_BUILDKIT=1 docker compose up --build
 ```
-web: java -Dserver.port=$PORT -jar target/djvb-0.0.1-SNAPSHOT.jar
+
+Open `http://localhost/` — Caddy serves the SPA from `/resources/*` and reverse-proxies everything else (`/`, `/api/*`, `/login*`, `/logout`, `/actuator/*`) to the server. Health check: `curl http://localhost/actuator/health`.
+
+Build images individually:
+
+```sh
+DOCKER_BUILDKIT=1 docker build -f Dockerfile.server \
+  --secret id=gh_pat,env=GITHUB_PACKAGES_TOKEN \
+  -t djvb-server:dev .
+
+docker build -f Dockerfile.ui -t djvb-ui:dev .
 ```
 
-The legacy Java runtime selector lives in [system.properties](system.properties); the actual Maven build targets Java 17.
+## Deployment (ECS on EC2)
+
+Production runs as four ECS services (`caddy-ui`, `server`, `mongo`, `redis`) on a single `t4g.small` EC2 instance, with a separate EBS data volume for Mongo and Redis persistence across instance replacement. Caddy terminates TLS with auto-issued Let's Encrypt certs — no ALB, no ACM.
+
+See [infra/terraform/](infra/terraform/):
+
+```sh
+cd infra/terraform
+cp terraform.tfvars.example terraform.tfvars   # then edit
+terraform init
+terraform apply
+```
+
+After the first apply, populate the SecureString secrets that Terraform left as placeholders:
+
+```sh
+aws ssm put-parameter --name /djvb/mongo_uri        --type SecureString --overwrite --value 'mongodb://djvb:<pw>@mongo:27017/djvb?authSource=admin'
+aws ssm put-parameter --name /djvb/redis_password   --type SecureString --overwrite --value '<strong-redis-pw>'
+aws ssm put-parameter --name /djvb/vb_organization  --type SecureString --overwrite --value '<vb-org-id>'
+aws ssm put-parameter --name /djvb/firebase_key     --type SecureString --overwrite --value file://path/to/firebaseServiceAccountKey.json
+```
+
+Then force a redeploy so the tasks pick up the new secret values:
+
+```sh
+aws ecs update-service --cluster djvb --service djvb-server --force-new-deployment
+aws ecs update-service --cluster djvb --service djvb-ui     --force-new-deployment
+```
+
+CI/CD is wired up in [.github/workflows/deploy.yml](.github/workflows/deploy.yml): pushes to `main` build both images for `linux/arm64`, push to ECR with both `<sha>` and `latest` tags, and call `aws ecs update-service --force-new-deployment` on both services. Set repository secrets `AWS_DEPLOY_ROLE` (output by Terraform as `github_deploy_role_arn`) and `GITHUB_PACKAGES_TOKEN` (PAT with `read:packages` on vbclient).
+
+### Heroku-era files
+
+[Procfile](Procfile) and [system.properties](system.properties) remain in-tree as harmless artifacts of the previous deployment target.

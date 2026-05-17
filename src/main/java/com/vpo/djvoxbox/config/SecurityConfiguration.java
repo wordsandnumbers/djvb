@@ -45,7 +45,7 @@ public class SecurityConfiguration {
 
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
-		return (web) -> web.ignoring().requestMatchers("/resources/**");
+		return (web) -> web.ignoring().requestMatchers("/resources/**", "/actuator/health", "/actuator/health/**");
 	}
 
 	@Bean

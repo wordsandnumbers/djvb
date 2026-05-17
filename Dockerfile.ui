@@ -1,0 +1,23 @@
+# syntax=docker/dockerfile:1.7
+
+FROM node:20-bullseye AS build
+WORKDIR /build
+
+# Install node deps first to maximize cache reuse.
+COPY package.json package-lock.json* ./
+RUN npm install --legacy-peer-deps
+
+# Then bower deps.
+COPY bower.json ./
+RUN ./node_modules/.bin/bower install --allow-root --config.interactive=false
+
+# Finally the UI sources and Gruntfile, then build the static bundle.
+COPY Gruntfile.js ./
+COPY djvb-ui ./djvb-ui
+RUN ./node_modules/.bin/grunt build-static
+
+FROM caddy:2-alpine
+COPY --from=build /build/target/classes/static/ /srv/
+COPY Caddyfile /etc/caddy/Caddyfile
+
+EXPOSE 80 443
