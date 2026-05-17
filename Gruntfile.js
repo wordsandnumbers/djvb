@@ -459,6 +459,14 @@ module.exports = function (grunt) {
     'watch:java'
   ]);
 
+  grunt.registerTask('build-static', [
+    'clean:server',
+    'wiredep',
+    'copy:bowerJava',
+    'sync:java',
+    'bowerRequirejs:java'
+  ]);
+
 
   grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
     if (target === 'dist') {

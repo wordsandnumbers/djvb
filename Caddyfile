@@ -1,0 +1,26 @@
+# SITE_ADDRESS drives Let's Encrypt issuance in prod. Locally we bind
+# to :80 so docker compose serves http://localhost without a cert.
+{$SITE_ADDRESS::80} {
+    encode gzip
+    root * /srv
+
+    # SPA entry — index.html lives at /srv/resources/index.html. Serve it
+    # at the bare root without changing the URL so the SPA's relative
+    # `resources/...` references still resolve.
+    @root path /
+    handle @root {
+        rewrite * /resources/index.html
+        file_server
+    }
+
+    # Other static SPA assets under /resources/*.
+    handle /resources/* {
+        file_server
+    }
+
+    # Everything else (/api, /login*, /logout, /actuator, WebSocket
+    # upgrades, etc.) goes to the Spring Boot server.
+    handle {
+        reverse_proxy {$SERVER_UPSTREAM:server:8080}
+    }
+}

@@ -10,3 +10,17 @@
 /.settings
 /.vscode
 .DS_Store
+
+# Terraform
+infra/terraform/.terraform/
+infra/terraform/.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+
+# Env files
+.env
+.env.*
+!.env.example
+

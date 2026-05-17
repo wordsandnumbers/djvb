@@ -1,0 +1,25 @@
+.git
+.gitignore
+.github
+.claude
+.vscode
+.settings
+.classpath
+.project
+.DS_Store
+
+# Build / dependency caches — Dockerfiles regenerate these from sources.
+target/
+node_modules/
+bower_components/
+.tmp/
+dist/
+
+# Local infra state and secrets.
+infra/terraform/.terraform/
+infra/terraform/*.tfstate*
+**/*.env
+**/*.env.local
+
+# Local app files we never want in an image.
+src/main/resources/firebaseServiceAccountKey.json
