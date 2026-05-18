@@ -51,6 +51,8 @@ jobs:
           tags: |
             ${{ steps.ecr.outputs.registry }}/djvb-server:${{ steps.meta.outputs.tag }}
             ${{ steps.ecr.outputs.registry }}/djvb-server:latest
+          cache-from: type=gha,scope=djvb-server
+          cache-to: type=gha,mode=max,scope=djvb-server
           secret-envs: |
             gh_pat=GH_PACKAGES_TOKEN
 
@@ -88,6 +90,8 @@ jobs:
           tags: |
             ${{ steps.ecr.outputs.registry }}/djvb-ui:${{ steps.meta.outputs.tag }}
             ${{ steps.ecr.outputs.registry }}/djvb-ui:latest
+          cache-from: type=gha,scope=djvb-ui
+          cache-to: type=gha,mode=max,scope=djvb-ui
 
   deploy:
     runs-on: ubuntu-latest
