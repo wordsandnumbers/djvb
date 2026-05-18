@@ -1,10 +1,43 @@
 services:
   mongo:
     image: mongo:6
+    command: ["--wiredTigerCacheSizeGB", "0.25"]
     ports: ["27017:27017"]
     volumes: ["mongo_data:/data/db"]
   redis:
     image: redis:7-alpine
+    command: ["redis-server", "--maxmemory", "64mb", "--maxmemory-policy", "allkeys-lru"]
     ports: ["6379:6379"]
+    volumes: ["redis_data:/data"]
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+      secrets: [gh_pat]
+    depends_on: [mongo, redis]
+    environment:
+      MONGO_URI: mongodb://mongo:27017/djvb
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      VB_ORGANIZATION: "00000000000000000000000000000000"
+      MANAGER_NAME: VBONE
+      DEFAULT_LANGUAGE: English
+      JAVA_OPTS: "-Xms128m -Xmx384m"
+      GOOGLE_APPLICATION_CREDENTIALS_PATH: /run/firebase.json
+    volumes:
+      - ./src/main/resources/firebaseServiceAccountKey.json:/run/firebase.json:ro
+  caddy-ui:
+    build:
+      context: .
+      dockerfile: Dockerfile.ui
+    depends_on: [server]
+    environment:
+      SITE_ADDRESS: ":80"
+      SERVER_UPSTREAM: server:8080
+    ports: ["80:80"]
 volumes:
   mongo_data:
+  redis_data:
+secrets:
+  gh_pat:
+    environment: GITHUB_PACKAGES_TOKEN

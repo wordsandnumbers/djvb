@@ -1,0 +1,4 @@
+region      = "us-west-2"
+domain_name = "djvb.justinsawyer.dev"
+github_repo = "wordsandnumbers/djvb"
+# ssh_pubkey = "ssh-ed25519 AAAA... you@host"  # optional; SSM Session Manager works without it
