@@ -31,7 +31,7 @@ resource "aws_security_group" "host" {
   vpc_id      = data.aws_vpc.default.id
 
   ingress {
-    description = "HTTP (Let's Encrypt HTTP-01 + redirect to HTTPS)"
+    description = "HTTP -- Lets Encrypt HTTP-01 challenge + redirect to HTTPS"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"

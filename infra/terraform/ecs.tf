@@ -54,9 +54,14 @@ locals {
 }
 
 # -- Mongo task ---------------------------------------------------------------
+# All tasks run with network_mode=host: containers bind directly to ports on
+# the EC2 host's network and reach each other via `localhost`. The host
+# security group only allows 80/443 from the internet, so Mongo (27017) and
+# Redis (6379) are reachable only from other containers on the same instance.
+
 resource "aws_ecs_task_definition" "mongo" {
   family             = "${var.name}-mongo"
-  network_mode       = "bridge"
+  network_mode       = "host"
   execution_role_arn = aws_iam_role.ecs_task_execution.arn
 
   volume {
@@ -71,7 +76,6 @@ resource "aws_ecs_task_definition" "mongo" {
     memory    = 480
     cpu       = 256
     command   = ["mongod", "--wiredTigerCacheSizeGB", "0.25"]
-    hostname  = "mongo"
     mountPoints = [{
       sourceVolume  = "mongo-data"
       containerPath = "/data/db"
@@ -79,10 +83,9 @@ resource "aws_ecs_task_definition" "mongo" {
     }]
     portMappings = [{
       containerPort = 27017
-      hostPort      = 0
+      hostPort      = 27017
       protocol      = "tcp"
     }]
-    dockerLabels = { "djvb.role" = "mongo" }
     logConfiguration = local.log_config
   }])
 }
@@ -90,7 +93,7 @@ resource "aws_ecs_task_definition" "mongo" {
 # -- Redis task ---------------------------------------------------------------
 resource "aws_ecs_task_definition" "redis" {
   family             = "${var.name}-redis"
-  network_mode       = "bridge"
+  network_mode       = "host"
   execution_role_arn = aws_iam_role.ecs_task_execution.arn
 
   volume {
@@ -104,7 +107,6 @@ resource "aws_ecs_task_definition" "redis" {
     essential = true
     memory    = 96
     cpu       = 128
-    hostname  = "redis"
     command   = ["redis-server", "--maxmemory", "64mb", "--maxmemory-policy", "allkeys-lru", "--requirepass", "$${REDIS_PASSWORD}"]
     secrets = [
       { name = "REDIS_PASSWORD", valueFrom = aws_ssm_parameter.redis_password.arn },
@@ -116,7 +118,7 @@ resource "aws_ecs_task_definition" "redis" {
     }]
     portMappings = [{
       containerPort = 6379
-      hostPort      = 0
+      hostPort      = 6379
       protocol      = "tcp"
     }]
     logConfiguration = local.log_config
@@ -126,7 +128,7 @@ resource "aws_ecs_task_definition" "redis" {
 # -- Server task (Spring Boot) ------------------------------------------------
 resource "aws_ecs_task_definition" "server" {
   family             = "${var.name}-server"
-  network_mode       = "bridge"
+  network_mode       = "host"
   execution_role_arn = aws_iam_role.ecs_task_execution.arn
   task_role_arn      = aws_iam_role.ecs_task.arn
 
@@ -136,12 +138,10 @@ resource "aws_ecs_task_definition" "server" {
     essential = true
     memory    = 500
     cpu       = 512
-    hostname  = "server"
-    links     = ["${aws_ecs_task_definition.mongo.family}:mongo", "${aws_ecs_task_definition.redis.family}:redis"]
     environment = [
-      { name = "JAVA_OPTS", value = "-Xms128m -Xmx384m" },
-      { name = "REDIS_HOST", value = "redis" },
-      { name = "REDIS_PORT", value = "6379" },
+      { name = "JAVA_OPTS",        value = "-Xms128m -Xmx384m" },
+      { name = "REDIS_HOST",       value = "localhost" },
+      { name = "REDIS_PORT",       value = "6379" },
       { name = "DEFAULT_LANGUAGE", value = "English" },
     ]
     secrets = [
@@ -153,7 +153,7 @@ resource "aws_ecs_task_definition" "server" {
     ]
     portMappings = [{
       containerPort = 8080
-      hostPort      = 0
+      hostPort      = 8080
       protocol      = "tcp"
     }]
     healthCheck = {
@@ -167,10 +167,10 @@ resource "aws_ecs_task_definition" "server" {
   }])
 }
 
-# -- Caddy / UI task (the only one publishing host ports) ---------------------
+# -- Caddy / UI task (the only task with public ingress) ----------------------
 resource "aws_ecs_task_definition" "ui" {
   family             = "${var.name}-ui"
-  network_mode       = "bridge"
+  network_mode       = "host"
   execution_role_arn = aws_iam_role.ecs_task_execution.arn
 
   volume {
@@ -184,10 +184,9 @@ resource "aws_ecs_task_definition" "ui" {
     essential = true
     memory    = 96
     cpu       = 128
-    links     = ["${aws_ecs_task_definition.server.family}:server"]
     environment = [
       { name = "SITE_ADDRESS",    value = var.domain_name },
-      { name = "SERVER_UPSTREAM", value = "server:8080" },
+      { name = "SERVER_UPSTREAM", value = "localhost:8080" },
     ]
     mountPoints = [{
       sourceVolume  = "caddy-data"

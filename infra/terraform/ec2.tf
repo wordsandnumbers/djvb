@@ -95,7 +95,8 @@ resource "aws_launch_template" "host" {
   block_device_mappings {
     device_name = "/dev/xvda"
     ebs {
-      volume_size           = 8
+      # AL2023 ECS-optimized AMI snapshot is 30 GB; can't go smaller.
+      volume_size           = 30
       volume_type           = "gp3"
       encrypted             = true
       delete_on_termination = true

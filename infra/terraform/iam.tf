@@ -91,8 +91,12 @@ resource "aws_iam_role" "ecs_task" {
 }
 
 # --- GitHub Actions OIDC role for CI to push images and trigger deploys ---
-data "aws_iam_openid_connect_provider" "github" {
-  url = "https://token.actions.githubusercontent.com"
+# AWS no longer requires thumbprints for this OIDC provider, but the field is
+# required by the API; the canonical placeholder below is what AWS docs use.
+resource "aws_iam_openid_connect_provider" "github" {
+  url             = "https://token.actions.githubusercontent.com"
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = ["6938fd4d98bab03faadb97b34396831e3780aea1"]
 }
 
 data "aws_iam_policy_document" "github_assume" {
@@ -100,7 +104,7 @@ data "aws_iam_policy_document" "github_assume" {
     actions = ["sts:AssumeRoleWithWebIdentity"]
     principals {
       type        = "Federated"
-      identifiers = [data.aws_iam_openid_connect_provider.github.arn]
+      identifiers = [aws_iam_openid_connect_provider.github.arn]
     }
     condition {
       test     = "StringEquals"

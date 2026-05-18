@@ -9,7 +9,8 @@ output "ecr_ui_url" {
 }
 
 output "host_public_ip" {
-  value = aws_eip.host.public_ip
+  value       = aws_eip.host.public_ip
+  description = "Point an A record for var.domain_name at this IP (Cloudflare DNS only, NOT proxied)."
 }
 
 output "domain" {
