@@ -132,7 +132,7 @@ Key properties (set in [application.properties](src/main/resources/application.p
 | Property | Purpose |
 | --- | --- |
 | `spring.data.mongodb.uri` | MongoDB connection string |
-| `spring.redis.host` / `spring.redis.port` / `spring.redis.password` | Redis (session store) |
+| `spring.data.redis.host` / `spring.data.redis.port` / `spring.data.redis.password` | Redis (session store) |
 | `vb.organization` | VoxBox organization ID this instance is bound to |
 | `manager.name` | Manager record name used to bootstrap state |
 | `default.language` | Default song search language |
@@ -171,24 +171,30 @@ docker build -f Dockerfile.ui -t djvb-ui:dev .
 
 ## Deployment (ECS on EC2)
 
-Production runs as four ECS services (`caddy-ui`, `server`, `mongo`, `redis`) on a single `t4g.small` EC2 instance, with a separate EBS data volume for Mongo and Redis persistence across instance replacement. Caddy terminates TLS with auto-issued Let's Encrypt certs — no ALB, no ACM.
+Production runs as four ECS services (`caddy-ui`, `server`, `mongo`, `redis`) on a single `t4g.small` EC2 instance in `us-west-2`, with a separate EBS data volume for Mongo and Redis persistence across instance replacement. Caddy terminates TLS with auto-issued Let's Encrypt certs — no ALB, no ACM. DNS lives at Cloudflare; an A record pointed at the EIP is the only thing AWS doesn't manage. Estimated steady-state cost ~$14/mo.
 
 See [infra/terraform/](infra/terraform/):
 
 ```sh
 cd infra/terraform
-cp terraform.tfvars.example terraform.tfvars   # then edit
+cp terraform.tfvars.example terraform.tfvars   # then edit if needed
 terraform init
 terraform apply
 ```
 
-After the first apply, populate the SecureString secrets that Terraform left as placeholders:
+After `terraform apply` completes, grab the EIP from the `host_public_ip` output and add an A record at Cloudflare:
+
+- **Name:** `djvb` (the subdomain part of your `domain_name`)
+- **IPv4 address:** the `host_public_ip` output
+- **Proxy status:** **DNS only** (grey cloud, **NOT** orange/proxied) — Caddy needs direct access to the origin to complete the ACME HTTP-01 challenge.
+
+Populate the SecureString secrets that Terraform left as placeholders:
 
 ```sh
-aws ssm put-parameter --name /djvb/mongo_uri        --type SecureString --overwrite --value 'mongodb://djvb:<pw>@mongo:27017/djvb?authSource=admin'
+aws ssm put-parameter --name /djvb/mongo_uri        --type SecureString --overwrite --value 'mongodb://localhost:27017/djvb'
 aws ssm put-parameter --name /djvb/redis_password   --type SecureString --overwrite --value '<strong-redis-pw>'
 aws ssm put-parameter --name /djvb/vb_organization  --type SecureString --overwrite --value '<vb-org-id>'
-aws ssm put-parameter --name /djvb/firebase_key     --type SecureString --overwrite --value file://path/to/firebaseServiceAccountKey.json
+aws ssm put-parameter --name /djvb/firebase_key     --type SecureString --overwrite --value file://src/main/resources/firebaseServiceAccountKey.json
 ```
 
 Then force a redeploy so the tasks pick up the new secret values:
@@ -199,7 +205,3 @@ aws ecs update-service --cluster djvb --service djvb-ui     --force-new-deployme
 ```
 
 CI/CD is wired up in [.github/workflows/deploy.yml](.github/workflows/deploy.yml): pushes to `main` build both images for `linux/arm64`, push to ECR with both `<sha>` and `latest` tags, and call `aws ecs update-service --force-new-deployment` on both services. Set repository secrets `AWS_DEPLOY_ROLE` (output by Terraform as `github_deploy_role_arn`) and `GITHUB_PACKAGES_TOKEN` (PAT with `read:packages` on vbclient).
-
-### Heroku-era files
-
-[Procfile](Procfile) and [system.properties](system.properties) remain in-tree as harmless artifacts of the previous deployment target.

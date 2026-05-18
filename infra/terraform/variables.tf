@@ -1,7 +1,7 @@
 variable "region" {
-  description = "AWS region. us-east-1 is cheapest and is the default."
+  description = "AWS region."
   type        = string
-  default     = "us-east-1"
+  default     = "us-west-2"
 }
 
 variable "name" {
@@ -23,12 +23,7 @@ variable "data_volume_size_gb" {
 }
 
 variable "domain_name" {
-  description = "Public hostname for the app (e.g. djvb.example.com). Caddy auto-provisions Let's Encrypt for this name."
-  type        = string
-}
-
-variable "hosted_zone_id" {
-  description = "Route53 hosted zone ID that owns domain_name."
+  description = "Public hostname for the app (e.g. djvb.example.com). Caddy auto-provisions Let's Encrypt for this name. DNS is managed externally (e.g. Cloudflare); after apply, point an A record at the EIP output."
   type        = string
 }
 
