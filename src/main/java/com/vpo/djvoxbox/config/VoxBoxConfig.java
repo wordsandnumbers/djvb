@@ -1,5 +1,7 @@
 package com.vpo.djvoxbox.config;
 
+import java.time.Duration;
+
 import jakarta.servlet.Filter;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -8,6 +10,9 @@ import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.session.data.redis.config.ConfigureRedisAction;
 import org.springframework.session.web.http.CookieSerializer;
@@ -71,6 +76,15 @@ public class VoxBoxConfig {
 	@Bean
 	public static ConfigureRedisAction configureRedisAction() {
 		return ConfigureRedisAction.NO_OP;
+	}
+
+	@Bean
+	RedisCacheConfiguration redisCacheConfiguration() {
+		return RedisCacheConfiguration.defaultCacheConfig()
+				.entryTtl(Duration.ofHours(24))
+				.prefixCacheNameWith("djvb:cache:")
+				.serializeValuesWith(RedisSerializationContext.SerializationPair
+						.fromSerializer(new GenericJackson2JsonRedisSerializer()));
 	}
 
 	@Bean
