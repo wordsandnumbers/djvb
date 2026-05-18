@@ -204,4 +204,6 @@ aws ecs update-service --cluster djvb --service djvb-server --force-new-deployme
 aws ecs update-service --cluster djvb --service djvb-ui     --force-new-deployment
 ```
 
-CI/CD is wired up in [.github/workflows/deploy.yml](.github/workflows/deploy.yml): pushes to `main` build both images for `linux/arm64`, push to ECR with both `<sha>` and `latest` tags, and call `aws ecs update-service --force-new-deployment` on both services. Set repository secrets `AWS_DEPLOY_ROLE` (output by Terraform as `github_deploy_role_arn`) and `GITHUB_PACKAGES_TOKEN` (PAT with `read:packages` on vbclient).
+CI/CD is wired up in [.github/workflows/deploy.yml](.github/workflows/deploy.yml): pushes to `main` build both images for `linux/arm64`, push to ECR with both `<sha>` and `latest` tags, and call `aws ecs update-service --force-new-deployment` on both services. The only repo secret needed is `AWS_DEPLOY_ROLE` (output by Terraform as `github_deploy_role_arn`); the workflow fetches `vbclient` via the auto-provided `GITHUB_TOKEN` with `packages: read` permission, so no PAT is stored in GitHub.
+
+For `GITHUB_TOKEN` to read the `vbclient` package, that package must grant access to this repo: in the [vbclient package settings](https://github.com/orgs/wordsandnumbers/packages/maven/com.vpo.vbclient/settings) under **Manage Actions access**, add `wordsandnumbers/djvb` with **Read** role.
