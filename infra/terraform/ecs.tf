@@ -107,7 +107,8 @@ resource "aws_ecs_task_definition" "redis" {
     essential = true
     memory    = 96
     cpu       = 128
-    command   = ["redis-server", "--maxmemory", "64mb", "--maxmemory-policy", "allkeys-lru", "--requirepass", "$${REDIS_PASSWORD}"]
+    entryPoint = ["sh", "-c"]
+    command    = ["exec redis-server --maxmemory 64mb --maxmemory-policy allkeys-lru --requirepass \"$REDIS_PASSWORD\""]
     secrets = [
       { name = "REDIS_PASSWORD", valueFrom = aws_ssm_parameter.redis_password.arn },
     ]
