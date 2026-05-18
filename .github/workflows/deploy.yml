@@ -41,6 +41,8 @@ jobs:
 
       - name: Build and push djvb-server
         uses: docker/build-push-action@v6
+        env:
+          GH_PACKAGES_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           context: .
           file: Dockerfile.server
@@ -49,8 +51,8 @@ jobs:
           tags: |
             ${{ steps.ecr.outputs.registry }}/djvb-server:${{ steps.meta.outputs.tag }}
             ${{ steps.ecr.outputs.registry }}/djvb-server:latest
-          secrets: |
-            gh_pat=${{ secrets.GITHUB_TOKEN }}
+          secret-envs: |
+            gh_pat=GH_PACKAGES_TOKEN
 
   build-ui:
     runs-on: ubuntu-latest
