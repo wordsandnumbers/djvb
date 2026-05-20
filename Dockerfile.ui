@@ -1,18 +1,17 @@
 # syntax=docker/dockerfile:1.7
 
 FROM --platform=$BUILDPLATFORM node:20-bullseye AS build
-WORKDIR /build
+WORKDIR /build/djvb-ui
 
-COPY package.json package-lock.json ./
+COPY djvb-ui/package.json djvb-ui/package-lock.json ./
 RUN --mount=type=cache,target=/root/.npm \
     npm ci --legacy-peer-deps --no-audit --no-fund
 
-COPY bower.json ./
+COPY djvb-ui/bower.json ./
 RUN --mount=type=cache,target=/root/.cache/bower \
     ./node_modules/.bin/bower install --allow-root --config.interactive=false
 
-COPY Gruntfile.js ./
-COPY djvb-ui ./djvb-ui
+COPY djvb-ui/ ./
 RUN ./node_modules/.bin/grunt build-static
 
 FROM caddy:2-alpine
