@@ -14,7 +14,7 @@ A web application for managing karaoke song queues, rooms, playlists, and live s
 
 **Frontend** ([djvb-ui/](djvb-ui/))
 - AngularJS + Ionic + RequireJS
-- Built and bundled with Grunt + Bower
+- Built and bundled with Grunt + Bower (build config and `package.json` / `bower.json` live inside `djvb-ui/`)
 - Unit tests via Karma + Jasmine
 
 **Datastores**
@@ -39,9 +39,12 @@ src/main/resources/
   firebaseServiceAccountKey.json     Firebase Admin credentials (do NOT commit real keys)
   static/                            Frontend bundle served by Spring Boot
 
-djvb-ui/                      AngularJS/Ionic frontend sources (views, scripts, styles, tests)
+djvb-ui/                      AngularJS/Ionic frontend (sources, build pipeline, deps, tests)
+  Gruntfile.js                  Frontend build pipeline
+  package.json / bower.json     Frontend tooling + bower deps
+  karma.conf.js                 Karma unit-test config
+  test/                         Karma/Jasmine specs
 docker-compose.yml            Local MongoDB + Redis
-Gruntfile.js                  Frontend build pipeline
 Procfile                      Heroku-style run command
 ```
 
@@ -49,10 +52,10 @@ Procfile                      Heroku-style run command
 
 - **Java 17** and **Maven 3.x**
 - **Docker** / Docker Compose (for local MongoDB and Redis)
-- **Node.js** ≥ 18 and **npm** — [package.json](package.json) still pins `engines.node` to `6.11.1` for legacy reasons; modern Node works for the tasks we use. Pass `--legacy-peer-deps` to `npm install` to tolerate the old dependency graph.
+- **Node.js** ≥ 18 and **npm** — [djvb-ui/package.json](djvb-ui/package.json) still pins `engines.node` to `6.11.1` for legacy reasons; modern Node works for the tasks we use. Pass `--legacy-peer-deps` to `npm install` to tolerate the old dependency graph.
 - A **Firebase service account** JSON placed at [src/main/resources/firebaseServiceAccountKey.json](src/main/resources/firebaseServiceAccountKey.json)
 
-Grunt and Bower CLIs are pulled in as local dev dependencies — no global install needed. Run them via `./node_modules/.bin/grunt` and `./node_modules/.bin/bower`.
+Grunt and Bower CLIs are pulled in as local dev dependencies — no global install needed. Run them from inside `djvb-ui/` via `./node_modules/.bin/grunt` and `./node_modules/.bin/bower`.
 
 ## Consuming vbclient
 
@@ -94,11 +97,13 @@ The `<id>` must match the repository id in [pom.xml](pom.xml#L26-L36). Once conf
 2. Install frontend dependencies (one-time):
 
    ```sh
+   cd djvb-ui
    npm install --legacy-peer-deps
    ./node_modules/.bin/bower install
+   cd ..
    ```
 
-   `npm install` brings in Grunt, the Bower CLI, and all the Grunt plugins listed in [package.json](package.json). `bower install` then pulls the AngularJS / Ionic / Firebase frontend libraries into `bower_components/` per [bower.json](bower.json).
+   `npm install` brings in Grunt, the Bower CLI, and all the Grunt plugins listed in [djvb-ui/package.json](djvb-ui/package.json). `bower install` then pulls the AngularJS / Ionic / Firebase frontend libraries into `djvb-ui/bower_components/` per [djvb-ui/bower.json](djvb-ui/bower.json).
 
 3. Run the backend against the `development` profile:
 
@@ -111,14 +116,14 @@ The `<id>` must match the repository id in [pom.xml](pom.xml#L26-L36). Once conf
 4. In a separate terminal, sync the UI into the backend's static-resources directory and watch for changes:
 
    ```sh
-   ./node_modules/.bin/grunt java
+   (cd djvb-ui && ./node_modules/.bin/grunt java)
    ```
 
-   The `java` task ([Gruntfile.js](Gruntfile.js)):
+   The `java` task ([djvb-ui/Gruntfile.js](djvb-ui/Gruntfile.js)):
 
-   - cleans `target/classes/static/`
+   - cleans `target/classes/static/` (at the project root)
    - runs `wiredep` to inject Bower CSS `@import`s into [djvb-ui/styles/main.css](djvb-ui/styles/main.css)
-   - copies `bower_components/` into `target/classes/static/resources/bower_components/`
+   - copies `djvb-ui/bower_components/` into `target/classes/static/resources/bower_components/`
    - syncs `djvb-ui/` into `target/classes/static/resources/`
    - rewrites the RequireJS config in [djvb-ui/scripts/main.js](djvb-ui/scripts/main.js)
    - watches `djvb-ui/**` and re-syncs on every change
@@ -144,7 +149,7 @@ Key properties (set in [application.properties](src/main/resources/application.p
 
 - Backend tests: `mvn test` (entry point: [src/test/java/djboxbox/DjvbApplicationTests.java](src/test/java/djboxbox/DjvbApplicationTests.java))
 - Backend jar: `mvn package -DskipTests` produces `target/djvb-0.0.1-SNAPSHOT.jar`
-- Frontend production build (`grunt` default task) and `grunt test` (Karma + Jasmine) are currently **not wired up for modern Node** — they relied on `node-sass` and `phantomjs`, which were dropped during the Node 24 / Spring Boot 3 upgrade. The dev loop (`grunt java`) is the supported workflow.
+- Frontend commands run from inside `djvb-ui/`. The production build (`grunt` default task) and `grunt test` (Karma + Jasmine) are currently **not wired up for modern Node** — they relied on `node-sass` and `phantomjs`, which were dropped during the Node 24 / Spring Boot 3 upgrade. The dev loop (`grunt java`) is the supported workflow.
 
 ## Containers
 
