@@ -209,6 +209,33 @@ aws ecs update-service --cluster djvb --service djvb-server --force-new-deployme
 aws ecs update-service --cluster djvb --service djvb-ui     --force-new-deployment
 ```
 
-CI/CD is wired up in [.github/workflows/deploy.yml](.github/workflows/deploy.yml): pushes to `main` build both images for `linux/arm64`, push to ECR with both `<sha>` and `latest` tags, and call `aws ecs update-service --force-new-deployment` on both services. The only repo secret needed is `AWS_DEPLOY_ROLE` (output by Terraform as `github_deploy_role_arn`); the workflow fetches `vbclient` via the auto-provided `GITHUB_TOKEN` with `packages: read` permission, so no PAT is stored in GitHub.
+CI/CD is wired up in [.github/workflows/deploy.yml](.github/workflows/deploy.yml): pushes to `main` build both images for `linux/arm64`, push to ECR with both `<sha>` and `latest` tags, then register a new ECS task-definition revision pinned to the `<sha>` tag and update each service to it (via [.github/scripts/deploy-service.sh](.github/scripts/deploy-service.sh)). The only repo secret needed is `AWS_DEPLOY_ROLE` (output by Terraform as `github_deploy_role_arn`); the workflow fetches `vbclient` via the auto-provided `GITHUB_TOKEN` with `packages: read` permission, so no PAT is stored in GitHub.
 
 For `GITHUB_TOKEN` to read the `vbclient` package, that package must grant access to this repo: in the [vbclient package settings](https://github.com/orgs/wordsandnumbers/packages/maven/com.vpo.vbclient/settings) under **Manage Actions access**, add `wordsandnumbers/djvb` with **Read** role.
+
+### Rollback
+
+Every deploy registers a new ECS task-definition revision pinned to its git SHA, so prior revisions remain valid rollback targets. ECR keeps the last 10 image revisions, so any of the last ~10 deployed SHAs are available.
+
+In order of preference:
+
+1. **Manual rollback workflow** — re-pins both services to an existing SHA already in ECR (no rebuild, ~1 min):
+
+   ```sh
+   # find a recent good SHA
+   gh run list --workflow=deploy.yml --branch=main --limit 10
+
+   gh workflow run rollback.yml -f sha=<good-sha>
+   ```
+
+   Optionally pass `-f services=djvb-server` to roll back only one service. See [.github/workflows/rollback.yml](.github/workflows/rollback.yml).
+
+2. **Revert the commit on `main`** — slower (rebuilds), but keeps `main` HEAD = what's running:
+
+   ```sh
+   git revert <bad-sha> && git push
+   ```
+
+3. **Auto-rollback (passive)** — `djvb-server` and `djvb-ui` have the ECS deployment circuit breaker enabled with `rollback = true` ([infra/terraform/ecs.tf](infra/terraform/ecs.tf)), so a deploy whose tasks fail to start will auto-restore the previous task-def revision after ~5–15 min without operator action.
+
+Note: rollback only restores the container images, not MongoDB data. There are no scheduled Mongo snapshots — a data-corrupting bug is not recoverable by these steps.
