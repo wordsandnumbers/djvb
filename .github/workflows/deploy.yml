@@ -97,25 +97,19 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build-server, build-ui]
     steps:
+      - uses: actions/checkout@v4
+
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Force new deployment for server
-        run: |
-          aws ecs update-service \
-            --cluster "$CLUSTER" \
-            --service djvb-server \
-            --force-new-deployment
+      - name: Deploy server
+        run: ./.github/scripts/deploy-service.sh djvb-server "${{ needs.build-server.outputs.image_tag }}"
 
-      - name: Force new deployment for UI
-        run: |
-          aws ecs update-service \
-            --cluster "$CLUSTER" \
-            --service djvb-ui \
-            --force-new-deployment
+      - name: Deploy UI
+        run: ./.github/scripts/deploy-service.sh djvb-ui "${{ needs.build-ui.outputs.image_tag }}"
 
       - name: Wait for stable
         run: |

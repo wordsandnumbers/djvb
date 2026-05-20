@@ -102,11 +102,11 @@ resource "aws_ecs_task_definition" "redis" {
   }
 
   container_definitions = jsonencode([{
-    name      = "redis"
-    image     = "redis:7-alpine"
-    essential = true
-    memory    = 96
-    cpu       = 128
+    name       = "redis"
+    image      = "redis:7-alpine"
+    essential  = true
+    memory     = 96
+    cpu        = 128
     entryPoint = ["sh", "-c"]
     command    = ["exec redis-server --maxmemory 64mb --maxmemory-policy allkeys-lru --requirepass \"$REDIS_PASSWORD\""]
     secrets = [
@@ -140,17 +140,17 @@ resource "aws_ecs_task_definition" "server" {
     memory    = 500
     cpu       = 512
     environment = [
-      { name = "JAVA_OPTS",        value = "-Xms128m -Xmx384m" },
-      { name = "REDIS_HOST",       value = "localhost" },
-      { name = "REDIS_PORT",       value = "6379" },
+      { name = "JAVA_OPTS", value = "-Xms128m -Xmx384m" },
+      { name = "REDIS_HOST", value = "localhost" },
+      { name = "REDIS_PORT", value = "6379" },
       { name = "DEFAULT_LANGUAGE", value = "English" },
     ]
     secrets = [
-      { name = "FIREBASE_KEY_JSON",  valueFrom = aws_ssm_parameter.firebase_key.arn },
-      { name = "MONGO_URI",          valueFrom = aws_ssm_parameter.mongo_uri.arn },
-      { name = "REDIS_PASSWORD",     valueFrom = aws_ssm_parameter.redis_password.arn },
-      { name = "VB_ORGANIZATION",    valueFrom = aws_ssm_parameter.vb_organization.arn },
-      { name = "MANAGER_NAME",       valueFrom = aws_ssm_parameter.manager_name.arn },
+      { name = "FIREBASE_KEY_JSON", valueFrom = aws_ssm_parameter.firebase_key.arn },
+      { name = "MONGO_URI", valueFrom = aws_ssm_parameter.mongo_uri.arn },
+      { name = "REDIS_PASSWORD", valueFrom = aws_ssm_parameter.redis_password.arn },
+      { name = "VB_ORGANIZATION", valueFrom = aws_ssm_parameter.vb_organization.arn },
+      { name = "MANAGER_NAME", valueFrom = aws_ssm_parameter.manager_name.arn },
     ]
     portMappings = [{
       containerPort = 8080
@@ -186,7 +186,7 @@ resource "aws_ecs_task_definition" "ui" {
     memory    = 96
     cpu       = 128
     environment = [
-      { name = "SITE_ADDRESS",    value = var.domain_name },
+      { name = "SITE_ADDRESS", value = var.domain_name },
       { name = "SERVER_UPSTREAM", value = "localhost:8080" },
     ]
     mountPoints = [{
@@ -195,7 +195,7 @@ resource "aws_ecs_task_definition" "ui" {
       readOnly      = false
     }]
     portMappings = [
-      { containerPort = 80,  hostPort = 80,  protocol = "tcp" },
+      { containerPort = 80, hostPort = 80, protocol = "tcp" },
       { containerPort = 443, hostPort = 443, protocol = "tcp" },
     ]
     logConfiguration = local.log_config
@@ -233,6 +233,11 @@ resource "aws_ecs_service" "server" {
   deployment_minimum_healthy_percent = 0
   deployment_maximum_percent         = 100
 
+  deployment_circuit_breaker {
+    enable   = true
+    rollback = true
+  }
+
   depends_on = [aws_ecs_service.mongo, aws_ecs_service.redis]
 }
 
@@ -244,6 +249,11 @@ resource "aws_ecs_service" "ui" {
   scheduling_strategy                = "REPLICA"
   deployment_minimum_healthy_percent = 0
   deployment_maximum_percent         = 100
+
+  deployment_circuit_breaker {
+    enable   = true
+    rollback = true
+  }
 
   depends_on = [aws_ecs_service.server]
 }

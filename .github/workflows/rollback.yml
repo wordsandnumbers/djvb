@@ -1,0 +1,62 @@
+name: rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: "Git SHA (12-char or full) of a previously-built image already in ECR"
+        type: string
+        required: true
+      services:
+        description: "Comma-separated list of services to roll back"
+        type: string
+        default: "djvb-server,djvb-ui"
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: us-west-2
+  CLUSTER: djvb
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Normalize SHA
+        id: tag
+        run: echo "value=${SHA:0:12}" >> "$GITHUB_OUTPUT"
+        env:
+          SHA: ${{ inputs.sha }}
+
+      - name: Roll back services
+        env:
+          SERVICES: ${{ inputs.services }}
+          TAG: ${{ steps.tag.outputs.value }}
+        run: |
+          IFS=',' read -ra svcs <<<"$SERVICES"
+          for svc in "${svcs[@]}"; do
+            ./.github/scripts/deploy-service.sh "$(echo "$svc" | xargs)" "$TAG"
+          done
+
+      - name: Wait for stable
+        env:
+          SERVICES: ${{ inputs.services }}
+        run: |
+          IFS=',' read -ra svcs <<<"$SERVICES"
+          trimmed=()
+          for svc in "${svcs[@]}"; do
+            trimmed+=("$(echo "$svc" | xargs)")
+          done
+          aws ecs wait services-stable \
+            --cluster "$CLUSTER" \
+            --services "${trimmed[@]}"
