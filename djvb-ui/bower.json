@@ -20,7 +20,7 @@
   "devDependencies": {
     "angular-mocks": "1.5.3"
   },
-  "appPath": "djvb-ui",
+  "appPath": ".",
   "moduleName": "djvbApp",
   "resolutions": {
     "angular": "1.5.3"

@@ -21,7 +21,7 @@ module.exports = function (grunt) {
   var appConfig = {
     app: require('./bower.json').appPath || 'app',
     dist: 'dist', 
-    target: 'target/classes/static/resources'
+    target: '../target/classes/static/resources'
   };
 
   // Define the configuration for all the tasks
@@ -65,7 +65,15 @@ module.exports = function (grunt) {
         ]
       },
       java: {
-    	  files: '<%= yeoman.app %>/**',
+    	  files: [
+    	    '<%= yeoman.app %>/index.html',
+    	    '<%= yeoman.app %>/*.{ico,png,jpg,svg,txt}',
+    	    '<%= yeoman.app %>/scripts/**',
+    	    '<%= yeoman.app %>/styles/**',
+    	    '<%= yeoman.app %>/views/**',
+    	    '<%= yeoman.app %>/images/**',
+    	    '<%= yeoman.app %>/fonts/**'
+    	  ],
     	  tasks: ['sync:java']
       },
       sass: {
@@ -155,11 +163,11 @@ module.exports = function (grunt) {
             '.tmp',
             '<%= yeoman.dist %>/{,*/}*',
             '!<%= yeoman.dist %>/.git{,*/}*',
-            'target/classes/static/**/*'
+            '../target/classes/static/**/*'
           ]
         }]
       },
-      server: 'target/classes/static/**/*'
+      server: '../target/classes/static/**/*'
     },
 
     // Automatically inject Bower components into the app
@@ -168,7 +176,6 @@ module.exports = function (grunt) {
 	        src: ['<%= yeoman.app %>/styles/main.css'],
 	        includeSelf: true,
 	        bowerJson: require('./bower.json'),        // default: require('./bower.json')
-	        ignorePath:  /\.\.\//,
 	        exclude: [
 	          "components-font-awesome"
 	        ],
@@ -391,7 +398,7 @@ module.exports = function (grunt) {
 
     replace: {
       test: {
-        src: '<%= yeoman.app %>/../test/test-main.js',
+        src: 'test/test-main.js',
         overwrite: true,
         replacements: [{
           from: /paths: {[^}]+}/,
@@ -443,7 +450,19 @@ module.exports = function (grunt) {
   sync: {
 	java: {
 		files: [
-			{ cwd: '<%= yeoman.app %>', src: '**', dest: '<%= yeoman.target %>' },
+			{
+				cwd: '<%= yeoman.app %>',
+				src: [
+					'index.html',
+					'*.{ico,png,jpg,svg,txt}',
+					'scripts/**',
+					'styles/**',
+					'views/**',
+					'images/**',
+					'fonts/**'
+				],
+				dest: '<%= yeoman.target %>'
+			},
 			{ cwd: 'bower_components', src: '**', dest: '<%= yeoman.target %>/bower_components' }
 		]
 	}
