@@ -22,7 +22,7 @@ public class UpdateService {
 	@Value("${manager.name}")
 	private String MANAGER_NAME;
 	
-	@Scheduled(fixedDelay=25000)
+	@Scheduled(fixedDelayString = "${manager.reconcileMs:300000}")
 	public void update() {
 		/*
 		 * look for a manager instance where the manager is active, it's been more than 30 seconds since an update

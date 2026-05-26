@@ -8,4 +8,5 @@ public interface UserQueueRepository extends MongoRepository<UserQueue, String> 
 	List<UserQueue> findByOwnerId(String ownerId);
 	UserQueue findByOwnerIdAndRoomCode(String ownerId, String roomCode);
 	List<UserQueue> readAllOrderByRoomCode();
+	List<UserQueue> findByRoomCode(String roomCode);
 }
