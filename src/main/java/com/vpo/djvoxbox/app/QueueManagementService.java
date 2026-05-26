@@ -52,6 +52,9 @@ public class QueueManagementService {
     @Value("${vb.organization}")
     private String vbOrganization;
 
+    @Value("${manager.preloadRemainingMs:45000}")
+    private long preloadRemainingMs;
+
     /**
      * @return all UserQueues sorted by room code (so the upstream fetch can be
      *         deduplicated across consecutive rows for the same room).
@@ -188,6 +191,8 @@ public class QueueManagementService {
             case "metered":
                 if (playCount == 0 && uq.getQueue().size() != 0) {
                     playNext(uq);
+                } else if (shouldPreloadNext(uq, q, playCount)) {
+                    playNext(uq);
                 } else if (playCount != 0 && uq.getQueue().size() != 0) {
                     Play lastPlay = uq.getQueued().get(uq.getQueued().size() - 1);
                     if (lastPlay != null) {
@@ -203,11 +208,27 @@ public class QueueManagementService {
                 // we don't do anything in manual mode
                 break;
             default:
-                if (playCount == 0 && uq.getQueue().size() != 0) {
+                if ((playCount == 0 && uq.getQueue().size() != 0) || shouldPreloadNext(uq, q, playCount)) {
                     playNext(uq);
                 }
                 break;
         }
+    }
+
+    private boolean shouldPreloadNext(UserQueue uq, ConvenientQueue q, int playCount) {
+        if (uq.getQueue().isEmpty() || playCount != 1 || q.getQueue() == null) {
+            return false;
+        }
+        Queue upstream = q.getQueue();
+        Play current = upstream.getCurrentSong();
+        if (current == null || upstream.getQueue() == null || !upstream.getQueue().isEmpty()) {
+            return false;
+        }
+        if (current.getDuration() == null || current.getPosition() == null) {
+            return false;
+        }
+        long remaining = current.getDuration().longValue() - current.getPosition().longValue();
+        return remaining <= preloadRemainingMs;
     }
 
     public void playNext(UserQueue uq) {
