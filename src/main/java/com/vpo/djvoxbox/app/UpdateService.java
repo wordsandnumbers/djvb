@@ -3,6 +3,8 @@ package com.vpo.djvoxbox.app;
 import java.util.Date;
 import java.util.List;
 
+import jakarta.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -21,8 +23,19 @@ public class UpdateService {
 	
 	@Value("${manager.name}")
 	private String MANAGER_NAME;
+
+	@PostConstruct
+	public void ensureManagerExists() {
+		if (managerRepository.findByName(MANAGER_NAME) == null) {
+			Manager manager = new Manager();
+			manager.setName(MANAGER_NAME);
+			manager.setActive(true);
+			manager.setLastUpdate(new Date(0));
+			managerRepository.save(manager);
+		}
+	}
 	
-	@Scheduled(fixedDelay=25000)
+	@Scheduled(fixedDelayString = "${manager.reconcileMs:300000}")
 	public void update() {
 		/*
 		 * look for a manager instance where the manager is active, it's been more than 30 seconds since an update

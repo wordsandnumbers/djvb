@@ -19,6 +19,8 @@ import com.vpo.djvoxbox.domain.User;
 import com.vpo.djvoxbox.domain.UserQueue;
 import com.vpo.djvoxbox.domain.UserQueueRepository;
 import com.vpo.djvoxbox.domain.UserRepository;
+import com.vpo.djvoxbox.faye.FayeQueueSubscriber;
+import com.vpo.djvoxbox.faye.QueueSnapshotStore;
 import com.vpo.djvoxbox.util.SessionUtils;
 import com.vpo.vbclient.model.Play;
 import com.vpo.vbclient.model.Queue;
@@ -48,6 +50,10 @@ public class QueueController {
 	UserQueueRepository userQueueRepository;
 	@Autowired
 	QueueManagementService queueManagementService;
+	@Autowired
+	FayeQueueSubscriber fayeQueueSubscriber;
+	@Autowired
+	QueueSnapshotStore queueSnapshotStore;
 	
 	@RequestMapping(value="/lights/{roomCode}/{level}", method=RequestMethod.GET)
 	public void lights(@PathVariable("roomCode") String code, @PathVariable("level") Integer level) {
@@ -78,6 +84,9 @@ public class QueueController {
 			Session s = sessionClient.getSessionById(user.getSessionId());
 			uq.setSession(s);
 			userQueueRepository.save(uq);
+			// Ensure the Faye subscription exists for this room so push
+			// events update our snapshot and UserQueue projections.
+			fayeQueueSubscriber.ensureSubscribed(uq.getRoomCode());
 		}
 		return uq;
 	}
@@ -87,7 +96,15 @@ public class QueueController {
 		User user = userRepository.getById(principal.getName());
 		UserQueue uq = userQueueRepository.findById(userQueueId).get();
 		if(uq.getOwnerId().equals(user.getIdentifier())) {
+			String roomCode = uq.getRoomCode();
 			userQueueRepository.delete(uq);
+			// If no UserQueue still references this room, drop the
+			// subscription and evict the snapshot — saves cycles and
+			// avoids serving stale state to a future joiner.
+			if(userQueueRepository.findByRoomCode(roomCode).isEmpty()) {
+				fayeQueueSubscriber.maybeUnsubscribe(roomCode);
+				queueSnapshotStore.evict(roomCode);
+			}
 		}
 	}
 	
@@ -108,6 +125,7 @@ public class QueueController {
 			queueManagementService.playNext(uq);
 		}
 		userQueueRepository.save(uq);
+		queueSnapshotStore.evict(uq.getRoomCode());
 		return uq;
 	}
 	
@@ -154,9 +172,10 @@ public class QueueController {
 			uq.getQueue().add(oldPlay);
 		}
 		userQueueRepository.save(uq);
+		queueSnapshotStore.evict(uq.getRoomCode());
 		return uq;
 	}
-	
+
 	@RequestMapping(value="/queue", method=RequestMethod.PUT)
 	public @ResponseBody UserQueue reorderQueue(@RequestBody PlayRequest request, Principal principal) {
 		UserQueue uq = createUserQueue(new QueueRequest(request.getRoomCode()) , principal);
@@ -176,9 +195,10 @@ public class QueueController {
 			// throw an appropriate error
 		}
 		userQueueRepository.save(uq);
+		queueSnapshotStore.evict(uq.getRoomCode());
 		return uq;
 	}
-	
+
 	@RequestMapping(value="/queue", method=RequestMethod.DELETE)
 	public @ResponseBody UserQueue removeFromQueue(@RequestBody PlayRequest request, Principal principal) {
 		UserQueue uq = createUserQueue(new QueueRequest(request.getRoomCode()) , principal);
@@ -196,6 +216,7 @@ public class QueueController {
 			// throw an appropriate error
 		}
 		userQueueRepository.save(uq);
+		queueSnapshotStore.evict(uq.getRoomCode());
 		return uq;
 	}
 	

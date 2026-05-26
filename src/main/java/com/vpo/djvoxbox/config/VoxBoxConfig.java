@@ -11,8 +11,11 @@ import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerF
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.session.data.redis.config.ConfigureRedisAction;
 import org.springframework.session.web.http.CookieSerializer;
@@ -76,6 +79,21 @@ public class VoxBoxConfig {
 	@Bean
 	public static ConfigureRedisAction configureRedisAction() {
 		return ConfigureRedisAction.NO_OP;
+	}
+
+	@Bean
+	RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+		RedisTemplate<String, Object> template = new RedisTemplate<>();
+		GenericJackson2JsonRedisSerializer valueSerializer = new GenericJackson2JsonRedisSerializer();
+		StringRedisSerializer keySerializer = new StringRedisSerializer();
+
+		template.setConnectionFactory(connectionFactory);
+		template.setKeySerializer(keySerializer);
+		template.setHashKeySerializer(keySerializer);
+		template.setValueSerializer(valueSerializer);
+		template.setHashValueSerializer(valueSerializer);
+		template.afterPropertiesSet();
+		return template;
 	}
 
 	@Bean
