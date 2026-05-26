@@ -3,6 +3,8 @@ package com.vpo.djvoxbox.app;
 import java.util.Date;
 import java.util.List;
 
+import jakarta.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -21,6 +23,17 @@ public class UpdateService {
 	
 	@Value("${manager.name}")
 	private String MANAGER_NAME;
+
+	@PostConstruct
+	public void ensureManagerExists() {
+		if (managerRepository.findByName(MANAGER_NAME) == null) {
+			Manager manager = new Manager();
+			manager.setName(MANAGER_NAME);
+			manager.setActive(true);
+			manager.setLastUpdate(new Date(0));
+			managerRepository.save(manager);
+		}
+	}
 	
 	@Scheduled(fixedDelayString = "${manager.reconcileMs:300000}")
 	public void update() {

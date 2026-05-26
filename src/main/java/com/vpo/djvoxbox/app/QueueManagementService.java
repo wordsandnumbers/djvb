@@ -70,12 +70,15 @@ public class QueueManagementService {
      * UserQueue accordingly.
      */
     private ConvenientQueue getQueue(final String roomCode, final ConvenientQueue queue) {
+        return getQueue(roomCode, queue, false);
+    }
+
+    private ConvenientQueue getQueue(final String roomCode, final ConvenientQueue queue, boolean refreshFromUpstream) {
         if (queue != null && queue.getQueue() != null && queue.getQueue().getRoomCode() != null
                 && queue.getQueue().getRoomCode().equals(roomCode)) {
             return queue;
         }
-        // Try snapshot store first.
-        Queue cached = queueSnapshotStore.get(roomCode);
+        Queue cached = refreshFromUpstream ? null : queueSnapshotStore.get(roomCode);
         if (cached != null) {
             return new ConvenientQueue(cached);
         }
@@ -84,6 +87,8 @@ public class QueueManagementService {
             Queue fresh = queueClient.getQueue(roomCode);
             if (fresh != null) {
                 queueSnapshotStore.put(roomCode, fresh);
+            } else {
+                queueSnapshotStore.evict(roomCode);
             }
             q = new ConvenientQueue(fresh);
         } catch (HttpClientErrorException e) {
@@ -107,7 +112,7 @@ public class QueueManagementService {
             if (!sameOrg(uq)) {
                 continue;
             }
-            q = getQueue(uq.getRoomCode(), q);
+            q = getQueue(uq.getRoomCode(), q, true);
             if (q == null || q.getQueue() == null) {
                 downgradeQueueStatus(uq);
                 continue;
@@ -220,6 +225,7 @@ public class QueueManagementService {
             nextPlay.setPosition(newPlay.getPosition());
             nextPlay.setIndex(newPlay.getIndex());
             uq.getQueued().add(nextPlay);
+            queueSnapshotStore.evict(uq.getRoomCode());
         }
         uq.getQueue().remove(0);
     }
