@@ -14,7 +14,13 @@ RUN --mount=type=secret,id=gh_pat \
     mvn -B -q dependency:go-offline
 
 COPY src ./src
-RUN --mount=type=cache,target=/root/.m2 \
+RUN --mount=type=secret,id=gh_pat \
+    --mount=type=cache,target=/root/.m2 \
+    GH_PAT=$(cat /run/secrets/gh_pat 2>/dev/null || echo "") && \
+    GH_USER="${GH_USER:-x-access-token}" && \
+    mkdir -p /root/.m2 && \
+    printf '<settings><servers><server><id>github-vbclient</id><username>%s</username><password>%s</password></server></servers></settings>\n' \
+        "$GH_USER" "$GH_PAT" > /root/.m2/settings.xml && \
     mvn -B -DskipTests package && \
     cp target/djvb-*.jar /build/app.jar
 
