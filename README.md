@@ -5,7 +5,7 @@ A web application for managing karaoke song queues, rooms, playlists, and live s
 ## Tech stack
 
 **Backend**
-- Java 17, Spring Boot 3.2.x
+- Java 21 (virtual threads enabled via `spring.threads.virtual.enabled=true`), Spring Boot 3.2.x
 - Spring Web, Spring Security, Spring WebSocket, Spring Integration
 - Spring Data MongoDB (domain persistence)
 - Spring Session backed by Redis (`@EnableRedisHttpSession` in [DjvbApplication.java](src/main/java/com/vpo/djvoxbox/DjvbApplication.java))
@@ -29,7 +29,8 @@ src/main/java/com/vpo/djvoxbox/
   app/                        Services (QueueManagementService, UserService, UpdateService)
   web/                        REST controllers under /api/v1/* (queue, songs, playlists, avatar, user, ...)
   domain/                     Mongo documents + repositories (User, UserQueue, Playlists, Avatar, Manager)
-  config/                     SecurityConfiguration, FirebaseConfig, HttpsEnforcer, SimpleCORSFilter, VoxBoxConfig
+  config/                     SecurityConfiguration, FirebaseConfig, SimpleCORSFilter, VoxBoxConfig
+  faye/                       Faye/CometD subscription to VoxBox push events (replaces the old 25s poll)
   security/                   Custom remember-me / session pieces
   util/                       Shared helpers (e.g. SessionUtils)
 
@@ -50,7 +51,7 @@ Procfile                      Heroku-style run command
 
 ## Prerequisites
 
-- **Java 17** and **Maven 3.x**
+- **Java 21** and **Maven 3.x**
 - **Docker** / Docker Compose (for local MongoDB and Redis)
 - **Node.js** ≥ 18 and **npm** — [djvb-ui/package.json](djvb-ui/package.json) still pins `engines.node` to `6.11.1` for legacy reasons; modern Node works for the tasks we use. Pass `--legacy-peer-deps` to `npm install` to tolerate the old dependency graph.
 - A **Firebase service account** JSON placed at [src/main/resources/firebaseServiceAccountKey.json](src/main/resources/firebaseServiceAccountKey.json)
@@ -147,7 +148,7 @@ Key properties (set in [application.properties](src/main/resources/application.p
 
 ## Build & test
 
-- Backend tests: `mvn test` (entry point: [src/test/java/djboxbox/DjvbApplicationTests.java](src/test/java/djboxbox/DjvbApplicationTests.java))
+- Backend tests: `mvn test` (entry point: [src/test/java/com/vpo/djvoxbox/DjvbApplicationTests.java](src/test/java/com/vpo/djvoxbox/DjvbApplicationTests.java))
 - Backend jar: `mvn package -DskipTests` produces `target/djvb-0.0.1-SNAPSHOT.jar`
 - Frontend commands run from inside `djvb-ui/`. The production build (`grunt` default task) and `grunt test` (Karma + Jasmine) are currently **not wired up for modern Node** — they relied on `node-sass` and `phantomjs`, which were dropped during the Node 24 / Spring Boot 3 upgrade. The dev loop (`grunt java`) is the supported workflow.
 
