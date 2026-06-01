@@ -5,8 +5,9 @@ A web application for managing karaoke song queues, rooms, playlists, and live s
 ## Tech stack
 
 **Backend**
-- Java 21 (virtual threads enabled via `spring.threads.virtual.enabled=true`), Spring Boot 3.2.x
+- Java 21 (virtual threads enabled via `spring.threads.virtual.enabled=true`), Spring Boot 3.5.x
 - Spring Web, Spring Security, Spring WebSocket, Spring Integration
+- Spring AI MCP Server (Streamable HTTP)
 - Spring Data MongoDB (domain persistence)
 - Spring Session backed by Redis (`@EnableRedisHttpSession` in [DjvbApplication.java](src/main/java/com/vpo/djvoxbox/DjvbApplication.java))
 - Firebase Admin SDK (auth)
@@ -31,6 +32,7 @@ src/main/java/com/vpo/djvoxbox/
   domain/                     Mongo documents + repositories (User, UserQueue, Playlists, Avatar, Manager)
   config/                     SecurityConfiguration, FirebaseConfig, SimpleCORSFilter, VoxBoxConfig
   faye/                       Faye/CometD subscription to VoxBox push events (replaces the old 25s poll)
+  mcp/                        Hosted vbsongs MCP tools, OAuth endpoints, and operation wrappers
   security/                   Custom remember-me / session pieces
   util/                       Shared helpers (e.g. SessionUtils)
 
@@ -143,8 +145,47 @@ Key properties (set in [application.properties](src/main/resources/application.p
 | `manager.name` | Manager record name used to bootstrap state |
 | `default.language` | Default song search language |
 | `server.session.timeout` | HTTP session timeout (seconds) |
+| `mcp.apiToken` | Optional static bearer token accepted by `/mcp` for compatibility and local smoke tests |
+| `mcp.publicBaseUrl` | Public origin used in MCP OAuth metadata, for example `https://djvb.example.com` |
+| `mcp.oauth.consentCode` | Shared human-entered authorization code used by the lightweight MCP OAuth consent page |
+| `mcp.oauth.clientId` / `mcp.oauth.clientSecret` | Optional pre-registered OAuth client credentials |
+| `mcp.oauth.authorizationCodeTtlSeconds` / `mcp.oauth.accessTokenTtlSeconds` / `mcp.oauth.refreshTokenTtlSeconds` | MCP OAuth token lifetimes |
 
 > The committed [application.properties](src/main/resources/application.properties) contains real-looking credentials. Rotate them and move them to environment variables / a secrets manager before deploying.
+
+## MCP server
+
+The backend hosts a vbsongs MCP server at `/mcp` using Spring AI's WebMVC Streamable HTTP transport. MCP tools delegate to `com.vpo:vbclient` and use this instance's configured `vb.rootUrl`, `vb.organization`, and `default.language`.
+
+The server is intentionally client-neutral. Claude, Codex, or any other MCP client that supports remote Streamable HTTP plus OAuth discovery can connect to the same endpoint.
+
+Authentication supports two paths:
+
+- OAuth: `/mcp` responds to unauthenticated requests with a `WWW-Authenticate` challenge pointing at `/.well-known/oauth-protected-resource/mcp`. The OAuth layer exposes protected-resource metadata, authorization-server metadata, dynamic client registration, authorization-code + PKCE, and refresh tokens.
+- Static bearer: clients may also call `/mcp` with `Authorization: Bearer <mcp.apiToken>`. This is useful for local tests and simple internal clients.
+
+For local development, [application-development.properties](src/main/resources/application-development.properties) sets both `mcp.apiToken` and `mcp.oauth.consentCode` to `development-mcp-token`.
+
+Useful local checks:
+
+```sh
+curl -i http://localhost:8080/mcp
+curl http://localhost:8080/.well-known/oauth-protected-resource/mcp
+curl http://localhost:8080/.well-known/oauth-authorization-server
+curl -i -H 'Authorization: Bearer development-mcp-token' http://localhost:8080/mcp
+```
+
+The last command is only an auth-boundary smoke test; use an MCP client for a real Streamable HTTP session.
+
+For production, set:
+
+```sh
+MCP_PUBLIC_BASE_URL=https://your-djvb-host
+MCP_OAUTH_CONSENT_CODE=<operator-shared-auth-code>
+MCP_API_TOKEN=<optional-static-bearer-token>
+```
+
+Current limitation: OAuth clients, authorization codes, access tokens, and refresh tokens are stored in memory. Restarting the server invalidates OAuth sessions, and multiple server instances would not share tokens without adding Redis/DB-backed storage or a full authorization server.
 
 ## Build & test
 

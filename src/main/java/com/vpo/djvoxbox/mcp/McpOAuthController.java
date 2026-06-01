@@ -72,7 +72,7 @@ public class McpOAuthController {
                 <head><title>Authorize DJVB MCP</title></head>
                 <body>
                   <h1>Authorize DJVB MCP</h1>
-                  <p>This will allow Claude to use karaoke room tools for this DJVB instance.</p>
+                  <p>This will allow an MCP client to use karaoke room tools for this DJVB instance.</p>
                   <p>Redirect URI: <code>%s</code></p>
                   <form method="post" action="/oauth/authorize">
                     <input type="hidden" name="response_type" value="%s">
