@@ -25,7 +25,10 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.filter.ShallowEtagHeaderFilter;
 
 import com.vpo.djvoxbox.security.web.authentication.SpringSessionRememberMeServices;
+import com.vpo.vbclient.currentsong.CurrentSongClient;
+import com.vpo.vbclient.feedback.FeedbackClient;
 import com.vpo.vbclient.queue.QueueClient;
+import com.vpo.vbclient.room.RoomClient;
 import com.vpo.vbclient.session.SessionClient;
 import com.vpo.vbclient.song.SongClient;
 
@@ -68,6 +71,33 @@ public class VoxBoxConfig {
 			return new QueueClient(vbRootUrl, "");
 		} else {
 			return new QueueClient(vbRootUrl, vbOrganization);
+		}
+	}
+
+	@Bean
+	RoomClient roomClient() {
+		if (vbOrganization.isEmpty()) {
+			return new RoomClient(vbRootUrl, "");
+		} else {
+			return new RoomClient(vbRootUrl, vbOrganization);
+		}
+	}
+
+	@Bean
+	CurrentSongClient currentSongClient() {
+		if (vbOrganization.isEmpty()) {
+			return new CurrentSongClient(vbRootUrl, "");
+		} else {
+			return new CurrentSongClient(vbRootUrl, vbOrganization);
+		}
+	}
+
+	@Bean
+	FeedbackClient feedbackClient() {
+		if (vbOrganization.isEmpty()) {
+			return new FeedbackClient(vbRootUrl, "");
+		} else {
+			return new FeedbackClient(vbRootUrl, vbOrganization);
 		}
 	}
 

@@ -9,17 +9,22 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
 
@@ -38,6 +43,9 @@ public class SecurityConfiguration {
 	@Autowired
 	private SpringSessionRememberMeServices springSessionRememberMeServices;
 
+	@Value("${mcp.apiToken:}")
+	private String mcpApiToken;
+
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 		auth.authenticationProvider(firebaseAuthenticationProvider);
@@ -50,6 +58,17 @@ public class SecurityConfiguration {
 
 	@Bean
 	@Order(1)
+	public SecurityFilterChain mcpChain(HttpSecurity http) throws Exception {
+		return http.securityMatcher("/mcp", "/mcp/**")
+			.authorizeHttpRequests(a -> a.anyRequest().permitAll())
+			.sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			.csrf(c -> c.disable())
+			.addFilterBefore(new McpBearerTokenFilter(mcpApiToken), UsernamePasswordAuthenticationFilter.class)
+			.build();
+	}
+
+	@Bean
+	@Order(2)
 	public SecurityFilterChain avatarChain(HttpSecurity http) throws Exception {
 		return http.securityMatcher("/api/v1/user/avatar/**")
 			.authorizeHttpRequests(a -> a.anyRequest().authenticated())
@@ -65,7 +84,7 @@ public class SecurityConfiguration {
 	}
 
 	@Bean
-	@Order(2)
+	@Order(3)
 	public SecurityFilterChain apiChain(HttpSecurity http) throws Exception {
 		return http.securityMatcher("/api/**")
 			.authorizeHttpRequests(a -> a.anyRequest().authenticated())
@@ -81,7 +100,7 @@ public class SecurityConfiguration {
 	}
 
 	@Bean
-	@Order(3)
+	@Order(4)
 	public SecurityFilterChain mainChain(HttpSecurity http) throws Exception {
 		return http
 			.sessionManagement(s -> s.sessionFixation().migrateSession())
@@ -96,6 +115,35 @@ public class SecurityConfiguration {
 				.permitAll())
 			.logout(l -> l.permitAll())
 			.build();
+	}
+
+	static class McpBearerTokenFilter extends OncePerRequestFilter {
+		private final String token;
+
+		McpBearerTokenFilter(String token) {
+			this.token = token;
+		}
+
+		@Override
+		protected void doFilterInternal(HttpServletRequest request,
+				HttpServletResponse response, FilterChain filterChain)
+				throws ServletException, IOException {
+			if (!StringUtils.hasText(token)) {
+				response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+				response.setContentType("application/json");
+				response.getWriter().write("{\"error\":\"MCP bearer token is not configured\"}");
+				return;
+			}
+			String expected = "Bearer " + token;
+			String actual = request.getHeader(HttpHeaders.AUTHORIZATION);
+			if (!expected.equals(actual)) {
+				response.setStatus(SC_UNAUTHORIZED);
+				response.setContentType("application/json");
+				response.getWriter().write("{\"error\":\"Unauthorized\"}");
+				return;
+			}
+			filterChain.doFilter(request, response);
+		}
 	}
 
 	public static class CsrfHeaderFilter extends OncePerRequestFilter {
