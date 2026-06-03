@@ -68,13 +68,222 @@ public class McpOAuthController {
         oauthService.requireClient(clientId);
         return """
                 <!doctype html>
-                <html>
-                <head><title>Authorize DJVB MCP</title></head>
+                <html lang="en">
+                <head>
+                  <meta charset="utf-8">
+                  <meta name="viewport" content="width=device-width, initial-scale=1">
+                  <title>Authorize DJVB MCP</title>
+                  <style>
+                    :root {
+                      color-scheme: light;
+                      --border: #d8d8d8;
+                      --ink: #222;
+                      --muted: #666;
+                      --page: #f5f5f5;
+                      --panel: #fff;
+                      --primary: #387ef5;
+                      --primary-active: #2d6ed8;
+                    }
+
+                    * {
+                      box-sizing: border-box;
+                    }
+
+                    body {
+                      margin: 0;
+                      min-height: 100vh;
+                      background: var(--page);
+                      color: var(--ink);
+                      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+                      line-height: 1.45;
+                    }
+
+                    .bar {
+                      min-height: 44px;
+                      border-bottom: 1px solid var(--border);
+                      background: #f8f8f8;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      padding: 0 16px;
+                    }
+
+                    .bar-title {
+                      font-size: 17px;
+                      font-weight: 600;
+                    }
+
+                    main {
+                      width: min(100%%, 480px);
+                      margin: 0 auto;
+                      padding: 28px 16px;
+                    }
+
+                    .panel {
+                      background: var(--panel);
+                      border: 1px solid var(--border);
+                      border-radius: 2px;
+                      overflow: hidden;
+                      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+                    }
+
+                    .section {
+                      padding: 18px;
+                      border-bottom: 1px solid #eee;
+                    }
+
+                    .section:last-child {
+                      border-bottom: 0;
+                    }
+
+                    h1 {
+                      margin: 0 0 6px;
+                      font-size: 22px;
+                      font-weight: 500;
+                    }
+
+                    p {
+                      margin: 0;
+                      color: var(--muted);
+                    }
+
+                    .permission-list {
+                      margin: 14px 0 0;
+                      padding: 0;
+                      list-style: none;
+                    }
+
+                    .permission-list li {
+                      display: flex;
+                      gap: 10px;
+                      padding: 8px 0;
+                      color: #333;
+                    }
+
+                    .check {
+                      width: 20px;
+                      color: var(--primary);
+                      font-weight: 600;
+                      text-align: center;
+                    }
+
+                    .meta-label,
+                    label {
+                      display: block;
+                      margin: 0 0 7px;
+                      color: #444;
+                      font-size: 13px;
+                      font-weight: 600;
+                    }
+
+                    code {
+                      display: block;
+                      max-width: 100%%;
+                      overflow-wrap: anywhere;
+                      padding: 10px;
+                      border: 1px solid #e2e2e2;
+                      border-radius: 2px;
+                      background: #fafafa;
+                      color: #444;
+                      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+                      font-size: 12px;
+                    }
+
+                    input {
+                      display: block;
+                      width: 100%%;
+                      min-height: 44px;
+                      padding: 10px 12px;
+                      border: 1px solid #ccc;
+                      border-radius: 2px;
+                      background: #fff;
+                      color: var(--ink);
+                      font-size: 16px;
+                    }
+
+                    input:focus {
+                      border-color: var(--primary);
+                      outline: 2px solid rgba(56, 126, 245, 0.18);
+                      outline-offset: 0;
+                    }
+
+                    .actions {
+                      display: flex;
+                      gap: 10px;
+                      align-items: center;
+                      justify-content: flex-end;
+                      padding: 14px 18px 18px;
+                    }
+
+                    button {
+                      min-height: 44px;
+                      min-width: 120px;
+                      border: 1px solid var(--primary);
+                      border-radius: 2px;
+                      background: var(--primary);
+                      color: #fff;
+                      cursor: pointer;
+                      font-size: 16px;
+                      font-weight: 600;
+                    }
+
+                    button:hover,
+                    button:focus {
+                      background: var(--primary-active);
+                      border-color: var(--primary-active);
+                    }
+
+                    .note {
+                      margin-top: 12px;
+                      color: #777;
+                      font-size: 13px;
+                    }
+
+                    @media (max-width: 420px) {
+                      main {
+                        padding: 18px 10px;
+                      }
+
+                      .section,
+                      .actions {
+                        padding-left: 14px;
+                        padding-right: 14px;
+                      }
+
+                      .actions,
+                      button {
+                        width: 100%%;
+                      }
+                    }
+                  </style>
+                </head>
                 <body>
-                  <h1>Authorize DJVB MCP</h1>
-                  <p>This will allow an MCP client to use karaoke room tools for this DJVB instance.</p>
-                  <p>Redirect URI: <code>%s</code></p>
-                  <form method="post" action="/oauth/authorize">
+                  <header class="bar">
+                    <div class="bar-title">DJ Voice Box</div>
+                  </header>
+                  <main>
+                    <form class="panel" method="post" action="/oauth/authorize">
+                      <section class="section">
+                        <h1>Authorize MCP Access</h1>
+                        <p>This will allow an MCP client to use karaoke room tools for this DJVB instance.</p>
+                        <ul class="permission-list" aria-label="Requested access">
+                          <li><span class="check" aria-hidden="true">&#10003;</span><span>Search the karaoke catalog</span></li>
+                          <li><span class="check" aria-hidden="true">&#10003;</span><span>View room and queue state</span></li>
+                          <li><span class="check" aria-hidden="true">&#10003;</span><span>Manage queue and playback controls</span></li>
+                        </ul>
+                      </section>
+                      <section class="section">
+                        <span class="meta-label">Redirect URI</span>
+                        <code>%s</code>
+                      </section>
+                      <section class="section">
+                        <label for="consent_code">Authorization code</label>
+                        <input id="consent_code" type="password" name="consent_code" autocomplete="one-time-code" autofocus required>
+                        <p class="note">Use the MCP authorization code provided by the DJVB operator.</p>
+                      </section>
+                      <div class="actions">
+                        <button type="submit">Authorize</button>
+                      </div>
                     <input type="hidden" name="response_type" value="%s">
                     <input type="hidden" name="client_id" value="%s">
                     <input type="hidden" name="redirect_uri" value="%s">
@@ -82,11 +291,8 @@ public class McpOAuthController {
                     <input type="hidden" name="code_challenge_method" value="%s">
                     <input type="hidden" name="state" value="%s">
                     <input type="hidden" name="scope" value="%s">
-                    <label>Authorization code
-                      <input type="password" name="consent_code" autofocus>
-                    </label>
-                    <button type="submit">Authorize</button>
                   </form>
+                  </main>
                 </body>
                 </html>
                 """.formatted(
