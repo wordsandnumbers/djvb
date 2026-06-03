@@ -22,6 +22,9 @@ services:
       VB_ORGANIZATION: "00000000000000000000000000000000"
       MANAGER_NAME: VBONE
       DEFAULT_LANGUAGE: English
+      MCP_PUBLIC_BASE_URL: http://localhost
+      MCP_OAUTH_CONSENT_CODE: development-mcp-token
+      MCP_API_TOKEN: development-mcp-token
       JAVA_OPTS: "-Xms128m -Xmx384m"
       GOOGLE_APPLICATION_CREDENTIALS_PATH: /run/firebase.json
     volumes:
