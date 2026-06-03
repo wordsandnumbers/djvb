@@ -53,3 +53,14 @@ resource "aws_ssm_parameter" "manager_name" {
     ignore_changes = [value]
   }
 }
+
+resource "aws_ssm_parameter" "mcp_oauth_consent_code" {
+  name        = "/${var.name}/mcp_oauth_consent_code"
+  description = "Shared operator authorization code for MCP OAuth consent."
+  type        = "SecureString"
+  value       = "PLACEHOLDER_OVERWRITE_VIA_CLI"
+
+  lifecycle {
+    ignore_changes = [value]
+  }
+}

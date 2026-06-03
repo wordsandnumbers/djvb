@@ -144,6 +144,7 @@ resource "aws_ecs_task_definition" "server" {
       { name = "REDIS_HOST", value = "localhost" },
       { name = "REDIS_PORT", value = "6379" },
       { name = "DEFAULT_LANGUAGE", value = "English" },
+      { name = "MCP_PUBLIC_BASE_URL", value = "https://${var.domain_name}" },
     ]
     secrets = [
       { name = "FIREBASE_KEY_JSON", valueFrom = aws_ssm_parameter.firebase_key.arn },
@@ -151,6 +152,7 @@ resource "aws_ecs_task_definition" "server" {
       { name = "REDIS_PASSWORD", valueFrom = aws_ssm_parameter.redis_password.arn },
       { name = "VB_ORGANIZATION", valueFrom = aws_ssm_parameter.vb_organization.arn },
       { name = "MANAGER_NAME", valueFrom = aws_ssm_parameter.manager_name.arn },
+      { name = "MCP_OAUTH_CONSENT_CODE", valueFrom = aws_ssm_parameter.mcp_oauth_consent_code.arn },
     ]
     portMappings = [{
       containerPort = 8080

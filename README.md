@@ -242,7 +242,10 @@ aws ssm put-parameter --name /djvb/mongo_uri        --type SecureString --overwr
 aws ssm put-parameter --name /djvb/redis_password   --type SecureString --overwrite --value '<strong-redis-pw>'
 aws ssm put-parameter --name /djvb/vb_organization  --type SecureString --overwrite --value '<vb-org-id>'
 aws ssm put-parameter --name /djvb/firebase_key     --type SecureString --overwrite --value file://src/main/resources/firebaseServiceAccountKey.json
+aws ssm put-parameter --name /djvb/mcp_oauth_consent_code --type SecureString --overwrite --value '<strong-mcp-operator-code>'
 ```
+
+`MCP_PUBLIC_BASE_URL` is set automatically in the ECS server task from `domain_name` as `https://<domain_name>`.
 
 Then force a redeploy so the tasks pick up the new secret values:
 

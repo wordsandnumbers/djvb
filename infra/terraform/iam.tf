@@ -65,6 +65,7 @@ data "aws_iam_policy_document" "ssm_read" {
       aws_ssm_parameter.redis_password.arn,
       aws_ssm_parameter.vb_organization.arn,
       aws_ssm_parameter.manager_name.arn,
+      aws_ssm_parameter.mcp_oauth_consent_code.arn,
     ]
   }
   statement {
@@ -158,7 +159,7 @@ data "aws_iam_policy_document" "github_deploy" {
     resources = ["*"]
   }
   statement {
-    actions   = ["iam:PassRole"]
+    actions = ["iam:PassRole"]
     resources = [
       aws_iam_role.ecs_task_execution.arn,
       aws_iam_role.ecs_task.arn,
